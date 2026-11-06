@@ -1,0 +1,2111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quantum Fields & Local Measurements — Visual Guide to Fewster & Verch (2020)</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    :root {
+      --background: #0b0f19;
+      --card: #111827;
+      --foreground: #f8fafc;
+      --muted-foreground: #94a3b8;
+      --border: #1e293b;
+      --primary: #3b82f6;
+      --primary-foreground: #ffffff;
+    }
+    html.light {
+      --background: #f8fafc;
+      --card: #ffffff;
+      --foreground: #0f172a;
+      --muted-foreground: #475569;
+      --border: #e2e8f0;
+      --primary: #2563eb;
+      --primary-foreground: #ffffff;
+    }
+    .math {
+      font-family: 'STIX Two Math', 'Cambria Math', 'Latin Modern Math', 'Times New Roman', Georgia, serif;
+      font-style: italic;
+    }
+    .math-rm {
+      font-family: 'STIX Two Math', 'Cambria Math', 'Latin Modern Math', 'Times New Roman', Georgia, serif;
+      font-style: normal;
+    }
+    .math-cal {
+      font-family: 'STIX Two Math', 'Cambria Math', 'Apple Chancery', 'URW Chancery L', cursive, serif;
+      font-style: italic;
+      font-weight: 600;
+    }
+    .math-bb {
+      font-family: 'STIX Two Math', 'Cambria Math', Georgia, serif;
+      font-weight: 700;
+      font-style: normal;
+    }
+    .eq-box {
+      font-family: 'STIX Two Math', 'Cambria Math', 'Times New Roman', Georgia, serif;
+    }
+    .frac {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      vertical-align: middle;
+      margin: 0 0.2em;
+      line-height: 1.1;
+    }
+    .frac-num {
+      border-bottom: 1px solid currentColor;
+      padding: 0 0.25em 0.1em;
+    }
+    .frac-den {
+      padding: 0.1em 0.25em 0;
+    }
+    canvas {
+      touch-action: none;
+      user-select: none;
+    }
+    .tab-btn.active {
+      background-color: var(--primary);
+      color: var(--primary-foreground);
+      border-color: var(--primary);
+    }
+    .step-card.active {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 1px var(--primary);
+    }
+  </style>
+</head>
+<body class="bg-[var(--background)] text-[var(--foreground)] antialiased p-4 md:p-6">
+
+  <!-- Top Header Banner -->
+  <header class="max-w-7xl mx-auto mb-6 bg-[var(--card)] border border-[var(--border)] rounded-2xl p-6 shadow-sm">
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+      <div>
+        <div class="flex flex-wrap items-center gap-2 mb-2">
+          <a href="index.html" class="px-2.5 py-0.5 rounded-full text-xs font-medium border border-[var(--border)] hover:bg-[var(--background)] transition">
+            &larr; Reading Notes Index
+          </a>
+          <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[var(--primary)] text-[var(--primary-foreground)]">
+            Commun. Math. Phys. 378, 851–889 (2020)
+          </span>
+          <span class="px-2.5 py-0.5 rounded-full text-xs font-medium border border-[var(--border)] text-[var(--muted-foreground)]">
+            C. J. Fewster &amp; R. Verch
+          </span>
+          <span class="px-2.5 py-0.5 rounded-full text-xs font-medium border border-[var(--border)] text-[var(--muted-foreground)]">
+            Interactive Mathematical Physics Guide
+          </span>
+          <button onclick="toggleTheme()" class="ml-auto lg:ml-2 px-2.5 py-0.5 rounded-full text-xs font-medium border border-[var(--border)] hover:bg-[var(--background)] transition">
+            Toggle Light/Dark Theme
+          </button>
+        </div>
+        <h1 class="text-2xl md:text-3xl font-bold tracking-tight text-[var(--foreground)]">
+          Quantum Fields and Local Measurements
+        </h1>
+        <p class="text-sm text-[var(--muted-foreground)] mt-1 max-w-3xl">
+          An interactive visual deconstruction for mathematical physicists: how to couple an AQFT system to a local probe in curved spacetime, extract induced observables and instruments without preferred Hilbert spaces, and exorcise non-covariant wave-packet collapse.
+        </p>
+      </div>
+
+      <!-- Quick Mental Map Pill Box -->
+      <div class="flex flex-col gap-1.5 bg-[var(--background)] border border-[var(--border)] rounded-xl p-3.5 text-xs shrink-0">
+        <div class="font-semibold text-[var(--foreground)]">Why people get lost in this paper:</div>
+        <div class="text-[var(--muted-foreground)]">1. <span class="text-[var(--foreground)] font-medium">Morphism overload</span> (<span class="math">&alpha;<sup>&plusmn;</sup>, &beta;<sup>&plusmn;</sup>, &gamma;<sup>&plusmn;</sup>, &chi;<sup>&plusmn;</sup>, &kappa;<sup>&plusmn;</sup>, &tau;<sup>&plusmn;</sup>, &Theta;</span>) in &sect;3.1</div>
+        <div class="text-[var(--muted-foreground)]">2. <span class="text-[var(--foreground)] font-medium">Why <span class="math">M<sup>&plusmn;</sup> = M \ J<sup>&mp;</sup>(K)</span></span> includes spacelike infinity (&sect;2 &amp; Fig. 1)</div>
+        <div class="text-[var(--muted-foreground)]">3. <span class="text-[var(--foreground)] font-medium">3-tier sharpness hierarchy</span> &amp; causal hull localization (&sect;3.2)</div>
+        <div class="text-[var(--muted-foreground)]">4. <span class="text-[var(--foreground)] font-medium">Post-selection changes <span class="math">K<sup>&perp;</sup></span></span> (Reeh–Schlieder) yet commutes (&sect;3.3)</div>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <nav class="mt-6 pt-4 border-t border-[var(--border)] flex flex-wrap gap-2" id="main-nav">
+      <button onclick="switchTab('overview')" id="tab-overview" class="tab-btn active px-3.5 py-2 rounded-lg text-xs font-semibold border border-[var(--border)] transition">
+        0. Big Picture &amp; Rosetta Stone
+      </button>
+      <button onclick="switchTab('geometry')" id="tab-geometry" class="tab-btn px-3.5 py-2 rounded-lg text-xs font-semibold border border-[var(--border)] transition">
+        1. Spacetime &amp; <span class="math">M<sup>&plusmn;</sup></span> Geometry (&sect;2)
+      </button>
+      <button onclick="switchTab('scattering')" id="tab-scattering" class="tab-btn px-3.5 py-2 rounded-lg text-xs font-semibold border border-[var(--border)] transition">
+        2. The Morphism Zoo &amp; <span class="math">&Theta;</span> (&sect;3.1)
+      </button>
+      <button onclick="switchTab('observables')" id="tab-observables" class="tab-btn px-3.5 py-2 rounded-lg text-xs font-semibold border border-[var(--border)] transition">
+        3. Induced Observables &amp; Sharpness (&sect;3.2)
+      </button>
+      <button onclick="switchTab('instruments')" id="tab-instruments" class="tab-btn px-3.5 py-2 rounded-lg text-xs font-semibold border border-[var(--border)] transition">
+        4. Collapse Myth &amp; Instruments (&sect;3.3)
+      </button>
+      <button onclick="switchTab('scalar')" id="tab-scalar" class="tab-btn px-3.5 py-2 rounded-lg text-xs font-semibold border border-[var(--border)] transition">
+        5. Scalar Field &amp; Unruh–deWitt (&sect;4–5)
+      </button>
+    </nav>
+  </header>
+
+  <main class="max-w-7xl mx-auto">
+
+    <!-- =====================================================================
+         TAB 0: OVERVIEW & ROSETTA STONE
+         ===================================================================== -->
+    <section id="panel-overview" class="tab-panel space-y-6">
+      <!-- Core Thesis Card -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm">
+          <div class="text-xs font-bold uppercase tracking-wider text-blue-500 mb-1">The Gap in AQFT</div>
+          <h3 class="font-semibold text-base mb-2">Algebras Without Apparatus</h3>
+          <p class="text-xs text-[var(--muted-foreground)] leading-relaxed">
+            Haag–Kastler AQFT assigns a unital <span class="math">*</span>-algebra <span class="math-cal">A</span><span class="math-rm">(</span><span class="math"><b>M</b>; N</span><span class="math-rm">)</span> to each causally convex open region <span class="math">N &sub; <b>M</b></span> and declares self-adjoint elements to be "local observables". Yet standard AQFT never models <em>how</em> an observable is actually measured, nor what happens to the field state afterward.
+          </p>
+        </div>
+
+        <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm">
+          <div class="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">The Gap in QMT &amp; Relativistic Collapse</div>
+          <h3 class="font-semibold text-base mb-2">Operations Without Spacetime</h3>
+          <p class="text-xs text-[var(--muted-foreground)] leading-relaxed">
+            Quantum Measurement Theory (Busch, Davies–Lewis, Ozawa) models measurements operationally by coupling a system to a probe, but usually in <span class="math">t</span>-parameterized non-relativistic Hilbert space. Meanwhile, naive Lüders projection in QFT breaks Lorentz covariance or causes superluminal signaling (Sorkin's 1993 "impossible measurements").
+          </p>
+        </div>
+
+        <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm">
+          <div class="text-xs font-bold uppercase tracking-wider text-emerald-500 mb-1">Fewster &amp; Verch's Synthesis</div>
+          <h3 class="font-semibold text-base mb-2">Covariant Scattering as Measurement</h3>
+          <p class="text-xs text-[var(--muted-foreground)] leading-relaxed">
+            Model both System <span class="math-cal">A</span> and Probe <span class="math-cal">B</span> as AQFTs on a curved globally hyperbolic spacetime <span class="math"><b>M</b></span>. Couple them inside a compact region <span class="math">K &sub; <b>M</b></span> to form a coupled AQFT <span class="math-cal">C</span>. Compare <span class="math-cal">C</span> with <span class="math-cal">A</span><span class="math"> &otimes; </span><span class="math-cal">B</span> via an algebraic scattering map <span class="math">&Theta;</span>. Everything—induced observables, unsharpness, and state updates—follows covariantly!
+          </p>
+        </div>
+      </div>
+
+      <!-- Visual Architecture Flow of the Paper -->
+      <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-6 shadow-sm">
+        <h2 class="text-lg font-semibold mb-1">The 5-Stage Logical Architecture of the Paper</h2>
+        <p class="text-xs text-[var(--muted-foreground)] mb-5">
+          Click any stage below to jump directly to its interactive laboratory, or read across to see how each mathematical object feeds into the next.
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
+          <div onclick="switchTab('geometry')" class="cursor-pointer bg-[var(--background)] hover:border-blue-500 border border-[var(--border)] rounded-xl p-4 transition">
+            <div class="text-xs font-bold text-blue-500 mb-1">Stage 1 (&sect;2 &amp; &sect;3.1)</div>
+            <div class="font-semibold text-sm mb-1.5">Compact Coupling <span class="math">K</span></div>
+            <p class="text-xs text-[var(--muted-foreground)] mb-2">
+              Interaction occurs only in compact <span class="math">K &sub; <b>M</b></span>. Defines covariant "In" and "Out" regions:
+            </p>
+            <div class="eq-box text-xs bg-[var(--card)] border border-[var(--border)] rounded p-2 text-center">
+              <span class="math">M<sup>&plusmn;</sup> := M \ J<sup>&mp;</sup>(K)</span>
+            </div>
+          </div>
+
+          <div onclick="switchTab('scattering')" class="cursor-pointer bg-[var(--background)] hover:border-purple-500 border border-[var(--border)] rounded-xl p-4 transition">
+            <div class="text-xs font-bold text-purple-500 mb-1">Stage 2 (&sect;3.1, Eq. 3.5)</div>
+            <div class="font-semibold text-sm mb-1.5">Scattering Map <span class="math">&Theta;</span></div>
+            <p class="text-xs text-[var(--muted-foreground)] mb-2">
+              Time-slice + equivalence outside <span class="math">K</span> identify coupled <span class="math-cal">C</span> with <span class="math-cal">A</span><span class="math">&otimes;</span><span class="math-cal">B</span> on <span class="math">M<sup>&plusmn;</sup></span> via <span class="math">&tau;<sup>&plusmn;</sup></span>:
+            </p>
+            <div class="eq-box text-xs bg-[var(--card)] border border-[var(--border)] rounded p-2 text-center">
+              <span class="math">&Theta; = (&tau;<sup>&minus;</sup>)<sup>&minus;1</sup> &circ; &tau;<sup>+</sup></span>
+            </div>
+          </div>
+
+          <div onclick="switchTab('observables')" class="cursor-pointer bg-[var(--background)] hover:border-emerald-500 border border-[var(--border)] rounded-xl p-4 transition">
+            <div class="text-xs font-bold text-emerald-500 mb-1">Stage 3 (&sect;3.2, Thm 3.2)</div>
+            <div class="font-semibold text-sm mb-1.5">Induced Observable <span class="math">&varepsilon;<sub>&sigma;</sub>(B)</span></div>
+            <p class="text-xs text-[var(--muted-foreground)] mb-2">
+              Pull probe observable <span class="math">B</span> at <span class="math">M<sup>+</sup></span> back via <span class="math">&Theta;</span> and evaluate probe state <span class="math">&sigma;</span>:
+            </p>
+            <div class="eq-box text-xs bg-[var(--card)] border border-[var(--border)] rounded p-2 text-center">
+              <span class="math">&varepsilon;<sub>&sigma;</sub>(B) = (&eta;<sub>&sigma;</sub> &circ; &Theta;)(</span><span class="math-bb">1</span><span class="math"> &otimes; B)</span>
+            </div>
+          </div>
+
+          <div onclick="switchTab('instruments')" class="cursor-pointer bg-[var(--background)] hover:border-amber-500 border border-[var(--border)] rounded-xl p-4 transition">
+            <div class="text-xs font-bold text-amber-500 mb-1">Stage 4 (&sect;3.3, Thm 3.5)</div>
+            <div class="font-semibold text-sm mb-1.5">Pre-Instrument <span class="math-cal">I</span><span class="math"><sub>&sigma;</sub>(B)</span></div>
+            <p class="text-xs text-[var(--muted-foreground)] mb-2">
+              Conditioning on probe effect <span class="math">B</span> updates <span class="math">&omega; &mapsto; &omega;'</span> without geometric collapse surfaces:
+            </p>
+            <div class="eq-box text-xs bg-[var(--card)] border border-[var(--border)] rounded p-2 text-center">
+              <span class="math-cal">I</span><span class="math"><sub>&sigma;</sub>(B)(&omega;)(A) = (&omega;&otimes;&sigma;)&Theta;(A&otimes;B)</span>
+            </div>
+          </div>
+
+          <div onclick="switchTab('scalar')" class="cursor-pointer bg-[var(--background)] hover:border-rose-500 border border-[var(--border)] rounded-xl p-4 transition">
+            <div class="text-xs font-bold text-rose-500 mb-1">Stage 5 (&sect;4–5, Eq. 5.4)</div>
+            <div class="font-semibold text-sm mb-1.5">Exact Scalar Model</div>
+            <p class="text-xs text-[var(--muted-foreground)] mb-2">
+              Linearly coupled fields <span class="math">&Phi;, &Psi;</span> solved exactly via retarded/advanced Green operators:
+            </p>
+            <div class="eq-box text-xs bg-[var(--card)] border border-[var(--border)] rounded p-2 text-center">
+              <span class="math">&varepsilon;<sub>&sigma;</sub>(&Psi;(h)) = &Phi;(f<sup>&minus;</sup>) + &sigma;(&Psi;(h<sup>&minus;</sup>))</span><span class="math-bb">1</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Rosetta Stone Table -->
+      <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-6 shadow-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+          <div>
+            <h2 class="text-lg font-semibold">The Rosetta Stone: Standard QM vs. Fewster–Verch AQFT</h2>
+            <p class="text-xs text-[var(--muted-foreground)]">
+              Filter or search every symbol in the paper to see its domain, codomain, and familiar Hilbert-space counterpart.
+            </p>
+          </div>
+          <input
+            type="text"
+            id="rosetta-search"
+            oninput="filterRosetta()"
+            placeholder="Search symbol (e.g. Θ, τ, η, K, hull, f-)..."
+            class="px-3 py-1.5 rounded-lg text-xs bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)] w-full sm:w-72"
+          />
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs" id="rosetta-table">
+            <thead>
+              <tr class="border-b border-[var(--border)] text-[var(--muted-foreground)]">
+                <th class="py-2.5 px-3 font-semibold">Symbol &amp; Paper Ref</th>
+                <th class="py-2.5 px-3 font-semibold">Name in Fewster–Verch (2020)</th>
+                <th class="py-2.5 px-3 font-semibold">Mathematical Signature</th>
+                <th class="py-2.5 px-3 font-semibold">Standard QM / Interaction Picture Analogy</th>
+                <th class="py-2.5 px-3 font-semibold">Physical Role &amp; Gotchas</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-[var(--border)]">
+              <tr>
+                <td class="py-2.5 px-3 font-medium"><span class="math-cal">A</span><span class="math">(<b>M</b>), </span><span class="math-cal">B</span><span class="math">(<b>M</b>)</span><br><span class="text-[var(--muted-foreground)]">&sect;2, &sect;3.1</span></td>
+                <td class="py-2.5 px-3 font-medium">System &amp; Probe Algebras</td>
+                <td class="py-2.5 px-3"><span class="math">Unital *-algebras on <b>M</b></span></td>
+                <td class="py-2.5 px-3"><span class="math-cal">B</span><span class="math">(</span><span class="math-cal">H</span><span class="math"><sub>S</sub>)</span> and <span class="math-cal">B</span><span class="math">(</span><span class="math-cal">H</span><span class="math"><sub>P</sub>)</span></td>
+                <td class="py-2.5 px-3 text-[var(--muted-foreground)]">Assigned to globally hyperbolic <span class="math"><b>M</b></span> and causally convex open subsets <span class="math">N &sub; <b>M</b></span>.</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-medium"><span class="math-cal">U</span><span class="math">(<b>M</b>) vs. </span><span class="math-cal">C</span><span class="math">(<b>M</b>)</span><br><span class="text-[var(--muted-foreground)]">&sect;3.1 (p. 859)</span></td>
+                <td class="py-2.5 px-3 font-medium">Uncoupled vs. Coupled Theory</td>
+                <td class="py-2.5 px-3"><span class="math-cal">U</span><span class="math">(<b>M</b>) = </span><span class="math-cal">A</span><span class="math">(<b>M</b>) &otimes; </span><span class="math-cal">B</span><span class="math">(<b>M</b>)</span></td>
+                <td class="py-2.5 px-3">Free evolution <span class="math">H<sub>0</sub> = H<sub>S</sub> + H<sub>P</sub></span> vs. Total <span class="math">H = H<sub>0</sub> + V(t)</span></td>
+                <td class="py-2.5 px-3 text-[var(--muted-foreground)]"><span class="math-cal">U</span> is the counterfactual "control" world; <span class="math-cal">C</span> is the actual experimental world.</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-medium"><span class="math">M<sup>&plusmn;</sup> = M \ J<sup>&mp;</sup>(K)</span><br><span class="text-[var(--muted-foreground)]">&sect;3.1, Fig. 1</span></td>
+                <td class="py-2.5 px-3 font-medium">Covariant "Out" (<span class="math">+</span>) &amp; "In" (<span class="math">&minus;</span>) Regions</td>
+                <td class="py-2.5 px-3">Open causally convex subsets of <span class="math"><b>M</b></span></td>
+                <td class="py-2.5 px-3">Asymptotic times <span class="math">t &gt; t<sub>off</sub></span> and <span class="math">t &lt; t<sub>on</sub></span></td>
+                <td class="py-2.5 px-3 text-[var(--muted-foreground)]"><strong>Crucial:</strong> <span class="math">M<sup>+</sup></span> and <span class="math">M<sup>&minus;</sup></span> overlap in <span class="math">K<sup>&perp;</sup> = M<sup>+</sup> &cap; M<sup>&minus;</sup></span> and each contain full Cauchy surfaces of <span class="math"><b>M</b></span>!</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-medium"><span class="math">J<sup>+</sup>(K) &cap; J<sup>&minus;</sup>(K)</span><br><span class="text-[var(--muted-foreground)]">&sect;2 (p. 856)</span></td>
+                <td class="py-2.5 px-3 font-medium">Causal Hull of <span class="math">K</span></td>
+                <td class="py-2.5 px-3">Intersection of all causally convex sets containing <span class="math">K</span></td>
+                <td class="py-2.5 px-3">Time interval <span class="math">[t<sub>on</sub>, t<sub>off</sub>]</span></td>
+                <td class="py-2.5 px-3 text-[var(--muted-foreground)]">Smallest region where <span class="math-cal">C</span> differs from <span class="math-cal">U</span>, and minimal localization region for all induced observables <span class="math">&varepsilon;<sub>&sigma;</sub>(B)</span>.</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-medium"><span class="math">&tau;<sup>&plusmn;</sup></span><br><span class="text-[var(--muted-foreground)]">Eq. (3.4)</span></td>
+                <td class="py-2.5 px-3 font-medium">Retarded (<span class="math">+</span>) &amp; Advanced (<span class="math">&minus;</span>) Response Maps</td>
+                <td class="py-2.5 px-3"><span class="math">&tau;<sup>&plusmn;</sup> : </span><span class="math-cal">U</span><span class="math">(<b>M</b>) &rarr; </span><span class="math-cal">C</span><span class="math">(<b>M</b>)</span> (isomorphisms)</td>
+                <td class="py-2.5 px-3">M&oslash;ller wave operators <span class="math">&Omega;<sub>&plusmn;</sub></span></td>
+                <td class="py-2.5 px-3 text-[var(--muted-foreground)]"><span class="math">&tau;<sup>&minus;</sup></span> identifies uncoupled &amp; coupled algebras at early times (<span class="math">M<sup>&minus;</sup></span>); <span class="math">&tau;<sup>+</sup></span> identifies them at late times (<span class="math">M<sup>+</sup></span>).</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-medium"><span class="math">&Theta; = (&tau;<sup>&minus;</sup>)<sup>&minus;1</sup> &circ; &tau;<sup>+</sup></span><br><span class="text-[var(--muted-foreground)]">Eq. (3.5)</span></td>
+                <td class="py-2.5 px-3 font-medium">Scattering Morphism</td>
+                <td class="py-2.5 px-3"><span class="math">&Theta; : </span><span class="math-cal">U</span><span class="math">(<b>M</b>) &rarr; </span><span class="math-cal">U</span><span class="math">(<b>M</b>)</span> (<span class="math">*</span>-automorphism)</td>
+                <td class="py-2.5 px-3">Heisenberg S-matrix action <span class="math">S<sup>&dagger;</sup> (&middot;) S</span></td>
+                <td class="py-2.5 px-3 text-[var(--muted-foreground)]">Pulls late-time observables in <span class="math">M<sup>+</sup></span> back to early-time observables in <span class="math">M<sup>&minus;</sup></span> within the <em>uncoupled</em> algebra!</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-medium"><span class="math">&eta;<sub>&sigma;</sub></span><br><span class="text-[var(--muted-foreground)]">Eq. (3.10)</span></td>
+                <td class="py-2.5 px-3 font-medium">Probe Conditional Expectation</td>
+                <td class="py-2.5 px-3"><span class="math">&eta;<sub>&sigma;</sub> : </span><span class="math-cal">A</span><span class="math">(<b>M</b>) &otimes; </span><span class="math-cal">B</span><span class="math">(<b>M</b>) &rarr; </span><span class="math-cal">A</span><span class="math">(<b>M</b>)</span></td>
+                <td class="py-2.5 px-3">Partial trace over probe <span class="math">Tr<sub>P</sub>((</span><span class="math-bb">1</span><span class="math">&otimes;&rho;<sub>P</sub>)(&middot;))</span></td>
+                <td class="py-2.5 px-3 text-[var(--muted-foreground)]">Defined by <span class="math">&eta;<sub>&sigma;</sub>(A &otimes; B) = &sigma;(B)A</span>. Completely positive map.</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-medium"><span class="math">&varepsilon;<sub>&sigma;</sub>(B)</span><br><span class="text-[var(--muted-foreground)]">Eq. (3.11), Thm 3.2</span></td>
+                <td class="py-2.5 px-3 font-medium">Induced System Observable Map</td>
+                <td class="py-2.5 px-3"><span class="math">&varepsilon;<sub>&sigma;</sub>(B) = (&eta;<sub>&sigma;</sub> &circ; &Theta;)(</span><span class="math-bb">1</span><span class="math"> &otimes; B) &isin; </span><span class="math-cal">A</span><span class="math">(<b>M</b>)</span></td>
+                <td class="py-2.5 px-3"><span class="math">Tr<sub>P</sub>((</span><span class="math-bb">1</span><span class="math">&otimes;&rho;<sub>P</sub>) S<sup>&dagger;</sup>(</span><span class="math-bb">1</span><span class="math">&otimes;B)S)</span></td>
+                <td class="py-2.5 px-3 text-[var(--muted-foreground)]">Unique system observable satisfying <span class="math">&omega;(&varepsilon;<sub>&sigma;</sub>(B)) = &omega;&#816;<sub>&sigma;</sub>(B&#771;)</span> for all system states <span class="math">&omega;</span>.</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-medium"><span class="math-cal">I</span><span class="math"><sub>&sigma;</sub>(B)(&omega;)</span><br><span class="text-[var(--muted-foreground)]">Eq. (3.19)–(3.20)</span></td>
+                <td class="py-2.5 px-3 font-medium">Davies–Lewis Pre-Instrument</td>
+                <td class="py-2.5 px-3"><span class="math-cal">A</span><span class="math">(<b>M</b>)<sup>*</sup><sub>+</sub> &rarr; </span><span class="math-cal">A</span><span class="math">(<b>M</b>)<sup>*</sup><sub>+</sub></span></td>
+                <td class="py-2.5 px-3"><span class="math">Tr<sub>P</sub>((</span><span class="math-bb">1</span><span class="math">&otimes;B) S(&rho;<sub>S</sub>&otimes;&rho;<sub>P</sub>)S<sup>&dagger;</sup>)</span></td>
+                <td class="py-2.5 px-3 text-[var(--muted-foreground)]">Normalized post-selected state is <span class="math">&omega;'(A) = </span><span class="math-cal">I</span><span class="math"><sub>&sigma;</sub>(B)(&omega;)(A) / &omega;(&varepsilon;<sub>&sigma;</sub>(B))</span>.</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-medium"><span class="math">E<sup>&plusmn;</sup><sub>P</sub>, E<sub>P</sub>, E<sup>&minus;</sup><sub>T</sub></span><br><span class="text-[var(--muted-foreground)]">&sect;4 (Eq. 4.3, 5.2)</span></td>
+                <td class="py-2.5 px-3 font-medium">Retarded/Advanced &amp; Causal Propagators</td>
+                <td class="py-2.5 px-3"><span class="math">C<sup>&infin;</sup><sub>0</sub>(<b>M</b>) &rarr; C<sup>&infin;</sup>(<b>M</b>)</span>, <span class="math">E<sub>P</sub> = E<sup>&minus;</sup><sub>P</sub> &minus; E<sup>+</sup><sub>P</sub></span></td>
+                <td class="py-2.5 px-3">Classical Green's functions / Pauli–Jordan commutator <span class="math">[&Phi;(f), &Phi;(h)] = iE<sub>P</sub>(f,h)</span><span class="math-bb">1</span></td>
+                <td class="py-2.5 px-3 text-[var(--muted-foreground)]">Note FV's sign convention: <span class="math">E<sup>+</sup></span> is retarded (<span class="math">supp E<sup>+</sup>f &sub; J<sup>+</sup>(supp f)</span>); <span class="math">E<sup>&minus;</sup></span> is advanced (<span class="math">supp E<sup>&minus;</sup>f &sub; J<sup>&minus;</sup>(supp f)</span>).</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         TAB 1: SPACETIME & M+/- GEOMETRY (SECT. 2 & FIG. 1)
+         ===================================================================== -->
+    <section id="panel-geometry" class="tab-panel hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Left Interactive Canvas -->
+        <div class="lg:col-span-7 bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm flex flex-col">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+            <div>
+              <h2 class="text-base font-semibold">Interactive Fig. 1: Causal Anatomy of <span class="math">K, M<sup>+</sup>, M<sup>&minus;</sup></span></h2>
+              <p class="text-xs text-[var(--muted-foreground)]">
+                Drag <span class="font-semibold text-amber-500">Coupling Region K</span> or <span class="font-semibold text-emerald-500">Test Region L</span> directly on the spacetime diagram (45&deg; lightcones, time <span class="math">t</span> upwards).
+              </p>
+            </div>
+            <div class="flex flex-wrap gap-1.5">
+              <button onclick="setKShape('convex')" id="kshape-convex" class="px-2.5 py-1 rounded text-xs font-medium bg-[var(--primary)] text-[var(--primary-foreground)]">
+                Convex K
+              </button>
+              <button onclick="setKShape('two-lobe')" id="kshape-two-lobe" class="px-2.5 py-1 rounded text-xs font-medium border border-[var(--border)]">
+                Non-Convex K (Hull &ne; K)
+              </button>
+            </div>
+          </div>
+
+          <!-- Layer Toggles -->
+          <div class="flex flex-wrap gap-3 mb-3 text-xs bg-[var(--background)] border border-[var(--border)] rounded-lg p-2.5">
+            <label class="flex items-center gap-1.5 cursor-pointer">
+              <input type="checkbox" id="show-jminus" checked onchange="drawGeometryCanvas()" />
+              <span>Show <span class="math">J<sup>&minus;</sup>(K)</span> (shaded dark, as in Fig. 1)</span>
+            </label>
+            <label class="flex items-center gap-1.5 cursor-pointer">
+              <input type="checkbox" id="show-jplus" checked onchange="drawGeometryCanvas()" />
+              <span>Show <span class="math">J<sup>+</sup>(K)</span> boundary</span>
+            </label>
+            <label class="flex items-center gap-1.5 cursor-pointer">
+              <input type="checkbox" id="show-hull" checked onchange="drawGeometryCanvas()" />
+              <span class="text-rose-500 font-medium">Highlight Causal Hull <span class="math">J<sup>+</sup>(K)&cap;J<sup>&minus;</sup>(K)</span></span>
+            </label>
+            <label class="flex items-center gap-1.5 cursor-pointer">
+              <input type="checkbox" id="show-cauchy" checked onchange="drawGeometryCanvas()" />
+              <span class="text-blue-500 font-medium">Show Cauchy Surfaces <span class="math">S<sup>+</sup> &sub; M<sup>+</sup>, S<sup>&minus;</sup> &sub; M<sup>&minus;</sup></span></span>
+            </label>
+          </div>
+
+          <div class="relative w-full aspect-[16/11] bg-[var(--background)] border border-[var(--border)] rounded-xl overflow-hidden">
+            <canvas id="geometry-canvas" width="720" height="495" class="w-full h-full"></canvas>
+          </div>
+
+          <!-- Live Region Inspector Bar -->
+          <div id="region-L-status" class="mt-3 p-3 rounded-lg bg-[var(--background)] border border-[var(--border)] text-xs">
+          </div>
+        </div>
+
+        <!-- Right Explanations & Key Conceptual Insights -->
+        <div class="lg:col-span-5 space-y-4">
+          <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm">
+            <div class="text-xs font-bold uppercase tracking-wider text-blue-500 mb-1">Crucial Insight #1 (Page 860, Fig. 1)</div>
+            <h3 class="font-semibold text-base mb-2">Why <span class="math">M<sup>+</sup> := M \ J<sup>&minus;</sup>(K)</span> instead of <span class="math">J<sup>+</sup>(K)</span>?</h3>
+            <p class="text-xs text-[var(--muted-foreground)] leading-relaxed mb-3">
+              When physicists first read <span class="math">M<sup>+</sup> = M \ J<sup>&minus;</sup>(K)</span> ("Out") and <span class="math">M<sup>&minus;</sup> = M \ J<sup>+</sup>(K)</span> ("In"), they often wonder why "Out" isn't just <span class="math">J<sup>+</sup>(K)</span>. Look at the canvas on the left:
+            </p>
+            <ul class="text-xs text-[var(--muted-foreground)] space-y-2 list-disc pl-4">
+              <li>
+                <span class="text-[var(--foreground)] font-medium">It contains full Cauchy surfaces <span class="math">S<sup>+</sup></span> of <span class="math"><b>M</b></span>:</span>
+                <span class="math">J<sup>+</sup>(K)</span> is spatially bounded (for compact <span class="math">K</span>), so it <em>never</em> contains a Cauchy surface of <span class="math"><b>M</b></span>. By contrast, <span class="math">M<sup>+</sup> = M \ J<sup>&minus;</sup>(K)</span> stretches all the way to spatial infinity (<span class="math">K<sup>&perp;</sup></span>) and contains full Cauchy surfaces <span class="math">S<sup>+</sup></span>!
+              </li>
+              <li>
+                <span class="text-[var(--foreground)] font-medium">The Time-Slice Axiom applies to <span class="math">M<sup>+</sup></span> and <span class="math">M<sup>&minus;</sup></span>:</span>
+                Because <span class="math">M<sup>&plusmn;</sup></span> contain Cauchy surfaces of <span class="math"><b>M</b></span>, the inclusion morphisms <span class="math">&alpha;<sup>&plusmn;</sup> : </span><span class="math-cal">A</span><span class="math">(<b>M</b><sup>&plusmn;</sup>) &rarr; </span><span class="math-cal">A</span><span class="math">(<b>M</b>)</span> and <span class="math">&gamma;<sup>&plusmn;</sup> : </span><span class="math-cal">C</span><span class="math">(<b>M</b><sup>&plusmn;</sup>) &rarr; </span><span class="math-cal">C</span><span class="math">(<b>M</b>)</span> are <strong>algebraic isomorphisms</strong> (convertible in both directions!).
+              </li>
+              <li>
+                <span class="text-[var(--foreground)] font-medium">Physical Meaning of <span class="math">M<sup>&minus;</sup></span> and <span class="math">M<sup>+</sup></span>:</span>
+                <span class="math">M<sup>&minus;</sup> = M \ J<sup>+</sup>(K)</span> is the set of all points that <em>cannot have been influenced by the coupling <span class="math">K</span></em>. <span class="math">M<sup>+</sup> = M \ J<sup>&minus;</sup>(K)</span> is the set of all points that <em>can no longer influence <span class="math">K</span></em>.
+              </li>
+              <li>
+                <span class="text-[var(--foreground)] font-medium">They cover the exterior of the Causal Hull:</span>
+                Notice that <span class="math">M<sup>+</sup> &cup; M<sup>&minus;</sup> = M \ (J<sup>+</sup>(K) &cap; J<sup>&minus;</sup>(K))</span>, and their intersection is the causal complement <span class="math">M<sup>+</sup> &cap; M<sup>&minus;</sup> = M \ (J<sup>+</sup>(K) &cup; J<sup>&minus;</sup>(K)) = K<sup>&perp;</sup></span>!
+              </li>
+            </ul>
+          </div>
+
+          <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm">
+            <div class="text-xs font-bold uppercase tracking-wider text-rose-500 mb-1">Crucial Insight #2 (Pages 856–857)</div>
+            <h3 class="font-semibold text-base mb-2">Causal Hull <span class="math">J<sup>+</sup>(K)&cap;J<sup>&minus;</sup>(K)</span> vs. <span class="math">K<sup>&perp;&perp;</sup></span> &amp; The Haag Property</h3>
+            <p class="text-xs text-[var(--muted-foreground)] leading-relaxed mb-2">
+              Click <strong>"Non-Convex K (Hull &ne; K)"</strong> above the canvas to see what happens when <span class="math">K</span> is U-shaped or consists of two separated lobes:
+            </p>
+            <div class="space-y-2 text-xs text-[var(--muted-foreground)]">
+              <div class="p-2.5 rounded bg-[var(--background)] border border-[var(--border)]">
+                <span class="font-semibold text-[var(--foreground)]">Causal Hull <span class="math">J<sup>+</sup>(K) &cap; J<sup>&minus;</sup>(K)</span>:</span>
+                All points lying on causal curves with <em>both endpoints in <span class="math">K</span></em>. A causal signal can leave <span class="math">K</span>, travel through the gap inside <span class="math">J<sup>+</sup>(K) &cap; J<sup>&minus;</sup>(K)</span>, and re-enter <span class="math">K</span>! Therefore, in that gap, the coupled theory <span class="math-cal">C</span> already feels the interaction and <em>cannot</em> be identified with <span class="math-cal">A</span><span class="math"> &otimes; </span><span class="math-cal">B</span>.
+              </div>
+              <div class="p-2.5 rounded bg-[var(--background)] border border-[var(--border)]">
+                <span class="font-semibold text-[var(--foreground)]">The 5 AQFT Axioms (&sect;2, p. 857):</span>
+                <ol class="list-decimal pl-4 mt-1 space-y-1">
+                  <li><strong>Isotony:</strong> <span class="math">N<sub>1</sub> &sub; N<sub>2</sub> &rArr; </span><span class="math-cal">A</span><span class="math">(<b>M</b>; N<sub>1</sub>) &sub; </span><span class="math-cal">A</span><span class="math">(<b>M</b>; N<sub>2</sub>)</span></li>
+                  <li><strong>Compatibility:</strong> <span class="math">&alpha;<sub>M<sub>1</sub>;M<sub>2</sub></sub> &circ; &alpha;<sub>M<sub>2</sub>;M<sub>3</sub></sub> = &alpha;<sub>M<sub>1</sub>;M<sub>3</sub></sub></span></li>
+                  <li><strong>Time-Slice:</strong> <span class="math">N</span> contains Cauchy surface of <span class="math"><b>M</b> &rArr; </span><span class="math-cal">A</span><span class="math">(<b>M</b>; N) = </span><span class="math-cal">A</span><span class="math">(<b>M</b>)</span></li>
+                  <li><strong>Einstein Causality:</strong> <span class="math">N<sub>1</sub> &sub; N<sub>2</sub><sup>&perp;</sup> &rArr; [</span><span class="math-cal">A</span><span class="math">(<b>M</b>; N<sub>1</sub>), </span><span class="math-cal">A</span><span class="math">(<b>M</b>; N<sub>2</sub>)] = 0</span></li>
+                  <li><strong>Haag Property (Weak Haag Duality):</strong> If <span class="math">A &isin; </span><span class="math-cal">A</span><span class="math">(<b>M</b>)</span> commutes with <span class="math-cal">A</span><span class="math">(<b>M</b>; N)</span> for every <span class="math">N &sub; K<sup>&perp;</sup></span>, then <span class="math">A &isin; </span><span class="math-cal">A</span><span class="math">(<b>M</b>; L)</span> for every connected open causally convex <span class="math">L &sup; K</span> (which automatically contains the causal hull of <span class="math">K</span>!).</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         TAB 2: THE MORPHISM ZOO & SCATTERING MAP Θ (SECT. 3.1)
+         ===================================================================== -->
+    <section id="panel-scattering" class="tab-panel hidden space-y-6">
+      <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-6 shadow-sm">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-5">
+          <div>
+            <h2 class="text-lg font-semibold">Interactive Step-by-Step Builder: The Scattering Morphism <span class="math">&Theta; = (&tau;<sup>&minus;</sup>)<sup>&minus;1</sup> &circ; &tau;<sup>+</sup></span></h2>
+            <p class="text-xs text-[var(--muted-foreground)]">
+              Section 3.1 (pp. 859–861) introduces 8 morphisms in 60 lines. Click through the 6 steps below to see how they form a single loop connecting the uncoupled theory <span class="math-cal">U</span><span class="math"> = </span><span class="math-cal">A</span><span class="math">&otimes;</span><span class="math-cal">B</span> to the coupled theory <span class="math-cal">C</span> and back.
+            </p>
+          </div>
+          <div class="flex items-center gap-2 shrink-0">
+            <button onclick="prevScatteringStep()" class="px-3 py-1.5 rounded-lg text-xs font-semibold border border-[var(--border)] hover:bg-[var(--background)]">
+              &larr; Prev Step
+            </button>
+            <span id="scattering-step-indicator" class="text-xs font-bold px-2">Step 1 / 6</span>
+            <button onclick="nextScatteringStep()" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-[var(--primary)] text-[var(--primary-foreground)]">
+              Next Step &rarr;
+            </button>
+          </div>
+        </div>
+
+        <!-- Interactive SVG Commutative Diagram -->
+        <div class="bg-[var(--background)] border border-[var(--border)] rounded-xl p-4 overflow-x-auto">
+          <svg id="commutative-svg" viewBox="0 0 920 310" class="w-full min-w-[720px] h-auto">
+            <defs>
+              <marker id="arrow-muted" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#64748b" />
+              </marker>
+              <marker id="arrow-active" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#3b82f6" />
+              </marker>
+              <marker id="arrow-theta" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+                <path d="M 0 1 L 10 5 L 0 9 z" fill="#10b981" />
+              </marker>
+            </defs>
+
+            <!-- Row Labels -->
+            <text x="20" y="75" fill="#94a3b8" font-size="12" font-weight="600">UNCOUPLED</text>
+            <text x="20" y="92" fill="#64748b" font-size="11">Control World U = A⊗B</text>
+
+            <text x="20" y="235" fill="#94a3b8" font-size="12" font-weight="600">COUPLED</text>
+            <text x="20" y="252" fill="#64748b" font-size="11">Experiment World C</text>
+
+            <!-- Nodes: Top Row (Uncoupled) -->
+            <g id="node-UMminus" class="cursor-pointer" onclick="setScatteringStep(4)">
+              <rect x="175" y="50" width="160" height="54" rx="10" fill="none" stroke="#64748b" stroke-width="2" />
+              <text x="255" y="74" text-anchor="middle" fill="currentColor" font-size="14" font-weight="700">𝒜(M⁻) ⊗ ℬ(M⁻)</text>
+              <text x="255" y="92" text-anchor="middle" fill="#64748b" font-size="11">Early Uncoupled ("In")</text>
+            </g>
+
+            <g id="node-UM" class="cursor-pointer" onclick="setScatteringStep(0)">
+              <rect x="445" y="50" width="160" height="54" rx="10" fill="none" stroke="#64748b" stroke-width="2" />
+              <text x="525" y="74" text-anchor="middle" fill="currentColor" font-size="14" font-weight="700">𝒜(M) ⊗ ℬ(M)</text>
+              <text x="525" y="92" text-anchor="middle" fill="#64748b" font-size="11">Global Uncoupled 𝒰(M)</text>
+            </g>
+
+            <g id="node-UMplus" class="cursor-pointer" onclick="setScatteringStep(1)">
+              <rect x="715" y="50" width="160" height="54" rx="10" fill="none" stroke="#64748b" stroke-width="2" />
+              <text x="795" y="74" text-anchor="middle" fill="currentColor" font-size="14" font-weight="700">𝒜(M⁺) ⊗ ℬ(M⁺)</text>
+              <text x="795" y="92" text-anchor="middle" fill="#64748b" font-size="11">Late Uncoupled ("Out")</text>
+            </g>
+
+            <!-- Nodes: Bottom Row (Coupled) -->
+            <g id="node-CMminus" class="cursor-pointer" onclick="setScatteringStep(3)">
+              <rect x="175" y="210" width="160" height="54" rx="10" fill="none" stroke="#64748b" stroke-width="2" />
+              <text x="255" y="234" text-anchor="middle" fill="currentColor" font-size="14" font-weight="700">𝒞(M⁻)</text>
+              <text x="255" y="252" text-anchor="middle" fill="#64748b" font-size="11">Early Coupled ("In")</text>
+            </g>
+
+            <g id="node-CM" class="cursor-pointer" onclick="setScatteringStep(2)">
+              <rect x="445" y="210" width="160" height="54" rx="10" fill="none" stroke="#64748b" stroke-width="2" />
+              <text x="525" y="234" text-anchor="middle" fill="currentColor" font-size="14" font-weight="700">𝒞(M)</text>
+              <text x="525" y="252" text-anchor="middle" fill="#64748b" font-size="11">Global Coupled Experiment</text>
+            </g>
+
+            <g id="node-CMplus" class="cursor-pointer" onclick="setScatteringStep(1)">
+              <rect x="715" y="210" width="160" height="54" rx="10" fill="none" stroke="#64748b" stroke-width="2" />
+              <text x="795" y="234" text-anchor="middle" fill="currentColor" font-size="14" font-weight="700">𝒞(M⁺)</text>
+              <text x="795" y="252" text-anchor="middle" fill="#64748b" font-size="11">Late Coupled ("Out")</text>
+            </g>
+
+            <!-- Morphism Arrows -->
+            <g id="edge-alpha-minus">
+              <line x1="340" y1="77" x2="438" y2="77" stroke="#64748b" stroke-width="2" marker-end="url(#arrow-muted)" />
+              <text x="389" y="67" text-anchor="middle" fill="currentColor" font-size="12" font-weight="600">α⁻ ⊗ β⁻</text>
+              <text x="389" y="95" text-anchor="middle" fill="#64748b" font-size="10">(Time-slice iso)</text>
+            </g>
+
+            <g id="edge-alpha-plus">
+              <line x1="710" y1="77" x2="612" y2="77" stroke="#64748b" stroke-width="2" marker-end="url(#arrow-muted)" />
+              <text x="661" y="67" text-anchor="middle" fill="currentColor" font-size="12" font-weight="600">α⁺ ⊗ β⁺</text>
+              <text x="661" y="95" text-anchor="middle" fill="#64748b" font-size="10">(Time-slice iso)</text>
+            </g>
+
+            <g id="edge-chi-minus">
+              <line x1="255" y1="108" x2="255" y2="202" stroke="#64748b" stroke-width="2" marker-end="url(#arrow-muted)" />
+              <text x="235" y="160" text-anchor="end" fill="currentColor" font-size="13" font-weight="600">χ⁻</text>
+              <text x="235" y="174" text-anchor="end" fill="#64748b" font-size="10">(No coupling in M⁻)</text>
+            </g>
+
+            <g id="edge-chi-plus">
+              <line x1="795" y1="108" x2="795" y2="202" stroke="#64748b" stroke-width="2" marker-end="url(#arrow-muted)" />
+              <text x="810" y="160" text-anchor="start" fill="currentColor" font-size="13" font-weight="600">χ⁺</text>
+              <text x="810" y="174" text-anchor="start" fill="#64748b" font-size="10">(No coupling in M⁺)</text>
+            </g>
+
+            <g id="edge-gamma-minus">
+              <line x1="340" y1="237" x2="438" y2="237" stroke="#64748b" stroke-width="2" marker-end="url(#arrow-muted)" />
+              <text x="389" y="227" text-anchor="middle" fill="currentColor" font-size="12" font-weight="600">γ⁻</text>
+              <text x="389" y="255" text-anchor="middle" fill="#64748b" font-size="10">(Time-slice iso)</text>
+            </g>
+
+            <g id="edge-gamma-plus">
+              <line x1="710" y1="237" x2="612" y2="237" stroke="#64748b" stroke-width="2" marker-end="url(#arrow-muted)" />
+              <text x="661" y="227" text-anchor="middle" fill="currentColor" font-size="12" font-weight="600">γ⁺</text>
+              <text x="661" y="255" text-anchor="middle" fill="#64748b" font-size="10">(Time-slice iso)</text>
+            </g>
+
+            <g id="edge-tau-minus">
+              <line x1="485" y1="108" x2="485" y2="202" stroke="#64748b" stroke-width="2" stroke-dasharray="5,4" marker-end="url(#arrow-muted)" />
+              <text x="472" y="158" text-anchor="end" fill="currentColor" font-size="12" font-weight="700">τ⁻ = γ⁻ ∘ χ⁻ ∘ (α⁻⊗β⁻)⁻¹</text>
+            </g>
+
+            <g id="edge-tau-plus">
+              <line x1="565" y1="108" x2="565" y2="202" stroke="#64748b" stroke-width="2" stroke-dasharray="5,4" marker-end="url(#arrow-muted)" />
+              <text x="578" y="158" text-anchor="start" fill="currentColor" font-size="12" font-weight="700">τ⁺ = γ⁺ ∘ χ⁺ ∘ (α⁺⊗β⁺)⁻¹</text>
+            </g>
+
+            <g id="edge-theta">
+              <path d="M 565 46 C 565 8, 485 8, 485 46" fill="none" stroke="#10b981" stroke-width="2.5" marker-end="url(#arrow-theta)" />
+              <text x="525" y="16" text-anchor="middle" fill="#10b981" font-size="13" font-weight="700">Θ = (τ⁻)⁻¹ ∘ τ⁺ (Scattering Automorphism)</text>
+            </g>
+          </svg>
+        </div>
+
+        <!-- Step Selector Pills -->
+        <div class="grid grid-cols-2 md:grid-cols-6 gap-2 mt-4">
+          <button onclick="setScatteringStep(0)" id="sstep-0" class="step-card active text-left p-2.5 rounded-lg border border-[var(--border)] bg-[var(--background)] text-xs transition">
+            <div class="font-bold text-blue-500">1. Late Observable</div>
+            <div class="text-[var(--muted-foreground)]">Start with <span class="math">1 &otimes; B &isin; </span><span class="math-cal">U</span><span class="math">(<b>M</b>)</span></div>
+          </button>
+          <button onclick="setScatteringStep(1)" id="sstep-1" class="step-card text-left p-2.5 rounded-lg border border-[var(--border)] bg-[var(--background)] text-xs transition">
+            <div class="font-bold text-blue-500">2. Restrict to <span class="math">M<sup>+</sup></span></div>
+            <div class="text-[var(--muted-foreground)]">Apply <span class="math">&chi;<sup>+</sup> &circ; (&alpha;<sup>+</sup>&otimes;&beta;<sup>+</sup>)<sup>&minus;1</sup></span></div>
+          </button>
+          <button onclick="setScatteringStep(2)" id="sstep-2" class="step-card text-left p-2.5 rounded-lg border border-[var(--border)] bg-[var(--background)] text-xs transition">
+            <div class="font-bold text-blue-500">3. Embed in <span class="math-cal">C</span><span class="math">(<b>M</b>)</span></div>
+            <div class="text-[var(--muted-foreground)]">Retarded map <span class="math">B&#771; = &tau;<sup>+</sup>(1&otimes;B)</span></div>
+          </button>
+          <button onclick="setScatteringStep(3)" id="sstep-3" class="step-card text-left p-2.5 rounded-lg border border-[var(--border)] bg-[var(--background)] text-xs transition">
+            <div class="font-bold text-blue-500">4. Evolve to <span class="math">M<sup>&minus;</sup></span></div>
+            <div class="text-[var(--muted-foreground)]">Pull back via <span class="math">(&gamma;<sup>&minus;</sup>)<sup>&minus;1</sup></span> across <span class="math">K</span></div>
+          </button>
+          <button onclick="setScatteringStep(4)" id="sstep-4" class="step-card text-left p-2.5 rounded-lg border border-[var(--border)] bg-[var(--background)] text-xs transition">
+            <div class="font-bold text-blue-500">5. Return to <span class="math-cal">U</span><span class="math">(<b>M</b>)</span></div>
+            <div class="text-[var(--muted-foreground)]">Apply <span class="math">(&alpha;<sup>&minus;</sup>&otimes;&beta;<sup>&minus;</sup>) &circ; (&chi;<sup>&minus;</sup>)<sup>&minus;1</sup></span></div>
+          </button>
+          <button onclick="setScatteringStep(5)" id="sstep-5" class="step-card text-left p-2.5 rounded-lg border border-[var(--border)] bg-[var(--background)] text-xs transition">
+            <div class="font-bold text-emerald-500">6. Full Loop <span class="math">&Theta;</span></div>
+            <div class="text-[var(--muted-foreground)]">Locality &amp; Proposition 3.1</div>
+          </button>
+        </div>
+
+        <!-- Detailed Step Explanation Box -->
+        <div id="scattering-step-detail" class="mt-4 p-5 rounded-xl bg-[var(--background)] border border-[var(--border)] text-sm">
+        </div>
+      </div>
+
+      <!-- Dual Perspective Card: Observables vs States -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+        <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm">
+          <div class="text-xs font-bold uppercase tracking-wider text-emerald-500 mb-1">Heisenberg-like View (Algebra Elements)</div>
+          <h3 class="font-semibold text-base mb-2">Why <span class="math">&Theta; = (&tau;<sup>&minus;</sup>)<sup>&minus;1</sup> &circ; &tau;<sup>+</sup></span> Maps Future &rarr; Past</h3>
+          <p class="text-xs text-[var(--muted-foreground)] leading-relaxed mb-3">
+            In AQFT, dynamics is encoded in the identification of local algebras at different times. An observable <span class="math">B &isin; </span><span class="math-cal">B</span><span class="math">(<b>M</b>)</span> measured on the probe at <strong>late times</strong> (<span class="math">M<sup>+</sup></span>) corresponds in the coupled experiment <span class="math-cal">C</span><span class="math">(<b>M</b>)</span> to:
+          </p>
+          <div class="eq-box text-sm bg-[var(--background)] border border-[var(--border)] rounded-lg p-3 text-center mb-3">
+            <span class="math">B&#771; := &tau;<sup>+</sup>(</span><span class="math-bb">1</span><span class="math"> &otimes; B) &isin; </span><span class="math-cal">C</span><span class="math">(<b>M</b>)</span> &nbsp;&nbsp;(Eq. 3.7)
+          </div>
+          <p class="text-xs text-[var(--muted-foreground)] leading-relaxed">
+            To evaluate its expectation value in a state prepared at <strong>early times</strong> (<span class="math">M<sup>&minus;</sup></span>), we must express <span class="math">B&#771;</span> in the early-time uncoupled language by applying <span class="math">(&tau;<sup>&minus;</sup>)<sup>&minus;1</sup></span>:
+            <span class="math">(&tau;<sup>&minus;</sup>)<sup>&minus;1</sup>(B&#771;) = (&tau;<sup>&minus;</sup>)<sup>&minus;1</sup> &tau;<sup>+</sup>(</span><span class="math-bb">1</span><span class="math"> &otimes; B) = &Theta;(</span><span class="math-bb">1</span><span class="math"> &otimes; B)</span>.
+            Because of the interaction in <span class="math">K</span>, <span class="math">&Theta;(</span><span class="math-bb">1</span><span class="math"> &otimes; B)</span> is no longer of the form <span class="math-bb">1</span><span class="math"> &otimes; B'</span>—it is an entangled sum <span class="math">&sum; A<sub>i</sub> &otimes; B<sub>i</sub></span> in <span class="math-cal">A</span><span class="math">(<b>M</b>) &otimes; </span><span class="math-cal">B</span><span class="math">(<b>M</b>)</span>!
+          </p>
+        </div>
+
+        <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm">
+          <div class="text-xs font-bold uppercase tracking-wider text-blue-500 mb-1">Schr&ouml;dinger-like View (States / Functionals)</div>
+          <h3 class="font-semibold text-base mb-2">How Early Product States <span class="math">&omega; &otimes; &sigma;</span> Evolve Forward</h3>
+          <p class="text-xs text-[var(--muted-foreground)] leading-relaxed mb-3">
+            At early times (<span class="math">M<sup>&minus;</sup></span>), the experimenter prepares the system in state <span class="math">&omega;</span> and the probe in state <span class="math">&sigma;</span> with no initial correlations. Pushing <span class="math">&omega; &otimes; &sigma;</span> forward into the coupled theory via the adjoint <span class="math">(&tau;<sup>&minus;</sup>)<sup>&minus;1*</sup></span> gives the coupled state:
+          </p>
+          <div class="eq-box text-sm bg-[var(--background)] border border-[var(--border)] rounded-lg p-3 text-center mb-3">
+            <span class="math">&omega;&#816;<sub>&sigma;</sub> := (&tau;<sup>&minus;</sup>)<sup>&minus;1*</sup>(&omega; &otimes; &sigma;)</span> &nbsp;&nbsp;(Eq. 3.6)
+          </div>
+          <p class="text-xs text-[var(--muted-foreground)] leading-relaxed">
+            Pairing the state <span class="math">&omega;&#816;<sub>&sigma;</sub></span> with the late-time probe observable <span class="math">B&#771;</span> yields Eq. (3.8):
+            <span class="math">&omega;&#816;<sub>&sigma;</sub>(B&#771;) = ((&tau;<sup>&minus;</sup>)<sup>&minus;1*</sup>(&omega; &otimes; &sigma;))(&tau;<sup>+</sup>(</span><span class="math-bb">1</span><span class="math"> &otimes; B)) = (&omega; &otimes; &sigma;)(&Theta;(</span><span class="math-bb">1</span><span class="math"> &otimes; B)) = (&Theta;<sup>*</sup>(&omega; &otimes; &sigma;))(</span><span class="math-bb">1</span><span class="math"> &otimes; B)</span>.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         TAB 3: INDUCED OBSERVABLES, SHARPNESS & LOCALIZATION (SECT. 3.2)
+         ===================================================================== -->
+    <section id="panel-observables" class="tab-panel hidden space-y-6">
+      <!-- Top Formula Walkthrough -->
+      <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-6 shadow-sm">
+        <h2 class="text-lg font-semibold mb-2">How a Probe Measurement Induces a System Observable (&sect;3.2, Theorem 3.2)</h2>
+        <p class="text-xs text-[var(--muted-foreground)] mb-4">
+          The experimenter only touches the probe observable <span class="math">B &isin; </span><span class="math-cal">B</span><span class="math">(<b>M</b>)</span> at late times, getting expectation value <span class="math">&omega;&#816;<sub>&sigma;</sub>(B&#771;)</span>. When can we interpret this number as the expectation value <span class="math">&omega;(A)</span> of a <em>system</em> observable <span class="math">A &isin; </span><span class="math-cal">A</span><span class="math">(<b>M</b>)</span>?
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center">
+          <div class="bg-[var(--background)] border border-[var(--border)] rounded-xl p-4">
+            <div class="text-xs font-bold text-blue-500 mb-1">Step A: Scatter <span class="math">1 &otimes; B</span></div>
+            <div class="eq-box text-sm mb-1.5">
+              <span class="math">&Theta;(</span><span class="math-bb">1</span><span class="math"> &otimes; B) = &sum;<sub>r</sub> A<sub>r</sub> &otimes; B<sub>r</sub></span>
+            </div>
+            <p class="text-xs text-[var(--muted-foreground)]">
+              The scattering morphism <span class="math">&Theta;</span> entangles the late-time probe observable <span class="math">1 &otimes; B</span> into a sum of tensor products of system and probe operators.
+            </p>
+          </div>
+
+          <div class="bg-[var(--background)] border border-[var(--border)] rounded-xl p-4">
+            <div class="text-xs font-bold text-purple-500 mb-1">Step B: Evaluate Probe State via <span class="math">&eta;<sub>&sigma;</sub></span></div>
+            <div class="eq-box text-sm mb-1.5">
+              <span class="math">&eta;<sub>&sigma;</sub>(A &otimes; B) := &sigma;(B) A</span>
+            </div>
+            <p class="text-xs text-[var(--muted-foreground)]">
+              The conditional expectation <span class="math">&eta;<sub>&sigma;</sub> : </span><span class="math-cal">A</span><span class="math">&otimes;</span><span class="math-cal">B</span><span class="math"> &rarr; </span><span class="math-cal">A</span> plugs in the known early probe preparation state <span class="math">&sigma;</span>, leaving an operator purely in <span class="math-cal">A</span><span class="math">(<b>M</b>)</span>.
+            </p>
+          </div>
+
+          <div class="bg-[var(--background)] border border-[var(--border)] rounded-xl p-4">
+            <div class="text-xs font-bold text-emerald-500 mb-1">Step C: Induced System Observable</div>
+            <div class="eq-box text-sm mb-1.5">
+              <span class="math">A = &varepsilon;<sub>&sigma;</sub>(B) := (&eta;<sub>&sigma;</sub> &circ; &Theta;)(</span><span class="math-bb">1</span><span class="math"> &otimes; B)</span>
+            </div>
+            <p class="text-xs text-[var(--muted-foreground)]">
+              Satisfies <span class="math">&omega;(&varepsilon;<sub>&sigma;</sub>(B)) = &omega;&#816;<sub>&sigma;</sub>(B&#771;)</span> for <em>all</em> system states <span class="math">&omega;</span>! Completely positive, unital (<span class="math">&varepsilon;<sub>&sigma;</sub>(1)=1</span>), and <span class="math">*</span>-preserving.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Interactive Simulator: The 3-Tier Sharpness Hierarchy & Variance Convolution -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <div class="lg:col-span-7 bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm">
+          <h3 class="text-base font-semibold mb-1">Interactive Lab: The 3-Tier Sharpness Hierarchy &amp; Variance Convolution</h3>
+          <p class="text-xs text-[var(--muted-foreground)] mb-4">
+            Why does the Abstract say: <em>"the induced system observables are typically less sharp than the probe observable, but more sharp than the actual measurement on the coupled theory"</em>? Adjust the sliders to see Eq. (3.13), Eq. (3.14), and Eq. (5.7)–(5.8) in action!
+          </p>
+
+          <!-- Sliders -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4 p-3.5 rounded-xl bg-[var(--background)] border border-[var(--border)] text-xs">
+            <div>
+              <div class="flex justify-between font-medium mb-1">
+                <span>System State Width <span class="math">&Delta;&Phi;<sub>&omega;</sub></span></span>
+                <span id="val-sys-width" class="font-mono text-blue-500">1.00</span>
+              </div>
+              <input type="range" id="slider-sys-width" min="0.3" max="2.2" step="0.05" value="1.0" oninput="updateVarianceSim()" class="w-full" />
+              <div class="text-[var(--muted-foreground)] mt-0.5">Intrinsic quantum spread in <span class="math">&omega;</span></div>
+            </div>
+
+            <div>
+              <div class="flex justify-between font-medium mb-1">
+                <span>Probe Fluctuations <span class="math">&Delta;&Psi;<sub>&sigma;</sub></span></span>
+                <span id="val-probe-width" class="font-mono text-amber-500">0.90</span>
+              </div>
+              <input type="range" id="slider-probe-width" min="0.1" max="2.2" step="0.05" value="0.9" oninput="updateVarianceSim()" class="w-full" />
+              <div class="text-[var(--muted-foreground)] mt-0.5">Detector noise in state <span class="math">&sigma;</span></div>
+            </div>
+
+            <div>
+              <div class="flex justify-between font-medium mb-1">
+                <span>Coupling Strength <span class="math">&lambda;</span></span>
+                <span id="val-coupling" class="font-mono text-emerald-500">0.80</span>
+              </div>
+              <input type="range" id="slider-coupling" min="0.0" max="1.5" step="0.05" value="0.8" oninput="updateVarianceSim()" class="w-full" />
+              <div class="text-[var(--muted-foreground)] mt-0.5">Scales <span class="math">f<sup>&minus;</sup> &propto; &lambda;&rho;E<sup>&minus;</sup><sub>Q</sub>h</span></div>
+            </div>
+          </div>
+
+          <div class="w-full aspect-[16/9] bg-[var(--background)] border border-[var(--border)] rounded-xl overflow-hidden">
+            <canvas id="variance-canvas" width="680" height="380" class="w-full h-full"></canvas>
+          </div>
+
+          <div id="variance-readout" class="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-2 text-xs">
+          </div>
+        </div>
+
+        <!-- Right Column: Mathematical Proof of the 3 Tiers & Localization -->
+        <div class="lg:col-span-5 space-y-4">
+          <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm">
+            <div class="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Decoding the 3 Sharpness Levels (pp. 862–864)</div>
+            <h3 class="font-semibold text-base mb-2">Why <span class="math">&varepsilon;<sub>&sigma;</sub>(B)<sup>2</sup> &le; &varepsilon;<sub>&sigma;</sub>(B<sup>2</sup>)</span> Causes Two Layers of Unsharpness</h3>
+            <p class="text-xs text-[var(--muted-foreground)] leading-relaxed mb-3">
+              Because <span class="math">&varepsilon;<sub>&sigma;</sub></span> is a completely positive map (not an algebra homomorphism!), Appendix B (Eq. B.8) proves the Kadison–Schwarz inequality:
+            </p>
+            <div class="eq-box text-xs bg-[var(--background)] border border-[var(--border)] rounded-lg p-2.5 text-center mb-3">
+              <span class="math">&varepsilon;<sub>&sigma;</sub>(B<sup>*</sup>B) &minus; &varepsilon;<sub>&sigma;</sub>(B)<sup>*</sup>&varepsilon;<sub>&sigma;</sub>(B) = &sum;<sub>r,s</sub> [ &sigma;(B<sub>r</sub><sup>*</sup>B<sub>s</sub>) &minus; &sigma;(B<sub>r</sub><sup>*</sup>)&sigma;(B<sub>s</sub>) ] A<sub>r</sub><sup>*</sup>A<sub>s</sub> &ge; 0</span>
+            </div>
+            <div class="space-y-2.5 text-xs text-[var(--muted-foreground)]">
+              <div class="p-2.5 rounded bg-[var(--background)] border border-[var(--border)]">
+                <span class="font-semibold text-[var(--foreground)]">1. Probe Observable <span class="math">B</span> (Sharpest):</span>
+                Suppose the experimenter measures a sharp projection-valued effect <span class="math">E(X)<sup>2</sup> = E(X)</span> on the probe.
+              </div>
+              <div class="p-2.5 rounded bg-[var(--background)] border border-[var(--border)]">
+                <span class="font-semibold text-blue-500">2. Induced System Observable <span class="math">A = &varepsilon;<sub>&sigma;</sub>(B)</span> (Intermediate):</span>
+                Even if <span class="math">E(X)</span> is a sharp projector, the induced system effect satisfies <span class="math">&varepsilon;<sub>&sigma;</sub>(E(X))<sup>2</sup> &le; &varepsilon;<sub>&sigma;</sub>(E(X)<sup>2</sup>) = &varepsilon;<sub>&sigma;</sub>(E(X))</span>. So a sharp probe PVM induces an <strong>unsharp system POVM (EVM)</strong>! Hypothetically measuring <span class="math">A = &varepsilon;<sub>&sigma;</sub>(B)</span> directly on the system has variance <span class="math">Var(A; &omega;) = &omega;(A<sup>2</sup>) &minus; &omega;(A)<sup>2</sup></span>.
+              </div>
+              <div class="p-2.5 rounded bg-[var(--background)] border border-[var(--border)]">
+                <span class="font-semibold text-rose-500">3. Actual Measurement of <span class="math">B&#771;</span> in Coupled Theory (Least Sharp):</span>
+                In reality we measure <span class="math">B&#771; = &tau;<sup>+</sup>(1&otimes;B)</span> in state <span class="math">&omega;&#816;<sub>&sigma;</sub></span>. Since <span class="math">(B&#771;)<sup>2</sup> = &tau;<sup>+</sup>(1&otimes;B<sup>2</sup>)</span>, its second moment is <span class="math">&omega;(&varepsilon;<sub>&sigma;</sub>(B<sup>2</sup>))</span>, NOT <span class="math">&omega;(&varepsilon;<sub>&sigma;</sub>(B)<sup>2</sup>)</span>! By Eq. (3.14):
+                <div class="eq-box text-center mt-1.5 text-[var(--foreground)]">
+                  <span class="math">Var(B&#771;; &omega;&#816;<sub>&sigma;</sub>) = &omega;(&varepsilon;<sub>&sigma;</sub>(B<sup>2</sup>)) &minus; &omega;(A)<sup>2</sup> &ge; &omega;(A<sup>2</sup>) &minus; &omega;(A)<sup>2</sup> = Var(A; &omega;)</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Localization Theorem 3.3 Card -->
+          <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm">
+            <div class="text-xs font-bold uppercase tracking-wider text-emerald-500 mb-1">Theorem 3.3 (Page 864)</div>
+            <h3 class="font-semibold text-base mb-2">Where is <span class="math">&varepsilon;<sub>&sigma;</sub>(B)</span> Localized?</h3>
+            <p class="text-xs text-[var(--muted-foreground)] leading-relaxed mb-2">
+              Suppose the experimenter reads the probe <span class="math">B</span> in Andromeda a million years after the interaction in <span class="math">K</span>. Where is the induced system observable <span class="math">&varepsilon;<sub>&sigma;</sub>(B)</span> localized?
+            </p>
+            <ul class="text-xs text-[var(--muted-foreground)] space-y-2 list-disc pl-4">
+              <li>
+                <strong>Always in any connected open causally convex neighborhood of <span class="math">K</span> (i.e., the Causal Hull of <span class="math">K</span>):</strong>
+                Take any system observable <span class="math">A &isin; </span><span class="math-cal">A</span><span class="math">(<b>M</b>; L)</span> in <span class="math">L &sub; K<sup>&perp;</sup></span>. Since <span class="math">&Theta;</span> acts trivially on <span class="math">K<sup>&perp;</sup></span>, <span class="math">&Theta;(A &otimes; 1) = A &otimes; 1</span>. Then Eq. (3.16) gives:
+                <div class="eq-box text-center my-1.5 p-1.5 rounded bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)]">
+                  <span class="math">[&varepsilon;<sub>&sigma;</sub>(B), A] = &eta;<sub>&sigma;</sub>(&Theta;[1 &otimes; B, A &otimes; 1]) = 0</span>
+                </div>
+                Since <span class="math">&varepsilon;<sub>&sigma;</sub>(B)</span> commutes with every <span class="math">A</span> in <span class="math">K<sup>&perp;</sup></span>, the <strong>Haag Property</strong> guarantees <span class="math">&varepsilon;<sub>&sigma;</sub>(B) &isin; </span><span class="math-cal">A</span><span class="math">(<b>M</b>; O)</span> for every connected open causally convex <span class="math">O &sup; K</span>!
+              </li>
+              <li>
+                <strong>What if <span class="math">B</span> itself is localized in <span class="math">K<sup>&perp;</sup></span>?</strong>
+                Then <span class="math">&Theta;(1 &otimes; B) = 1 &otimes; B</span>, so <span class="math">&varepsilon;<sub>&sigma;</sub>(B) = &sigma;(B)</span><span class="math-bb">1</span> (Eq. 3.15)—a trivial multiple of the identity! You learn <em>nothing</em> about the system if the probe is measured outside <span class="math">J<sup>+</sup>(K)</span>.
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         TAB 4: COLLAPSE MYTH, INSTRUMENTS & CAUSAL CONSISTENCY (SECT. 3.3)
+         ===================================================================== -->
+    <section id="panel-instruments" class="tab-panel hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Left Interactive Two-Detector & Collapse Simulator -->
+        <div class="lg:col-span-7 bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm flex flex-col">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+            <div>
+              <h2 class="text-base font-semibold">Interactive Lab: Collapse Surfaces vs. Covariant Instruments (&sect;3.3)</h2>
+              <p class="text-xs text-[var(--muted-foreground)]">
+                Drag coupling regions <span class="font-semibold text-blue-500">K<sub>1</sub> (Alice)</span> and <span class="font-semibold text-purple-500">K<sub>2</sub> (Bob)</span> to test causal ordering, Reeh–Schlieder correlations, and Theorem 3.5!
+              </p>
+            </div>
+          </div>
+
+          <!-- Mode Selector -->
+          <div class="flex flex-wrap gap-2 mb-3">
+            <button onclick="setInstrumentMode('selective')" id="imode-selective" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-[var(--primary)] text-[var(--primary-foreground)]">
+              1. Selective Post-Selection <span class="math">&omega;'</span> (Thm 3.4 &amp; Reeh–Schlieder)
+            </button>
+            <button onclick="setInstrumentMode('nonselective')" id="imode-nonselective" class="px-3 py-1.5 rounded-lg text-xs font-semibold border border-[var(--border)]">
+              2. Non-Selective <span class="math">&omega;'<sub>ns</sub></span> (No Signaling in <span class="math">K<sub>1</sub><sup>&perp;</sup></span>)
+            </button>
+            <button onclick="setInstrumentMode('hellwig')" id="imode-hellwig" class="px-3 py-1.5 rounded-lg text-xs font-semibold border border-[var(--border)]">
+              3. Why Hellwig–Kraus Collapse Fails (p. 867)
+            </button>
+          </div>
+
+          <div class="relative w-full aspect-[16/10] bg-[var(--background)] border border-[var(--border)] rounded-xl overflow-hidden">
+            <canvas id="instrument-canvas" width="720" height="450" class="w-full h-full"></canvas>
+          </div>
+
+          <!-- Causal Ordering & Theorem 3.5 Live Status -->
+          <div id="instrument-status" class="mt-3 p-3.5 rounded-xl bg-[var(--background)] border border-[var(--border)] text-xs">
+          </div>
+        </div>
+
+        <!-- Right Explanations: Theorems 3.4, 3.5, Corollary 3.6 & Joint EVMs -->
+        <div class="lg:col-span-5 space-y-4">
+          <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm">
+            <div class="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Theorem 3.4 &amp; Reeh–Schlieder (Pages 866–867)</div>
+            <h3 class="font-semibold text-base mb-2">Why There is No Collapse Surface in Spacetime</h3>
+            <p class="text-xs text-[var(--muted-foreground)] leading-relaxed mb-2">
+              Conditioned on observing probe effect <span class="math">B</span>, the updated system state is <span class="math">&omega;'(A) = </span><span class="math-cal">I</span><span class="math"><sub>&sigma;</sub>(B)(&omega;)(A) / &omega;(&varepsilon;<sub>&sigma;</sub>(B))</span>, where <span class="math-cal">I</span><span class="math"><sub>&sigma;</sub>(B)(&omega;)(A) = (&omega;&otimes;&sigma;)(&Theta;(A&otimes;B))</span>.
+              What is <span class="math">&omega;'(A)</span> for a system observable <span class="math">A &isin; </span><span class="math-cal">A</span><span class="math">(<b>M</b>; K<sup>&perp;</sup>)</span> at <strong>spacelike separation</strong> from <span class="math">K</span>?
+            </p>
+            <div class="eq-box text-xs bg-[var(--background)] border border-[var(--border)] rounded-lg p-2.5 text-center mb-2.5">
+              For <span class="math">A &isin; </span><span class="math-cal">A</span><span class="math">(<b>M</b>; K<sup>&perp;</sup>)</span>: &nbsp;
+              <span class="math">&omega;'(A) = </span>
+              <span class="frac"><span class="frac-num"><span class="math">&omega;(A &varepsilon;<sub>&sigma;</sub>(B))</span></span><span class="frac-den"><span class="math">&omega;(&varepsilon;<sub>&sigma;</sub>(B))</span></span></span>
+              &nbsp;&nbsp;(Eq. 3.26)
+            </div>
+            <ul class="text-xs text-[var(--muted-foreground)] space-y-2 list-disc pl-4">
+              <li>
+                <strong>Theorem 3.4:</strong> <span class="math">&omega;'(A) = &omega;(A)</span> if and only if <span class="math">A</span> is <em>uncorrelated</em> with <span class="math">&varepsilon;<sub>&sigma;</sub>(B)</span> in state <span class="math">&omega;</span>.
+              </li>
+              <li>
+                <strong>Reeh–Schlieder Consequence (Eq. 3.27):</strong> In any state <span class="math">&omega;</span> with the Reeh–Schlieder property (such as the vacuum!), every open region <span class="math">O &sub; K<sup>&perp;</sup></span> has entangled correlations with <span class="math">&varepsilon;<sub>&sigma;</sub>(B)</span>. Thus <span class="math">&omega;'</span> differs from <span class="math">&omega;</span> <strong>everywhere in spacetime</strong>—in <span class="math">K<sup>&perp;</sup></span> and even in the causal past <span class="math">J<sup>&minus;</sup>(K)</span>!
+              </li>
+              <li>
+                <strong>Physical Resolution:</strong> <span class="math">&omega; &mapsto; &omega;'</span> is <em>not</em> a physical shockwave occurring along a constant-<span class="math">t</span> slice or backward lightcone <span class="math">&partial;J<sup>&minus;</sup>(K)</span> (Hellwig–Kraus 1970). It is Bayesian conditioning (filtering) of the global state on the classical measurement record.
+              </li>
+              <li>
+                <strong>Why no faster-than-light signaling?</strong> If Alice does <em>not</em> communicate her outcome to Bob, Bob sees the <strong>non-selective state</strong> <span class="math">&omega;'<sub>ns</sub>(A) = </span><span class="math-cal">I</span><span class="math"><sub>&sigma;</sub>(1)(&omega;)(A) = (&Theta;<sup>*</sup>(&omega;&otimes;&sigma;))(A&otimes;1)</span>. For <span class="math">A &isin; </span><span class="math-cal">A</span><span class="math">(<b>M</b>; K<sup>&perp;</sup>)</span>, <span class="math">&Theta;(A&otimes;1) = A&otimes;1</span>, so <span class="math">&omega;'<sub>ns</sub>(A) = &omega;(A)</span> identically!
+              </li>
+            </ul>
+          </div>
+
+          <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm">
+            <div class="text-xs font-bold uppercase tracking-wider text-purple-500 mb-1">Theorem 3.5 &amp; Corollary 3.6 (Pages 868–869)</div>
+            <h3 class="font-semibold text-base mb-2">The Central Consistency Theorem: Causal Factorization</h3>
+            <p class="text-xs text-[var(--muted-foreground)] leading-relaxed mb-2">
+              Suppose two probes <span class="math-cal">B</span><span class="math"><sub>1</sub>, </span><span class="math-cal">B</span><span class="math"><sub>2</sub></span> couple to the system in compact regions <span class="math">K<sub>1</sub>, K<sub>2</sub></span> with <span class="math">K<sub>2</sub> &cap; J<sup>&minus;</sup>(K<sub>1</sub>) = &empty;</span> (<span class="math">K<sub>2</sub></span> does not precede <span class="math">K<sub>1</sub></span>). Provided the combined scattering morphism satisfies <strong>Bogoliubov causal factorization</strong>:
+            </p>
+            <div class="eq-box text-xs bg-[var(--background)] border border-[var(--border)] rounded-lg p-2 text-center mb-2">
+              <span class="math">&Theta;&#770; = &Theta;&#770;<sub>1</sub> &circ; &Theta;&#770;<sub>2</sub></span> &nbsp;&nbsp;(Eq. 3.28 — note <span class="math">&Theta;&#770;<sub>2</sub></span> acts first on future observables!)
+            </div>
+            <p class="text-xs text-[var(--muted-foreground)] leading-relaxed mb-2">
+              then the pre-instruments compose covariantly (Theorem 3.5):
+            </p>
+            <div class="eq-box text-xs bg-[var(--background)] border border-[var(--border)] rounded-lg p-2 text-center mb-2">
+              <span class="math-cal">I</span><span class="math"><sub>&sigma;<sub>2</sub></sub>(B<sub>2</sub>) &circ; </span><span class="math-cal">I</span><span class="math"><sub>&sigma;<sub>1</sub></sub>(B<sub>1</sub>) = </span><span class="math-cal">I</span><span class="math"><sub>&sigma;<sub>1</sub>&otimes;&sigma;<sub>2</sub></sub>(B<sub>1</sub> &otimes; B<sub>2</sub>)</span> &nbsp;&nbsp;(Eq. 3.29)
+            </div>
+            <p class="text-xs text-[var(--muted-foreground)] leading-relaxed">
+              And if <span class="math">K<sub>1</sub> &perp; K<sub>2</sub></span> (causally disjoint), both causal orderings hold, so <span class="math-cal">I</span><span class="math"><sub>&sigma;<sub>2</sub></sub>(B<sub>2</sub>) &circ; </span><span class="math-cal">I</span><span class="math"><sub>&sigma;<sub>1</sub></sub>(B<sub>1</sub>) = </span><span class="math-cal">I</span><span class="math"><sub>&sigma;<sub>1</sub></sub>(B<sub>1</sub>) &circ; </span><span class="math-cal">I</span><span class="math"><sub>&sigma;<sub>2</sub></sub>(B<sub>2</sub>)</span>! Updating the state in any Lorentz frame's order—or all at once—yields the <strong>exact same post-selected state <span class="math">&omega;''<sub>12</sub> = &omega;'<sub>12</sub></span></strong>!
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Row of Tab 4: Joint EVMs (&sect;3.2) & Symmetries (&sect;3.4) -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm">
+          <div class="text-xs font-bold uppercase tracking-wider text-blue-500 mb-1">Joint EVMs (&sect;3.2, pp. 864–865)</div>
+          <h3 class="font-semibold text-base mb-2">Spacelike Probe Readings vs. Incompatible System Observables</h3>
+          <p class="text-xs text-[var(--muted-foreground)] leading-relaxed">
+            Suppose Alice and Bob measure a <em>single</em> probe at spacelike separated regions in <span class="math">M<sup>+</sup></span> after it coupled to the system in <span class="math">K</span>. By Einstein causality on the probe, their probe EVMs <span class="math">E<sub>1</sub>, E<sub>2</sub></span> commute and define a joint probe EVM <span class="math">E</span>. However, the induced system EVMs <span class="math">&varepsilon;<sub>&sigma;</sub> &circ; E<sub>1</sub></span> and <span class="math">&varepsilon;<sub>&sigma;</sub> &circ; E<sub>2</sub></span> are both localized in the causal hull of <span class="math">K</span> and <strong>generally do not commute</strong>! How is this consistent? Because <span class="math">&varepsilon;<sub>&sigma;</sub> &circ; E</span> is an <strong>unsharp joint EVM</strong>: incompatible system observables cannot be measured jointly and <em>sharply</em>, but they <em>can</em> be measured jointly and unsharply!
+          </p>
+        </div>
+
+        <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm">
+          <div class="text-xs font-bold uppercase tracking-wider text-emerald-500 mb-1">Gauge Symmetries (&sect;3.4, Theorem 3.7)</div>
+          <h3 class="font-semibold text-base mb-2">How Gauge Invariance Passes from Probe to System</h3>
+          <p class="text-xs text-[var(--muted-foreground)] leading-relaxed mb-2">
+            If a global gauge group <span class="math">G</span> acts on <span class="math-cal">A</span><span class="math">, </span><span class="math-cal">B</span><span class="math">, </span><span class="math-cal">C</span> and the coupling is gauge-invariant, then <span class="math">&Theta;</span> commutes with <span class="math">&phi;<sub>M</sub>(g) &otimes; &psi;<sub>M</sub>(g)</span> and:
+          </p>
+          <div class="eq-box text-xs bg-[var(--background)] border border-[var(--border)] rounded p-2 text-center mb-2">
+            <span class="math">&phi;(g)(&varepsilon;<sub>&sigma;</sub>(B)) = &varepsilon;<sub>&psi;(g<sup>&minus;1</sup>)<sup>*</sup>&sigma;</sub>(&psi;(g)B)</span> &nbsp;(Eq. 3.42)
+          </div>
+          <p class="text-xs text-[var(--muted-foreground)] leading-relaxed">
+            Thus, if <span class="math">&sigma;</span> is gauge-invariant, gauge-invariant probe observables can <em>only</em> measure gauge-invariant system observables! Measuring a gauge-noninvariant quantity requires a symmetry-breaking probe state <span class="math">&sigma;</span> or coupling.
+          </p>
+        </div>
+
+        <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm">
+          <div class="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">Geometrical Symmetries (&sect;3.4, Eq. 3.44–3.45)</div>
+          <h3 class="font-semibold text-base mb-2">Strong Mixing Erases Post-Selection Over Time</h3>
+          <p class="text-xs text-[var(--muted-foreground)] leading-relaxed mb-2">
+            If the system state <span class="math">&omega;</span> has the <strong>strong mixing (timelike clustering)</strong> property under time translations <span class="math">&nu;<sub>s</sub></span>, <span class="math">&omega;((&nu;<sub>s</sub>A)B) &rarr; &omega;(&nu;<sub>s</sub>A)&omega;(B)</span> as <span class="math">|s| &rarr; &infin;</span>, then:
+          </p>
+          <div class="eq-box text-xs bg-[var(--background)] border border-[var(--border)] rounded p-2 text-center mb-2">
+            <span class="math">&omega;'(&nu;<sub>s</sub>A) &minus; &omega;(&nu;<sub>s</sub>A) = </span>
+            <span class="frac"><span class="frac-num"><span class="math">&omega;((&nu;<sub>s</sub>A)&varepsilon;<sub>&sigma;</sub>(B))</span></span><span class="frac-den"><span class="math">&omega;(&varepsilon;<sub>&sigma;</sub>(B))</span></span></span>
+            <span class="math"> &minus; &omega;(&nu;<sub>s</sub>A) &rarr; 0</span>
+          </div>
+          <p class="text-xs text-[var(--muted-foreground)] leading-relaxed">
+            Wait long enough after a measurement and <span class="math">&omega;'</span> becomes indistinguishable from <span class="math">&omega;</span>—allowing repeated experiments without active state re-preparation!
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         TAB 5: SOLVABLE SCALAR FIELD MODEL & UNRUH-DEWITT (SECTS. 4 & 5)
+         ===================================================================== -->
+    <section id="panel-scalar" class="tab-panel hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Left Interactive Green's Function Ray-Tracer -->
+        <div class="lg:col-span-7 bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm flex flex-col">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+            <div>
+              <h2 class="text-base font-semibold">Interactive Green's Function Ray-Tracer (&sect;4–5, Eq. 5.1–5.29)</h2>
+              <p class="text-xs text-[var(--muted-foreground)]">
+                Drag the <span class="font-semibold text-emerald-500">Probe Readout <span class="math">supp h &sub; M<sup>+</sup></span></span> to see how the advanced Green operator <span class="math">E<sup>&minus;</sup><sub>T</sub></span> traces <span class="math">h</span> backward into <span class="math">K = supp &rho;</span> to create <span class="math">f<sup>&minus;</sup></span> and <span class="math">h<sup>&minus;</sup></span>!
+              </p>
+            </div>
+            <div class="flex gap-1.5">
+              <button onclick="setScalarPreset('hit')" class="px-2.5 py-1 rounded text-xs font-medium bg-[var(--primary)] text-[var(--primary-foreground)]">
+                Wait in <span class="math">M<sup>+</sup> &cap; J<sup>+</sup>(K)</span> (Hit!)
+              </button>
+              <button onclick="setScalarPreset('miss')" class="px-2.5 py-1 rounded text-xs font-medium border border-[var(--border)]">
+                Measure in <span class="math">K<sup>&perp;</sup></span> (<span class="math">f<sup>&minus;</sup> = 0</span>)
+              </button>
+            </div>
+          </div>
+
+          <!-- Perturbative Order Toggle -->
+          <div class="flex flex-wrap gap-3 mb-3 text-xs bg-[var(--background)] border border-[var(--border)] rounded-lg p-2.5">
+            <label class="flex items-center gap-1.5 cursor-pointer">
+              <input type="checkbox" id="show-eQminus" checked onchange="drawScalarCanvas()" />
+              <span class="text-emerald-500 font-medium">1. Backward Probe Cone <span class="math">J<sup>&minus;</sup>(supp h)</span> (<span class="math">E<sup>&minus;</sup><sub>Q</sub>h</span>)</span>
+            </label>
+            <label class="flex items-center gap-1.5 cursor-pointer">
+              <input type="checkbox" id="show-fminus" checked onchange="drawScalarCanvas()" />
+              <span class="text-rose-500 font-medium">2. Induced System Source <span class="math">supp f<sup>&minus;</sup> &sub; K &cap; J<sup>&minus;</sup>(supp h)</span> (<span class="math">O(&lambda;)</span>)</span>
+            </label>
+            <label class="flex items-center gap-1.5 cursor-pointer">
+              <input type="checkbox" id="show-backreact" checked onchange="drawScalarCanvas()" />
+              <span class="text-purple-500 font-medium">3. System Back-Reaction <span class="math">&lambda;<sup>2</sup>&rho;E<sup>&minus;</sup><sub>P</sub>&rho;E<sup>&minus;</sup><sub>Q</sub>h</span> (<span class="math">O(&lambda;<sup>2</sup>)</span>)</span>
+            </label>
+          </div>
+
+          <div class="relative w-full aspect-[16/10] bg-[var(--background)] border border-[var(--border)] rounded-xl overflow-hidden">
+            <canvas id="scalar-canvas" width="720" height="450" class="w-full h-full"></canvas>
+          </div>
+
+          <!-- Live Ray-Tracer Formula Readout -->
+          <div id="scalar-status" class="mt-3 p-3.5 rounded-xl bg-[var(--background)] border border-[var(--border)] text-xs">
+          </div>
+        </div>
+
+        <!-- Right Column: Exact Solution, Deformed Star Product & Unruh-deWitt -->
+        <div class="lg:col-span-5 space-y-4">
+          <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm">
+            <div class="text-xs font-bold uppercase tracking-wider text-rose-500 mb-1">Exact Solvable Model (&sect;4 &amp; &sect;5.1)</div>
+            <h3 class="font-semibold text-base mb-2">Two Coupled Klein–Gordon Fields <span class="math">&Phi;</span> and <span class="math">&Psi;</span></h3>
+            <p class="text-xs text-[var(--muted-foreground)] leading-relaxed mb-2">
+              System <span class="math">P = &Box; + m<sub>&Phi;</sub><sup>2</sup></span> and Probe <span class="math">Q = &Box; + m<sub>&Psi;</sub><sup>2</sup></span> are coupled via <span class="math">S<sub>int</sub> = &minus;&int; &rho; &Phi; &Psi; dvol</span> (<span class="math">supp &rho; &sub; K</span>). The coupled equation of motion is:
+            </p>
+            <div class="eq-box text-xs bg-[var(--background)] border border-[var(--border)] rounded-lg p-2.5 text-center mb-2.5">
+              <span class="math">T &Xi; = </span>
+              <span class="math-rm">[</span>
+              <span class="math">P &nbsp; R ; R &nbsp; Q</span>
+              <span class="math-rm">] [</span>
+              <span class="math">&Phi; ; &Psi;</span>
+              <span class="math-rm">] = 0</span>, &nbsp;&nbsp;where <span class="math">(R&Phi;)(x) = &rho;(x)&Phi;(x)</span>
+            </div>
+            <p class="text-xs text-[var(--muted-foreground)] leading-relaxed mb-2">
+              Measuring the smeared probe field <span class="math">&Psi;(h)</span> with <span class="math">supp h &sub; M<sup>+</sup></span> gives the exact scattering formula (Eq. 5.1–5.4):
+            </p>
+            <div class="eq-box text-xs bg-[var(--background)] border border-[var(--border)] rounded-lg p-2.5 space-y-1.5 mb-2.5">
+              <div><span class="math">&Theta;(</span><span class="math-bb">1</span><span class="math"> &otimes; &Psi;(h)) = &Phi;(f<sup>&minus;</sup>) &otimes; </span><span class="math-bb">1</span><span class="math"> + </span><span class="math-bb">1</span><span class="math"> &otimes; &Psi;(h<sup>&minus;</sup>)</span></div>
+              <div><span class="math">&varepsilon;<sub>&sigma;</sub>(&Psi;(h)) = &Phi;(f<sup>&minus;</sup>) + &sigma;(&Psi;(h<sup>&minus;</sup>))</span><span class="math-bb">1</span></div>
+              <div class="text-[var(--muted-foreground)] pt-1 border-t border-[var(--border)]">
+                where <span class="math">(f<sup>&minus;</sup>, h<sup>&minus;</sup>)<sup>T</sup> = (0, h)<sup>T</sup> &minus; R&#771; E<sup>&minus;</sup><sub>T</sub> (0, h)<sup>T</sup></span> &nbsp;(Eq. 5.2)
+              </div>
+            </div>
+            <p class="text-xs text-[var(--muted-foreground)] leading-relaxed">
+              <strong>Born Expansion in Weak Coupling <span class="math">&rho; &rarr; &lambda;&rho;</span> (Eq. 5.27):</strong>
+              <br>&bull; <span class="math">f<sup>&minus;</sup> = &minus;&lambda; &rho; E<sup>&minus;</sup><sub>Q</sub> h + O(&lambda;<sup>3</sup>)</span> (supported in <span class="math">supp &rho; &cap; J<sup>&minus;</sup>(supp h)</span>!)
+              <br>&bull; <span class="math">h<sup>&minus;</sup> = h + &lambda;<sup>2</sup> &rho; E<sup>&minus;</sup><sub>P</sub> &rho; E<sup>&minus;</sup><sub>Q</sub> h + O(&lambda;<sup>4</sup>)</span> (probe shift due to radiation reaction!)
+            </p>
+          </div>
+
+          <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm">
+            <div class="text-xs font-bold uppercase tracking-wider text-purple-500 mb-1">Deformed <span class="math">&star;</span>-Product (&sect;5.1, Eq. 5.16–5.20)</div>
+            <h3 class="font-semibold text-base mb-2">Why Causally Disjoint Probe Readings Don't Commute on the System</h3>
+            <p class="text-xs text-[var(--muted-foreground)] leading-relaxed mb-2">
+              Even if two experimenters measure the probe at spacelike separated regions <span class="math">supp h &perp; supp h'</span> in <span class="math">M<sup>+</sup></span> (so <span class="math">[&Psi;(h), &Psi;(h')] = 0</span>), their induced system observables <span class="math">&varepsilon;<sub>&sigma;</sub>(&Psi;(h))</span> and <span class="math">&varepsilon;<sub>&sigma;</sub>(&Psi;(h'))</span> satisfy (Eq. 5.22):
+            </p>
+            <div class="eq-box text-xs bg-[var(--background)] border border-[var(--border)] rounded-lg p-2 text-center mb-2">
+              <span class="math">[&varepsilon;<sub>&sigma;</sub>(&Psi;(h)), &varepsilon;<sub>&sigma;</sub>(&Psi;(h'))] = [&Phi;(f<sup>&minus;</sup>), &Phi;(f'<sup>&minus;</sup>)] = i E<sub>P</sub>(f<sup>&minus;</sup>, f'<sup>&minus;</sup>)</span><span class="math-bb">1</span><span class="math"> &ne; 0</span>
+            </div>
+            <p class="text-xs text-[var(--muted-foreground)] leading-relaxed">
+              Because both <span class="math">f<sup>&minus;</sup></span> and <span class="math">f'<sup>&minus;</sup></span> trace back into the <em>same</em> coupling region <span class="math">K</span>! Deforming the product on <span class="math-cal">B</span><span class="math">(<b>M</b>)</span> to <span class="math">e<sup>i&Psi;(h)</sup> &star; e<sup>i&Psi;(h')</sup></span> (Eq. 5.16) turns <span class="math">&varepsilon;<sub>&sigma;</sub></span> into a <span class="math">*</span>-homomorphism onto a genuine subalgebra of <span class="math-cal">A</span><span class="math">(<b>M</b>)</span>.
+            </p>
+          </div>
+
+          <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm">
+            <div class="text-xs font-bold uppercase tracking-wider text-emerald-500 mb-1">Bridge to Unruh–deWitt Detectors (&sect;5.3, Eq. 5.36)</div>
+            <h3 class="font-semibold text-base mb-2">"Waiting for Unruh": Where Must You Read the Detector?</h3>
+            <p class="text-xs text-[var(--muted-foreground)] leading-relaxed mb-2">
+              Concentrating <span class="math">&rho;</span> along a proper-time parameterized worldline <span class="math">&gamma;(&tau;)</span> with switching function <span class="math">&rho;&#771;(&tau;)</span> and choosing <span class="math">h</span> so <span class="math">&gamma;<sup>*</sup>E<sup>&minus;</sup><sub>Q</sub>h = e<sup>iE&tau;</sup></span> on <span class="math">supp &rho;&#771;</span> yields the exact textbook Unruh–deWitt excitation probability (Eq. 5.36):
+            </p>
+            <div class="eq-box text-xs bg-[var(--background)] border border-[var(--border)] rounded-lg p-2 text-center mb-2">
+              <span class="math">&omega;(&varepsilon;<sub>&sigma;</sub>(N<sub>h</sub>)) = &lambda;<sup>2</sup> &int; d&tau; d&tau;' e<sup>&minus;iE(&tau;&minus;&tau;')</sup> &rho;&#771;(&tau;)&rho;&#771;(&tau;') W(&gamma;(&tau;), &gamma;(&tau;')) + O(&lambda;<sup>4</sup>)</span>
+            </div>
+            <p class="text-xs text-[var(--muted-foreground)] leading-relaxed">
+              <strong>The Operational Payoff (p. 880):</strong> You must measure the probe mode <span class="math">h</span> in <span class="math">M<sup>+</sup> &cap; J<sup>+</sup>(K)</span>—after the coupling has switched off (<span class="math">M<sup>+</sup></span>) and inside the causal future of the interaction (<span class="math">J<sup>+</sup>(K)</span>)!
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    function toggleTheme() {
+      document.documentElement.classList.toggle('light');
+      drawGeometryCanvas();
+      updateVarianceSim();
+      drawInstrumentCanvas();
+      drawScalarCanvas();
+    }
+
+    // =========================================================================
+    // TAB NAVIGATION
+    // =========================================================================
+    function switchTab(tabId) {
+      const panels = ['overview', 'geometry', 'scattering', 'observables', 'instruments', 'scalar'];
+      panels.forEach(id => {
+        const panel = document.getElementById('panel-' + id);
+        const btn = document.getElementById('tab-' + id);
+        if (id === tabId) {
+          panel.classList.remove('hidden');
+          btn.classList.add('active');
+        } else {
+          panel.classList.add('hidden');
+          btn.classList.remove('active');
+        }
+      });
+      if (tabId === 'geometry') drawGeometryCanvas();
+      if (tabId === 'scattering') setScatteringStep(currentScatteringStep);
+      if (tabId === 'observables') updateVarianceSim();
+      if (tabId === 'instruments') drawInstrumentCanvas();
+      if (tabId === 'scalar') drawScalarCanvas();
+    }
+
+    // =========================================================================
+    // ROSETTA STONE SEARCH FILTER
+    // =========================================================================
+    function filterRosetta() {
+      const q = document.getElementById('rosetta-search').value.toLowerCase();
+      const rows = document.querySelectorAll('#rosetta-table tbody tr');
+      rows.forEach(row => {
+        const text = row.innerText.toLowerCase();
+        row.style.display = text.includes(q) ? '' : 'none';
+      });
+    }
+
+    // =========================================================================
+    // THEME HELPER FOR CANVASES
+    // =========================================================================
+    function getThemeColors() {
+      const isLight = document.documentElement.classList.contains('light');
+      return {
+        isLight,
+        bg: isLight ? '#f8fafc' : '#0f172a',
+        grid: isLight ? 'rgba(100,116,139,0.16)' : 'rgba(148,163,184,0.12)',
+        text: isLight ? '#0f172a' : '#f1f5f9',
+        muted: isLight ? '#475569' : '#94a3b8'
+      };
+    }
+
+    // =========================================================================
+    // MODULE 1: SPACETIME & M+/- GEOMETRY CANVAS
+    // =========================================================================
+    const geoState = {
+      kShape: 'convex',
+      kx: 350,
+      ky: 265,
+      kw: 85,
+      kh: 44,
+      lx: 485,
+      ly: 145,
+      lw: 75,
+      lh: 38,
+      dragging: null,
+      offsetX: 0,
+      offsetY: 0
+    };
+
+    function setKShape(shape) {
+      geoState.kShape = shape;
+      const bConvex = document.getElementById('kshape-convex');
+      const bTwo = document.getElementById('kshape-two-lobe');
+      if (shape === 'convex') {
+        bConvex.className = 'px-2.5 py-1 rounded text-xs font-medium bg-[var(--primary)] text-[var(--primary-foreground)]';
+        bTwo.className = 'px-2.5 py-1 rounded text-xs font-medium border border-[var(--border)]';
+      } else {
+        bTwo.className = 'px-2.5 py-1 rounded text-xs font-medium bg-[var(--primary)] text-[var(--primary-foreground)]';
+        bConvex.className = 'px-2.5 py-1 rounded text-xs font-medium border border-[var(--border)]';
+      }
+      drawGeometryCanvas();
+    }
+
+    function drawGeometryCanvas() {
+      const canvas = document.getElementById('geometry-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const W = canvas.width;
+      const H = canvas.height;
+      const tc = getThemeColors();
+
+      ctx.clearRect(0, 0, W, H);
+      ctx.fillStyle = tc.bg;
+      ctx.fillRect(0, 0, W, H);
+
+      ctx.strokeStyle = tc.grid;
+      ctx.lineWidth = 1;
+      for (let c = -H; c < W + H; c += 60) {
+        ctx.beginPath();
+        ctx.moveTo(c, 0);
+        ctx.lineTo(c + H, H);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(c, 0);
+        ctx.lineTo(c - H, H);
+        ctx.stroke();
+      }
+
+      const showJMinus = document.getElementById('show-jminus').checked;
+      const showJPlus = document.getElementById('show-jplus').checked;
+      const showHull = document.getElementById('show-hull').checked;
+      const showCauchy = document.getElementById('show-cauchy').checked;
+
+      const { kx, ky, kw, kh, lx, ly, lw, lh } = geoState;
+      const topTipY = ky - kw;
+      const botTipY = ky + kw;
+
+      if (showJMinus) {
+        ctx.fillStyle = tc.isLight ? 'rgba(71, 85, 105, 0.25)' : 'rgba(100, 116, 139, 0.32)';
+        ctx.beginPath();
+        ctx.moveTo(kx - kw, ky);
+        ctx.lineTo(kx, ky - kh);
+        ctx.lineTo(kx + kw, ky);
+        ctx.lineTo(kx + kw + (H - ky), H);
+        ctx.lineTo(kx - kw - (H - ky), H);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = tc.text;
+        ctx.font = 'bold 13px sans-serif';
+        ctx.fillText('J⁻(K) (excluded from M⁺)', kx - 75, H - 22);
+      }
+
+      if (showJPlus) {
+        ctx.fillStyle = 'rgba(59, 130, 246, 0.08)';
+        ctx.beginPath();
+        ctx.moveTo(kx - kw, ky);
+        ctx.lineTo(kx, ky + kh);
+        ctx.lineTo(kx + kw, ky);
+        ctx.lineTo(kx + kw + ky, 0);
+        ctx.lineTo(kx - kw - ky, 0);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.save();
+        ctx.setLineDash([6, 5]);
+        ctx.strokeStyle = '#3b82f6';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(kx - kw, ky);
+        ctx.lineTo(kx - kw - ky, 0);
+        ctx.moveTo(kx + kw, ky);
+        ctx.lineTo(kx + kw + ky, 0);
+        ctx.stroke();
+        ctx.restore();
+
+        ctx.fillStyle = '#3b82f6';
+        ctx.font = 'bold 12px sans-serif';
+        ctx.fillText('∂J⁺(K)', kx - kw - ky + 55, 24);
+      }
+
+      if (showHull) {
+        ctx.fillStyle = 'rgba(244, 63, 94, 0.22)';
+        ctx.strokeStyle = '#f43f5e';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(kx, topTipY);
+        ctx.lineTo(kx + kw, ky);
+        ctx.lineTo(kx, botTipY);
+        ctx.lineTo(kx - kw, ky);
+        ctx.closePath();
+        ctx.fill();
+        ctx.stroke();
+
+        ctx.fillStyle = '#f43f5e';
+        ctx.font = 'bold 11px sans-serif';
+        ctx.fillText('Causal Hull J⁺(K)∩J⁻(K)', kx - 64, topTipY - 8);
+      }
+
+      ctx.fillStyle = 'rgba(245, 158, 11, 0.85)';
+      ctx.strokeStyle = '#d97706';
+      ctx.lineWidth = 2;
+      if (geoState.kShape === 'convex') {
+        ctx.beginPath();
+        ctx.ellipse(kx, ky, kw * 0.85, kh * 0.78, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+      } else {
+        ctx.beginPath();
+        ctx.ellipse(kx - kw * 0.5, ky, kw * 0.35, kh * 0.65, -0.2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.ellipse(kx + kw * 0.5, ky, kw * 0.35, kh * 0.65, 0.2, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.stroke();
+      }
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 14px sans-serif';
+      ctx.fillText('K', kx - 6, ky + 5);
+
+      if (showCauchy) {
+        ctx.strokeStyle = '#0ea5e9';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        for (let x = 20; x <= W - 20; x += 10) {
+          const y = Math.min(topTipY - 28, 115) + 18 * Math.sin((x / W) * Math.PI);
+          if (x === 20) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+        ctx.fillStyle = '#0ea5e9';
+        ctx.font = 'bold 12px sans-serif';
+        ctx.fillText('Cauchy Surface S⁺ ⊂ M⁺', 34, Math.min(topTipY - 34, 108));
+
+        ctx.strokeStyle = '#8b5cf6';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        for (let x = 20; x <= W - 20; x += 10) {
+          const y = Math.max(botTipY + 28, H - 90) - 15 * Math.sin((x / W) * Math.PI);
+          if (x === 20) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+        ctx.fillStyle = '#8b5cf6';
+        ctx.font = 'bold 12px sans-serif';
+        ctx.fillText('Cauchy Surface S⁻ ⊂ M⁻', 34, Math.max(botTipY + 42, H - 68));
+      }
+
+      ctx.fillStyle = tc.text;
+      ctx.font = 'bold 14px sans-serif';
+      ctx.fillText('M⁺ = M \\ J⁻(K)', 40, 50);
+      ctx.fillText('K⊥ = M⁺ ∩ M⁻', 35, ky + 5);
+      ctx.fillText('K⊥ = M⁺ ∩ M⁻', W - 135, ky + 5);
+
+      ctx.fillStyle = 'rgba(16, 185, 129, 0.28)';
+      ctx.strokeStyle = '#10b981';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.ellipse(lx, ly, lw, lh, -0.12, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#10b981';
+      ctx.font = 'bold 14px sans-serif';
+      ctx.fillText('L (drag me)', lx - 36, ly + 5);
+
+      const dx = Math.abs(lx - kx);
+      const dy = ly - ky;
+      const inHull = (dx + Math.abs(dy)) < (kw + lw * 0.65);
+      const inJPlus = (ly < ky + kh * 0.5) && (dx < (ky - ly) + kw + lw * 0.45);
+      const inJMinus = (ly > ky - kh * 0.5) && (dx < (ly - ky) + kw + lw * 0.45);
+
+      const inMPlus = !inJMinus;
+      const inMMinus = !inJPlus;
+      const inKPerp = inMPlus && inMMinus;
+
+      const statusEl = document.getElementById('region-L-status');
+      if (inHull) {
+        statusEl.innerHTML = `
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="px-2 py-0.5 rounded bg-rose-500/20 text-rose-500 font-bold">L overlaps Causal Hull J⁺(K) ∩ J⁻(K)</span>
+            <span class="text-[var(--muted-foreground)]">
+              Here the coupling is active (or causal curves leave and re-enter <span class="math">K</span>). The isomorphism <span class="math">&chi;<sub>L</sub> : </span><span class="math-cal">A</span><span class="math">(L)&otimes;</span><span class="math-cal">B</span><span class="math">(L) &rarr; </span><span class="math-cal">C</span><span class="math">(L)</span> <strong>does NOT exist</strong> here!
+            </span>
+          </div>`;
+      } else if (inKPerp) {
+        statusEl.innerHTML = `
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-500 font-bold">L ⊂ K⊥ = M⁺ ∩ M⁻ (Causally Disjoint from K)</span>
+            <span class="text-[var(--muted-foreground)]">
+              <span class="math">L</span> lies in <em>both</em> <span class="math">M<sup>+</sup></span> and <span class="math">M<sup>&minus;</sup></span>! By Prop. 3.1(b), <span class="math">&tau;<sup>+</sup> = &tau;<sup>&minus;</sup></span> on <span class="math">L</span>, so <span class="math">&Theta;</span> acts as the <strong>identity</strong> on <span class="math-cal">U</span><span class="math">(<b>M</b>; L)</span>, and any probe measurement in <span class="math">L</span> gives <span class="math">&varepsilon;<sub>&sigma;</sub>(B) = &sigma;(B)</span><span class="math-bb">1</span>.
+            </span>
+          </div>`;
+      } else if (inMPlus) {
+        statusEl.innerHTML = `
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="px-2 py-0.5 rounded bg-blue-500/20 text-blue-500 font-bold">L ⊂ M⁺ (and intersects J⁺(K), exactly as in Fig. 1!)</span>
+            <span class="text-[var(--muted-foreground)]">
+              <span class="math">L</span> is outside the Causal Hull, so <span class="math">&chi;<sub>L</sub> : </span><span class="math-cal">A</span><span class="math">(L)&otimes;</span><span class="math-cal">B</span><span class="math">(L) &rarr; </span><span class="math-cal">C</span><span class="math">(L)</span> is an isomorphism! Because <span class="math">L &cap; J<sup>+</sup>(K) &ne; &empty;</span>, measuring the probe in <span class="math">L</span> extracts genuine information about the system in <span class="math">K</span>!
+            </span>
+          </div>`;
+      } else {
+        statusEl.innerHTML = `
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="px-2 py-0.5 rounded bg-purple-500/20 text-purple-500 font-bold">L ⊂ M⁻ (Early Times / Causal Past J⁻(K) \\ K)</span>
+            <span class="text-[var(--muted-foreground)]">
+              <span class="math">L</span> lies in the "In" region <span class="math">M<sup>&minus;</sup> = M \\ J<sup>+</sup>(K)</span> before the interaction. Here <span class="math">&chi;<sub>L</sub></span> identifies the uncoupled preparation state <span class="math">&omega; &otimes; &sigma;</span> with the coupled theory.
+            </span>
+          </div>`;
+      }
+    }
+
+    function setupGeometryEvents() {
+      const canvas = document.getElementById('geometry-canvas');
+      if (!canvas) return;
+      const getPos = (e) => {
+        const rect = canvas.getBoundingClientRect();
+        return {
+          x: (e.clientX - rect.left) * (canvas.width / rect.width),
+          y: (e.clientY - rect.top) * (canvas.height / rect.height)
+        };
+      };
+
+      canvas.addEventListener('pointerdown', (e) => {
+        const p = getPos(e);
+        if (Math.hypot(p.x - geoState.lx, p.y - geoState.ly) < geoState.lw) {
+          geoState.dragging = 'L';
+          geoState.offsetX = p.x - geoState.lx;
+          geoState.offsetY = p.y - geoState.ly;
+        } else if (Math.hypot(p.x - geoState.kx, p.y - geoState.ky) < geoState.kw) {
+          geoState.dragging = 'K';
+          geoState.offsetX = p.x - geoState.kx;
+          geoState.offsetY = p.y - geoState.ky;
+        }
+      });
+
+      window.addEventListener('pointermove', (e) => {
+        if (!geoState.dragging) return;
+        const p = getPos(e);
+        if (geoState.dragging === 'L') {
+          geoState.lx = Math.max(60, Math.min(canvas.width - 60, p.x - geoState.offsetX));
+          geoState.ly = Math.max(40, Math.min(canvas.height - 40, p.y - geoState.offsetY));
+        } else if (geoState.dragging === 'K') {
+          geoState.kx = Math.max(140, Math.min(canvas.width - 140, p.x - geoState.offsetX));
+          geoState.ky = Math.max(140, Math.min(canvas.height - 120, p.y - geoState.offsetY));
+        }
+        drawGeometryCanvas();
+      });
+
+      window.addEventListener('pointerup', () => {
+        geoState.dragging = null;
+      });
+    }
+
+    // =========================================================================
+    // MODULE 2: SCATTERING MORPHISM STEP-BY-STEP BUILDER
+    // =========================================================================
+    let currentScatteringStep = 0;
+
+    const scatteringStepsData = [
+      {
+        title: 'Step 1: Start with a Probe Observable B in the Uncoupled Algebra 𝒰(M) = 𝒜(M) ⊗ ℬ(M)',
+        nodes: ['node-UM'],
+        edges: [],
+        html: `
+          <div class="space-y-2">
+            <p class="text-xs text-[var(--muted-foreground)] leading-relaxed">
+              Imagine the experimenter plans to measure an observable <span class="math">B &isin; </span><span class="math-cal">B</span><span class="math">(<b>M</b>)</span> of the probe. In the uncoupled "control" theory <span class="math-cal">U</span><span class="math">(<b>M</b>) = </span><span class="math-cal">A</span><span class="math">(<b>M</b>) &otimes; </span><span class="math-cal">B</span><span class="math">(<b>M</b>)</span>, this is represented by the tensor product element:
+            </p>
+            <div class="eq-box text-sm p-2.5 rounded bg-[var(--card)] border border-[var(--border)] text-center">
+              <span class="math-bb">1</span><span class="math"><sub>𝒜(M)</sub> &otimes; B &isin; </span><span class="math-cal">A</span><span class="math">(<b>M</b>) &otimes; </span><span class="math-cal">B</span><span class="math">(<b>M</b>)</span>
+            </div>
+            <p class="text-xs text-[var(--muted-foreground)]">
+              <strong>Goal:</strong> We want to know what this observable corresponds to in the <em>actual coupled experiment</em> <span class="math-cal">C</span><span class="math">(<b>M</b>)</span> when measured at late times (<span class="math">M<sup>+</sup></span>), and then pull it back to early times (<span class="math">M<sup>&minus;</sup></span>) where the initial state <span class="math">&omega; &otimes; &sigma;</span> was prepared!
+            </p>
+          </div>`
+      },
+      {
+        title: 'Step 2: Restrict to the "Out" Region M⁺ and Cross to the Coupled Algebra 𝒞(M⁺)',
+        nodes: ['node-UM', 'node-UMplus', 'node-CMplus'],
+        edges: ['edge-alpha-plus', 'edge-chi-plus'],
+        html: `
+          <div class="space-y-2">
+            <p class="text-xs text-[var(--muted-foreground)] leading-relaxed">
+              Because <span class="math">M<sup>+</sup> = M \\ J<sup>&minus;</sup>(K)</span> contains a Cauchy surface of <span class="math"><b>M</b></span>, the <strong>Time-Slice Property</strong> says the inclusion <span class="math">&alpha;<sup>+</sup> &otimes; &beta;<sup>+</sup> : </span><span class="math-cal">A</span><span class="math">(<b>M</b><sup>+</sup>)&otimes;</span><span class="math-cal">B</span><span class="math">(<b>M</b><sup>+</sup>) &rarr; </span><span class="math-cal">A</span><span class="math">(<b>M</b>)&otimes;</span><span class="math-cal">B</span><span class="math">(<b>M</b>)</span> is an <strong>isomorphism</strong>. So we can invert it!
+            </p>
+            <p class="text-xs text-[var(--muted-foreground)] leading-relaxed">
+              Next, because <span class="math">M<sup>+</sup></span> lies completely outside the causal hull of the coupling region <span class="math">K</span>, the interaction is <em>not active</em> in <span class="math">M<sup>+</sup></span>. Therefore, the isomorphism <span class="math">&chi;<sup>+</sup> : </span><span class="math-cal">A</span><span class="math">(<b>M</b><sup>+</sup>)&otimes;</span><span class="math-cal">B</span><span class="math">(<b>M</b><sup>+</sup>) &rarr; </span><span class="math-cal">C</span><span class="math">(<b>M</b><sup>+</sup>)</span> (Eq. 3.1) identifies the uncoupled late-time algebra with the coupled late-time algebra!
+            </p>
+          </div>`
+      },
+      {
+        title: 'Step 3: Embed into the Global Coupled Theory 𝒞(M) via the Retarded Response Map τ⁺',
+        nodes: ['node-UM', 'node-UMplus', 'node-CMplus', 'node-CM'],
+        edges: ['edge-alpha-plus', 'edge-chi-plus', 'edge-gamma-plus', 'edge-tau-plus'],
+        html: `
+          <div class="space-y-2">
+            <p class="text-xs text-[var(--muted-foreground)] leading-relaxed">
+              Applying the coupled theory's inclusion morphism <span class="math">&gamma;<sup>+</sup> : </span><span class="math-cal">C</span><span class="math">(<b>M</b><sup>+</sup>) &rarr; </span><span class="math-cal">C</span><span class="math">(<b>M</b>)</span> puts our late-time observable into the global coupled algebra <span class="math-cal">C</span><span class="math">(<b>M</b>)</span>. Composing these three maps defines the <strong>Retarded Response Map <span class="math">&tau;<sup>+</sup></span></strong> (Eq. 3.3–3.4):
+            </p>
+            <div class="eq-box text-sm p-2.5 rounded bg-[var(--card)] border border-[var(--border)] text-center">
+              <span class="math">&tau;<sup>+</sup> := &gamma;<sup>+</sup> &circ; &chi;<sup>+</sup> &circ; (&alpha;<sup>+</sup> &otimes; &beta;<sup>+</sup>)<sup>&minus;1</sup> : </span><span class="math-cal">A</span><span class="math">(<b>M</b>)&otimes;</span><span class="math-cal">B</span><span class="math">(<b>M</b>) &rarr; </span><span class="math-cal">C</span><span class="math">(<b>M</b>)</span>, &nbsp;&nbsp;
+              <span class="math">B&#771; := &tau;<sup>+</sup>(</span><span class="math-bb">1</span><span class="math"> &otimes; B)</span>
+            </div>
+            <p class="text-xs text-[var(--muted-foreground)]">
+              Here <span class="math">&kappa;<sup>+</sup> = &gamma;<sup>+</sup> &circ; &chi;<sup>+</sup></span> is just the shorthand for the bottom-right corner. Physically, <span class="math">B&#771; = &tau;<sup>+</sup>(</span><span class="math-bb">1</span><span class="math"> &otimes; B)</span> is "the probe observable <span class="math">B</span> measured at late times in the interacting world".
+            </p>
+          </div>`
+      },
+      {
+        title: 'Step 4: Pull Back Across the Interaction Region K to the Early Coupled Algebra 𝒞(M⁻)',
+        nodes: ['node-CM', 'node-CMminus'],
+        edges: ['edge-gamma-minus'],
+        html: `
+          <div class="space-y-2">
+            <p class="text-xs text-[var(--muted-foreground)] leading-relaxed">
+              Now comes the dynamical magic of the Time-Slice Axiom in the <strong>coupled theory <span class="math-cal">C</span></strong>! Because the "In" region <span class="math">M<sup>&minus;</sup> = M \\ J<sup>+</sup>(K)</span> also contains a Cauchy surface of <span class="math"><b>M</b></span>, the early inclusion map <span class="math">&gamma;<sup>&minus;</sup> : </span><span class="math-cal">C</span><span class="math">(<b>M</b><sup>&minus;</sup>) &rarr; </span><span class="math-cal">C</span><span class="math">(<b>M</b>)</span> is an <strong>isomorphism</strong>!
+            </p>
+            <p class="text-xs text-[var(--muted-foreground)] leading-relaxed">
+              Applying <span class="math">(&gamma;<sup>&minus;</sup>)<sup>&minus;1</sup></span> evolves the late-time observable <span class="math">B&#771; &isin; </span><span class="math-cal">C</span><span class="math">(<b>M</b>)</span> <em>backward through the interaction region <span class="math">K</span></em> using the coupled field equations of <span class="math-cal">C</span>, rewriting it in terms of early-time degrees of freedom in <span class="math-cal">C</span><span class="math">(<b>M</b><sup>&minus;</sup>)</span>!
+            </p>
+          </div>`
+      },
+      {
+        title: 'Step 5: Cross Back to the Uncoupled Algebra at Early Times via (τ⁻)⁻¹',
+        nodes: ['node-CM', 'node-CMminus', 'node-UMminus', 'node-UM'],
+        edges: ['edge-gamma-minus', 'edge-chi-minus', 'edge-alpha-minus', 'edge-tau-minus'],
+        html: `
+          <div class="space-y-2">
+            <p class="text-xs text-[var(--muted-foreground)] leading-relaxed">
+              In <span class="math">M<sup>&minus;</sup></span>, the interaction hasn't happened yet, so <span class="math">(&chi;<sup>&minus;</sup>)<sup>&minus;1</sup> : </span><span class="math-cal">C</span><span class="math">(<b>M</b><sup>&minus;</sup>) &rarr; </span><span class="math-cal">A</span><span class="math">(<b>M</b><sup>&minus;</sup>)&otimes;</span><span class="math-cal">B</span><span class="math">(<b>M</b><sup>&minus;</sup>)</span> translates the coupled early operators back into uncoupled system-and-probe operators, and <span class="math">&alpha;<sup>&minus;</sup> &otimes; &beta;<sup>&minus;</sup></span> embeds them back into <span class="math-cal">A</span><span class="math">(<b>M</b>)&otimes;</span><span class="math-cal">B</span><span class="math">(<b>M</b>)</span>.
+            </p>
+            <div class="eq-box text-sm p-2.5 rounded bg-[var(--card)] border border-[var(--border)] text-center">
+              <span class="math">(&tau;<sup>&minus;</sup>)<sup>&minus;1</sup> = (&alpha;<sup>&minus;</sup> &otimes; &beta;<sup>&minus;</sup>) &circ; (&chi;<sup>&minus;</sup>)<sup>&minus;1</sup> &circ; (&gamma;<sup>&minus;</sup>)<sup>&minus;1</sup> : </span><span class="math-cal">C</span><span class="math">(<b>M</b>) &rarr; </span><span class="math-cal">A</span><span class="math">(<b>M</b>)&otimes;</span><span class="math-cal">B</span><span class="math">(<b>M</b>)</span>
+            </div>
+          </div>`
+      },
+      {
+        title: 'Step 6: The Complete Scattering Morphism Θ = (τ⁻)⁻¹ ∘ τ⁺ and Proposition 3.1',
+        nodes: ['node-UM', 'node-UMplus', 'node-CMplus', 'node-CM', 'node-CMminus', 'node-UMminus'],
+        edges: ['edge-alpha-plus', 'edge-chi-plus', 'edge-gamma-plus', 'edge-gamma-minus', 'edge-chi-minus', 'edge-alpha-minus', 'edge-theta'],
+        html: `
+          <div class="space-y-2">
+            <p class="text-xs text-[var(--muted-foreground)] leading-relaxed">
+              Composing the entire clockwise loop from <span class="math-cal">A</span><span class="math">(<b>M</b>)&otimes;</span><span class="math-cal">B</span><span class="math">(<b>M</b>)</span> down the right (<span class="math">&tau;<sup>+</sup></span>) and up the left (<span class="math">(&tau;<sup>&minus;</sup>)<sup>&minus;1</sup></span>) gives the <strong>Scattering Morphism</strong> <span class="math">&Theta; = (&tau;<sup>&minus;</sup>)<sup>&minus;1</sup> &circ; &tau;<sup>+</sup></span> (Eq. 3.5)!
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-2.5 pt-1 text-xs">
+              <div class="p-2.5 rounded bg-[var(--card)] border border-[var(--border)]">
+                <div class="font-bold text-emerald-500">Prop 3.1(a): Canonical</div>
+                <div class="text-[var(--muted-foreground)]">Replacing <span class="math">K</span> by any larger compact <span class="math">K&#770; &sup; K</span> leaves <span class="math">&Theta;&#770; = &Theta;</span> unchanged.</div>
+              </div>
+              <div class="p-2.5 rounded bg-[var(--card)] border border-[var(--border)]">
+                <div class="font-bold text-blue-500">Prop 3.1(b): Causality on <span class="math">K<sup>&perp;</sup></span></div>
+                <div class="text-[var(--muted-foreground)]">If <span class="math">L &sub; K<sup>&perp;</sup> = M<sup>+</sup> &cap; M<sup>&minus;</sup></span>, the left and right branches of the diagram coincide, so <span class="math">&Theta; = id</span> on <span class="math-cal">U</span><span class="math">(<b>M</b>; L)</span>!</div>
+              </div>
+              <div class="p-2.5 rounded bg-[var(--card)] border border-[var(--border)]">
+                <div class="font-bold text-purple-500">Prop 3.1(c): Cauchy Dev.</div>
+                <div class="text-[var(--muted-foreground)]">If <span class="math">L<sup>+</sup> &sub; D(L<sup>&minus;</sup>)</span>, then <span class="math">&Theta;</span><span class="math-cal">U</span><span class="math">(<b>M</b>; L<sup>+</sup>) &sub; </span><span class="math-cal">U</span><span class="math">(<b>M</b>; L<sup>&minus;</sup>)</span>.</div>
+              </div>
+            </div>
+          </div>`
+      }
+    ];
+
+    function setScatteringStep(idx) {
+      currentScatteringStep = idx;
+      document.getElementById('scattering-step-indicator').innerText = `Step ${idx + 1} / 6`;
+      const step = scatteringStepsData[idx];
+
+      for (let i = 0; i < 6; i++) {
+        const btn = document.getElementById('sstep-' + i);
+        if (i === idx) btn.classList.add('active');
+        else btn.classList.remove('active');
+      }
+
+      const allNodes = ['node-UM', 'node-UMplus', 'node-CMplus', 'node-CM', 'node-CMminus', 'node-UMminus'];
+      allNodes.forEach(nid => {
+        const g = document.getElementById(nid);
+        const rect = g.querySelector('rect');
+        if (step.nodes.includes(nid)) {
+          rect.setAttribute('stroke', '#3b82f6');
+          rect.setAttribute('stroke-width', '3');
+          rect.setAttribute('fill', 'rgba(59, 130, 246, 0.12)');
+        } else {
+          rect.setAttribute('stroke', '#64748b');
+          rect.setAttribute('stroke-width', '2');
+          rect.setAttribute('fill', 'none');
+        }
+      });
+
+      const allEdges = ['edge-alpha-plus', 'edge-chi-plus', 'edge-gamma-plus', 'edge-gamma-minus', 'edge-chi-minus', 'edge-alpha-minus', 'edge-tau-plus', 'edge-tau-minus'];
+      allEdges.forEach(eid => {
+        const g = document.getElementById(eid);
+        const line = g.querySelector('line');
+        if (step.edges.includes(eid)) {
+          line.setAttribute('stroke', '#3b82f6');
+          line.setAttribute('stroke-width', '3');
+          line.setAttribute('marker-end', 'url(#arrow-active)');
+        } else {
+          line.setAttribute('stroke', '#64748b');
+          line.setAttribute('stroke-width', '2');
+          line.setAttribute('marker-end', 'url(#arrow-muted)');
+        }
+      });
+
+      const detailEl = document.getElementById('scattering-step-detail');
+      detailEl.innerHTML = `<h3 class="font-semibold text-base mb-2 text-[var(--foreground)]">${step.title}</h3>` + step.html;
+    }
+
+    function nextScatteringStep() {
+      setScatteringStep((currentScatteringStep + 1) % 6);
+    }
+    function prevScatteringStep() {
+      setScatteringStep((currentScatteringStep + 5) % 6);
+    }
+
+    // =========================================================================
+    // MODULE 3: SHARPNESS & VARIANCE CONVOLUTION SIMULATOR (SECT. 3.2 & 5.1)
+    // =========================================================================
+    function updateVarianceSim() {
+      const sysWidth = parseFloat(document.getElementById('slider-sys-width').value);
+      const probeWidth = parseFloat(document.getElementById('slider-probe-width').value);
+      const coupling = parseFloat(document.getElementById('slider-coupling').value);
+
+      document.getElementById('val-sys-width').innerText = sysWidth.toFixed(2);
+      document.getElementById('val-probe-width').innerText = probeWidth.toFixed(2);
+      document.getElementById('val-coupling').innerText = coupling.toFixed(2);
+
+      const varInduced = (coupling * sysWidth) ** 2;
+      const varProbe = probeWidth ** 2;
+      const varActual = varInduced + varProbe;
+
+      const sdInduced = Math.max(0.08, Math.sqrt(varInduced));
+      const sdProbe = Math.sqrt(varProbe);
+      const sdActual = Math.sqrt(varActual);
+
+      const canvas = document.getElementById('variance-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const W = canvas.width;
+      const H = canvas.height;
+      const tc = getThemeColors();
+
+      ctx.clearRect(0, 0, W, H);
+      ctx.fillStyle = tc.bg;
+      ctx.fillRect(0, 0, W, H);
+
+      const padL = 55, padR = 30, padT = 35, padB = 45;
+      const plotW = W - padL - padR;
+      const plotH = H - padT - padB;
+
+      ctx.strokeStyle = tc.grid;
+      ctx.lineWidth = 1;
+      for (let i = 0; i <= 4; i++) {
+        const y = padT + (plotH * i) / 4;
+        ctx.beginPath();
+        ctx.moveTo(padL, y);
+        ctx.lineTo(W - padR, y);
+        ctx.stroke();
+      }
+
+      const xMin = -6, xMax = 6;
+      const yMax = 1.15;
+      const yToPx = y => padT + plotH - (y / yMax) * plotH;
+      const gauss = (x, mu, sd) => Math.exp(-0.5 * ((x - mu) / sd) ** 2) / (sd * Math.sqrt(2 * Math.PI));
+
+      const drawCurve = (sd, color, dashed, fillAlpha) => {
+        ctx.save();
+        if (dashed) ctx.setLineDash([6, 4]);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        for (let px = 0; px <= plotW; px += 2) {
+          const x = xMin + (px / plotW) * (xMax - xMin);
+          const y = gauss(x, 0, sd);
+          const cx = padL + px;
+          const cy = yToPx(Math.min(y, yMax));
+          if (px === 0) ctx.moveTo(cx, cy);
+          else ctx.lineTo(cx, cy);
+        }
+        ctx.stroke();
+        if (fillAlpha > 0) {
+          ctx.lineTo(padL + plotW, yToPx(0));
+          ctx.lineTo(padL, yToPx(0));
+          ctx.closePath();
+          ctx.fillStyle = color.replace(')', `, ${fillAlpha})`).replace('rgb', 'rgba');
+          ctx.fill();
+        }
+        ctx.restore();
+      };
+
+      drawCurve(sdActual, 'rgb(244, 63, 94)', false, 0.14);
+      drawCurve(sdProbe, 'rgb(245, 158, 11)', true, 0);
+      drawCurve(sdInduced, 'rgb(59, 130, 246)', false, 0.18);
+
+      ctx.font = 'bold 12px sans-serif';
+      ctx.fillStyle = '#3b82f6';
+      ctx.fillText('― Induced System Observable A = ε_σ(B) in state ω (Hypothetical)', padL + 12, padT + 18);
+      ctx.fillStyle = '#f59e0b';
+      ctx.fillText('--- Probe Quantum Noise Ψ(h⁻) in state σ', padL + 12, padT + 38);
+      ctx.fillStyle = '#f43f5e';
+      ctx.fillText('― Actual Measurement B̃ in Coupled State ω_σ (Convolution, Eq. 5.8)', padL + 12, padT + 58);
+
+      ctx.fillStyle = tc.muted;
+      ctx.font = '12px sans-serif';
+      ctx.fillText('Measurement Outcome λ (centered around mean ω(A))', W / 2 - 140, H - 12);
+
+      document.getElementById('variance-readout').innerHTML = `
+        <div class="p-3 rounded-lg bg-[var(--background)] border border-blue-500/40">
+          <div class="text-blue-500 font-bold">Induced System Var(A; ω)</div>
+          <div class="text-base font-mono font-bold mt-0.5">${varInduced.toFixed(3)}</div>
+          <div class="text-[var(--muted-foreground)]"><span class="math">&omega;(A<sup>2</sup>) &minus; &omega;(A)<sup>2</sup> = Var(&Phi;(f<sup>&minus;</sup>); &omega;)</span></div>
+        </div>
+        <div class="p-3 rounded-lg bg-[var(--background)] border border-amber-500/40">
+          <div class="text-amber-500 font-bold">+ Probe Noise Var(Ψ(h⁻); σ)</div>
+          <div class="text-base font-mono font-bold mt-0.5">+ ${varProbe.toFixed(3)}</div>
+          <div class="text-[var(--muted-foreground)]">From <span class="math">&varepsilon;<sub>&sigma;</sub>(B<sup>2</sup>) &minus; &varepsilon;<sub>&sigma;</sub>(B)<sup>2</sup> &ge; 0</span></div>
+        </div>
+        <div class="p-3 rounded-lg bg-[var(--background)] border border-rose-500/40">
+          <div class="text-rose-500 font-bold">= Actual Coupled Var(B̃; ω_σ)</div>
+          <div class="text-base font-mono font-bold mt-0.5">= ${varActual.toFixed(3)}</div>
+          <div class="text-[var(--muted-foreground)]"><span class="math">Var(B&#771;; &omega;&#816;<sub>&sigma;</sub>) &ge; Var(A; &omega;)</span> (Eq. 3.14 &amp; 5.7)</div>
+        </div>
+      `;
+    }
+
+    // =========================================================================
+    // MODULE 4: COLLAPSE MYTH & TWO-DETECTOR INSTRUMENTS (SECT. 3.3)
+    // =========================================================================
+    const instState = {
+      mode: 'selective',
+      k1x: 240,
+      k1y: 265,
+      k2x: 490,
+      k2y: 255,
+      r: 42,
+      dragging: null
+    };
+
+    function setInstrumentMode(m) {
+      instState.mode = m;
+      ['selective', 'nonselective', 'hellwig'].forEach(id => {
+        const btn = document.getElementById('imode-' + id);
+        if (id === m) {
+          btn.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold bg-[var(--primary)] text-[var(--primary-foreground)]';
+        } else {
+          btn.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold border border-[var(--border)]';
+        }
+      });
+      drawInstrumentCanvas();
+    }
+
+    function drawInstrumentCanvas() {
+      const canvas = document.getElementById('instrument-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const W = canvas.width;
+      const H = canvas.height;
+      const tc = getThemeColors();
+
+      ctx.clearRect(0, 0, W, H);
+      ctx.fillStyle = tc.bg;
+      ctx.fillRect(0, 0, W, H);
+
+      const { k1x, k1y, k2x, k2y, r, mode } = instState;
+
+      if (mode === 'selective') {
+        const grad = ctx.createRadialGradient(k1x, k1y, 15, k1x, k1y, 520);
+        grad.addColorStop(0, 'rgba(59, 130, 246, 0.26)');
+        grad.addColorStop(1, 'rgba(59, 130, 246, 0.08)');
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, W, H);
+
+        ctx.save();
+        ctx.setLineDash([4, 4]);
+        ctx.strokeStyle = 'rgba(59, 130, 246, 0.65)';
+        ctx.lineWidth = 1.8;
+        ctx.beginPath();
+        ctx.moveTo(k1x, k1y);
+        ctx.quadraticCurveTo((k1x + k2x) / 2, k1y - 70, k2x, k2y);
+        ctx.stroke();
+        ctx.restore();
+
+        ctx.fillStyle = '#3b82f6';
+        ctx.font = 'bold 12px sans-serif';
+        ctx.fillText('Reeh–Schlieder Entanglement: ω′(A) = ω(A ε_σ(B₁)) / ω(ε_σ(B₁)) ≠ ω(A) everywhere in M!', 24, 28);
+      } else if (mode === 'nonselective') {
+        ctx.fillStyle = 'rgba(16, 185, 129, 0.22)';
+        ctx.beginPath();
+        ctx.moveTo(k1x - r, k1y);
+        ctx.lineTo(k1x + r, k1y);
+        ctx.lineTo(k1x + r + k1y, 0);
+        ctx.lineTo(k1x - r - k1y, 0);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.fillStyle = '#10b981';
+        ctx.font = 'bold 12px sans-serif';
+        ctx.fillText('Non-Selective ω′_ns = ℐ_σ(1)(ω): Changes ONLY in J⁺(K₁)! Strictly ω′_ns(A) = ω(A) in K₁⊥!', 24, 28);
+      } else if (mode === 'hellwig') {
+        ctx.fillStyle = 'rgba(244, 63, 94, 0.14)';
+        ctx.beginPath();
+        ctx.moveTo(k1x - r, k1y);
+        ctx.lineTo(k1x + r, k1y);
+        ctx.lineTo(k1x + r + (H - k1y), H);
+        ctx.lineTo(k1x - r - (H - k1y), H);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.strokeStyle = '#f43f5e';
+        ctx.lineWidth = 3;
+        ctx.beginPath();
+        ctx.moveTo(0, k1y - (k1x - r));
+        ctx.lineTo(k1x - r, k1y);
+        ctx.lineTo(k1x + r, k1y);
+        ctx.lineTo(W, k1y - (W - (k1x + r)));
+        ctx.stroke();
+
+        ctx.fillStyle = '#f43f5e';
+        ctx.font = 'bold 12px sans-serif';
+        ctx.fillText('Myth: Hellwig–Kraus (1970) Collapse across ∂J⁻(K₁) — refuted by Reeh–Schlieder & Huygens (p. 867)', 24, 28);
+      }
+
+      const drawCones = (x, y, color, label) => {
+        ctx.save();
+        ctx.setLineDash([5, 5]);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 1.6;
+        ctx.beginPath();
+        ctx.moveTo(x - r, y);
+        ctx.lineTo(x - r - y, 0);
+        ctx.moveTo(x + r, y);
+        ctx.lineTo(x + r + y, 0);
+        ctx.moveTo(x - r, y);
+        ctx.lineTo(x - r - (H - y), H);
+        ctx.moveTo(x + r, y);
+        ctx.lineTo(x + r + (H - y), H);
+        ctx.stroke();
+        ctx.restore();
+
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.ellipse(x, y, r, r * 0.62, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 13px sans-serif';
+        ctx.fillText(label, x - 32, y + 4);
+      };
+
+      drawCones(k1x, k1y, '#3b82f6', 'K₁ (Alice)');
+      drawCones(k2x, k2y, '#8b5cf6', 'K₂ (Bob)');
+
+      const dx = Math.abs(k2x - k1x);
+      const dy = k1y - k2y;
+      const overlap = dx < 2 * r && Math.abs(dy) < 1.2 * r;
+      const k2InFutureOfK1 = (dy > -r * 0.5) && (dx < dy + 1.8 * r);
+      const k2InPastOfK1 = (dy < r * 0.5) && (dx < -dy + 1.8 * r);
+
+      const statusEl = document.getElementById('instrument-status');
+      if (overlap) {
+        statusEl.innerHTML = `
+          <div class="text-rose-500 font-bold mb-1">K₁ and K₂ Overlap (Not Causally Separable)</div>
+          <div class="text-[var(--muted-foreground)]">
+            When <span class="math">J<sup>+</sup>(K<sub>1</sub>) &cap; J<sup>&minus;</sup>(K<sub>2</sub>)</span> and <span class="math">J<sup>&minus;</sup>(K<sub>1</sub>) &cap; J<sup>+</sup>(K<sub>2</sub>)</span> are both non-empty, no Cauchy surface separates <span class="math">K<sub>1</sub></span> and <span class="math">K<sub>2</sub></span>. They must be treated as a single joint coupling region <span class="math">K = K<sub>1</sub> &cup; K<sub>2</sub></span>.
+          </div>`;
+      } else if (!k2InFutureOfK1 && !k2InPastOfK1) {
+        statusEl.innerHTML = `
+          <div class="flex flex-wrap items-center gap-2 mb-1">
+            <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-500 font-bold">K₁ ⊥ K₂ (Causally Disjoint / Spacelike Separated!)</span>
+            <span class="font-mono text-xs text-[var(--foreground)]">Θ̂ = Θ̂₁ ∘ Θ̂₂ = Θ̂₂ ∘ Θ̂₁</span>
+          </div>
+          <div class="text-[var(--muted-foreground)]">
+            <strong>Theorem 3.5 (Eq. 3.30) &amp; Corollary 3.6:</strong> Both <span class="math">K<sub>2</sub> &cap; J<sup>&minus;</sup>(K<sub>1</sub>) = &empty;</span> and <span class="math">K<sub>1</sub> &cap; J<sup>&minus;</sup>(K<sub>2</sub>) = &empty;</span> hold! The pre-instruments commute:
+            <span class="math-cal">I</span><span class="math"><sub>&sigma;<sub>2</sub></sub>(B<sub>2</sub>) &circ; </span><span class="math-cal">I</span><span class="math"><sub>&sigma;<sub>1</sub></sub>(B<sub>1</sub>) = </span><span class="math-cal">I</span><span class="math"><sub>&sigma;<sub>1</sub>&otimes;&sigma;<sub>2</sub></sub>(B<sub>1</sub>&otimes;B<sub>2</sub>) = </span><span class="math-cal">I</span><span class="math"><sub>&sigma;<sub>1</sub></sub>(B<sub>1</sub>) &circ; </span><span class="math-cal">I</span><span class="math"><sub>&sigma;<sub>2</sub></sub>(B<sub>2</sub>)</span>.
+            Whether you condition on Alice's outcome first or Bob's outcome first, you get the <strong>exact same post-selected state <span class="math">&omega;''<sub>12</sub></span></strong> without needing any collapse surface!
+          </div>`;
+      } else if (!k2InPastOfK1 && k2InFutureOfK1) {
+        statusEl.innerHTML = `
+          <div class="flex flex-wrap items-center gap-2 mb-1">
+            <span class="px-2 py-0.5 rounded bg-blue-500/20 text-blue-500 font-bold">Strict Causal Order: K₂ is to the Future of K₁ (K₂ ∩ J⁻(K₁) = ∅)</span>
+            <span class="font-mono text-xs text-[var(--foreground)]">Θ̂ = Θ̂₁ ∘ Θ̂₂</span>
+          </div>
+          <div class="text-[var(--muted-foreground)]">
+            <strong>Theorem 3.5 (Eq. 3.29):</strong> Because signals can travel from <span class="math">K<sub>1</sub> &rarr; K<sub>2</sub></span> (but not <span class="math">K<sub>2</sub> &rarr; K<sub>1</sub></span>), there is a Cauchy surface with <span class="math">K<sub>1</sub></span> to its past and <span class="math">K<sub>2</sub></span> to its future. Sequential post-selection in causal order equals the combined single-stage instrument:
+            <span class="math-cal">I</span><span class="math"><sub>&sigma;<sub>2</sub></sub>(B<sub>2</sub>) &circ; </span><span class="math-cal">I</span><span class="math"><sub>&sigma;<sub>1</sub></sub>(B<sub>1</sub>) = </span><span class="math-cal">I</span><span class="math"><sub>&sigma;<sub>1</sub>&otimes;&sigma;<sub>2</sub></sub>(B<sub>1</sub>&otimes;B<sub>2</sub>)</span> (generally <span class="math">&ne; </span><span class="math-cal">I</span><span class="math"><sub>&sigma;<sub>1</sub></sub>(B<sub>1</sub>) &circ; </span><span class="math-cal">I</span><span class="math"><sub>&sigma;<sub>2</sub></sub>(B<sub>2</sub>)</span>).
+          </div>`;
+      } else {
+        statusEl.innerHTML = `
+          <div class="flex flex-wrap items-center gap-2 mb-1">
+            <span class="px-2 py-0.5 rounded bg-purple-500/20 text-purple-500 font-bold">Strict Causal Order: K₁ is to the Future of K₂ (K₁ ∩ J⁻(K₂) = ∅)</span>
+            <span class="font-mono text-xs text-[var(--foreground)]">Θ̂ = Θ̂₂ ∘ Θ̂₁</span>
+          </div>
+          <div class="text-[var(--muted-foreground)]">
+            <strong>Theorem 3.5 (Reversed Order):</strong> Here Bob's coupling <span class="math">K<sub>2</sub></span> precedes Alice's coupling <span class="math">K<sub>1</sub></span>, so the causal composition order is
+            <span class="math-cal">I</span><span class="math"><sub>&sigma;<sub>1</sub></sub>(B<sub>1</sub>) &circ; </span><span class="math-cal">I</span><span class="math"><sub>&sigma;<sub>2</sub></sub>(B<sub>2</sub>) = </span><span class="math-cal">I</span><span class="math"><sub>&sigma;<sub>1</sub>&otimes;&sigma;<sub>2</sub></sub>(B<sub>1</sub>&otimes;B<sub>2</sub>)</span>.
+          </div>`;
+      }
+    }
+
+    function setupInstrumentEvents() {
+      const canvas = document.getElementById('instrument-canvas');
+      if (!canvas) return;
+      const getPos = (e) => {
+        const rect = canvas.getBoundingClientRect();
+        return {
+          x: (e.clientX - rect.left) * (canvas.width / rect.width),
+          y: (e.clientY - rect.top) * (canvas.height / rect.height)
+        };
+      };
+
+      canvas.addEventListener('pointerdown', (e) => {
+        const p = getPos(e);
+        if (Math.hypot(p.x - instState.k1x, p.y - instState.k1y) < instState.r * 1.2) {
+          instState.dragging = 'K1';
+        } else if (Math.hypot(p.x - instState.k2x, p.y - instState.k2y) < instState.r * 1.2) {
+          instState.dragging = 'K2';
+        }
+      });
+
+      window.addEventListener('pointermove', (e) => {
+        if (!instState.dragging) return;
+        const p = getPos(e);
+        if (instState.dragging === 'K1') {
+          instState.k1x = Math.max(60, Math.min(canvas.width - 60, p.x));
+          instState.k1y = Math.max(70, Math.min(canvas.height - 50, p.y));
+        } else if (instState.dragging === 'K2') {
+          instState.k2x = Math.max(60, Math.min(canvas.width - 60, p.x));
+          instState.k2y = Math.max(70, Math.min(canvas.height - 50, p.y));
+        }
+        drawInstrumentCanvas();
+      });
+
+      window.addEventListener('pointerup', () => {
+        instState.dragging = null;
+      });
+    }
+
+    // =========================================================================
+    // MODULE 5: SCALAR FIELD GREEN'S FUNCTION RAY-TRACER (SECTS. 4 & 5)
+    // =========================================================================
+    const scalarState = {
+      kx: 330,
+      ky: 280,
+      kr: 56,
+      hx: 410,
+      hy: 120,
+      hr: 40,
+      dragging: false
+    };
+
+    function setScalarPreset(preset) {
+      if (preset === 'hit') {
+        scalarState.hx = 405;
+        scalarState.hy = 120;
+      } else {
+        scalarState.hx = 585;
+        scalarState.hy = 235;
+      }
+      drawScalarCanvas();
+    }
+
+    function drawScalarCanvas() {
+      const canvas = document.getElementById('scalar-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const W = canvas.width;
+      const H = canvas.height;
+      const tc = getThemeColors();
+
+      ctx.clearRect(0, 0, W, H);
+      ctx.fillStyle = tc.bg;
+      ctx.fillRect(0, 0, W, H);
+
+      const { kx, ky, kr, hx, hy, hr } = scalarState;
+      const showEQ = document.getElementById('show-eQminus').checked;
+      const showF = document.getElementById('show-fminus').checked;
+      const showBack = document.getElementById('show-backreact').checked;
+
+      ctx.fillStyle = 'rgba(59, 130, 246, 0.07)';
+      ctx.beginPath();
+      ctx.moveTo(kx - kr, ky);
+      ctx.lineTo(kx + kr, ky);
+      ctx.lineTo(kx + kr + ky, 0);
+      ctx.lineTo(kx - kr - ky, 0);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.save();
+      ctx.setLineDash([5, 5]);
+      ctx.strokeStyle = '#3b82f6';
+      ctx.lineWidth = 1.8;
+      ctx.beginPath();
+      ctx.moveTo(kx - kr, ky);
+      ctx.lineTo(kx - kr - ky, 0);
+      ctx.moveTo(kx + kr, ky);
+      ctx.lineTo(kx + kr + ky, 0);
+      ctx.stroke();
+      ctx.restore();
+
+      ctx.fillStyle = '#3b82f6';
+      ctx.font = 'bold 12px sans-serif';
+      ctx.fillText('J⁺(K) ∩ M⁺ ("Waiting for Unruh" zone)', kx - 110, 25);
+
+      if (showEQ) {
+        ctx.fillStyle = 'rgba(16, 185, 129, 0.12)';
+        ctx.beginPath();
+        ctx.moveTo(hx - hr, hy);
+        ctx.lineTo(hx + hr, hy);
+        ctx.lineTo(hx + hr + (H - hy), H);
+        ctx.lineTo(hx - hr - (H - hy), H);
+        ctx.closePath();
+        ctx.fill();
+
+        ctx.save();
+        ctx.setLineDash([4, 4]);
+        ctx.strokeStyle = '#10b981';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(hx - hr, hy);
+        ctx.lineTo(hx - hr - (H - hy), H);
+        ctx.moveTo(hx + hr, hy);
+        ctx.lineTo(hx + hr + (H - hy), H);
+        ctx.stroke();
+        ctx.restore();
+
+        ctx.fillStyle = '#10b981';
+        ctx.font = 'bold 11px sans-serif';
+        ctx.fillText('supp(E⁻_Q h) ⊂ J⁻(supp h)', hx + hr + 12, hy + 55);
+      }
+
+      ctx.fillStyle = 'rgba(148, 163, 184, 0.25)';
+      ctx.strokeStyle = '#64748b';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.ellipse(kx, ky, kr, kr * 0.65, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = tc.text;
+      ctx.font = 'bold 12px sans-serif';
+      ctx.fillText('K = supp ρ', kx - 34, ky + kr * 0.65 + 16);
+
+      const dy = ky - hy;
+      let intersects = false;
+      let leftOverlap = 0, rightOverlap = 0;
+      if (dy > -hr * 0.5) {
+        const coneLeftAtK = hx - hr - Math.max(0, dy);
+        const coneRightAtK = hx + hr + Math.max(0, dy);
+        leftOverlap = Math.max(kx - kr, coneLeftAtK);
+        rightOverlap = Math.min(kx + kr, coneRightAtK);
+        if (rightOverlap > leftOverlap + 4) {
+          intersects = true;
+        }
+      }
+
+      if (intersects && showF) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.ellipse(kx, ky, kr, kr * 0.65, 0, 0, Math.PI * 2);
+        ctx.clip();
+
+        ctx.fillStyle = 'rgba(244, 63, 94, 0.82)';
+        ctx.beginPath();
+        ctx.moveTo(hx - hr, hy);
+        ctx.lineTo(hx + hr, hy);
+        ctx.lineTo(hx + hr + (H - hy), H);
+        ctx.lineTo(hx - hr - (H - hy), H);
+        ctx.closePath();
+        ctx.fill();
+        ctx.restore();
+
+        const midX = (leftOverlap + rightOverlap) / 2;
+        ctx.fillStyle = '#ffffff';
+        ctx.font = 'bold 12px sans-serif';
+        ctx.fillText('supp f⁻', midX - 24, ky + 4);
+
+        ctx.strokeStyle = '#f43f5e';
+        ctx.lineWidth = 2.2;
+        ctx.beginPath();
+        ctx.moveTo(hx, hy + hr * 0.55);
+        ctx.lineTo(midX, ky - 12);
+        ctx.stroke();
+
+        if (showBack) {
+          ctx.strokeStyle = '#a855f7';
+          ctx.lineWidth = 2.2;
+          ctx.beginPath();
+          ctx.arc(midX, ky + 8, 18, 0, Math.PI, false);
+          ctx.stroke();
+          ctx.fillStyle = '#a855f7';
+          ctx.font = 'bold 11px sans-serif';
+          ctx.fillText('O(λ²): h⁻ shift via E⁻_P', midX - 55, ky - kr * 0.65 - 8);
+        }
+      }
+
+      ctx.fillStyle = 'rgba(16, 185, 129, 0.85)';
+      ctx.strokeStyle = '#059669';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.ellipse(hx, hy, hr, hr * 0.58, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 12px sans-serif';
+      ctx.fillText('supp h (drag)', hx - 36, hy + 4);
+
+      const statusEl = document.getElementById('scalar-status');
+      if (intersects) {
+        const frac = Math.min(100, Math.round(((rightOverlap - leftOverlap) / (2 * kr)) * 100));
+        statusEl.innerHTML = `
+          <div class="flex flex-wrap items-center gap-2 mb-1">
+            <span class="px-2 py-0.5 rounded bg-rose-500/20 text-rose-500 font-bold">Active Measurement: J⁻(supp h) Intersects K (${frac}% of K illuminated!)</span>
+          </div>
+          <div class="text-[var(--muted-foreground)]">
+            The advanced propagator <span class="math">E<sup>&minus;</sup><sub>Q</sub>h</span> reaches back from <span class="math">supp h</span> into <span class="math">K</span>, producing a non-zero system test function <span class="math">f<sup>&minus;</sup> = &minus;&lambda;&rho;E<sup>&minus;</sup><sub>Q</sub>h + O(&lambda;<sup>3</sup>)</span> supported in <span class="math">K &cap; J<sup>&minus;</sup>(supp h)</span> (red region). Thus <span class="math">&varepsilon;<sub>&sigma;</sub>(&Psi;(h)) = &Phi;(f<sup>&minus;</sup>) + &sigma;(&Psi;(h<sup>&minus;</sup>))</span><span class="math-bb">1</span> measures the system field <span class="math">&Phi;(f<sup>&minus;</sup>)</span> localized in the causal hull of <span class="math">supp f<sup>&minus;</sup></span>!
+          </div>`;
+      } else {
+        statusEl.innerHTML = `
+          <div class="flex flex-wrap items-center gap-2 mb-1">
+            <span class="px-2 py-0.5 rounded bg-amber-500/20 text-amber-500 font-bold">Zero System Signal: supp h is Outside J⁺(K) &rArr; f⁻ = 0 identically!</span>
+          </div>
+          <div class="text-[var(--muted-foreground)]">
+            Because <span class="math">J<sup>&minus;</sup>(supp h) &cap; K = &empty;</span>, the advanced solution <span class="math">E<sup>&minus;</sup><sub>T</sub>(0 &oplus; h)</span> vanishes on <span class="math">supp &rho; &sub; K</span>! By Eq. (5.2), <span class="math">f<sup>&minus;</sup> = 0</span> and <span class="math">h<sup>&minus;</sup> = h</span>, so <span class="math">&varepsilon;<sub>&sigma;</sub>(&Psi;(h)) = &sigma;(&Psi;(h))</span><span class="math-bb">1</span>. You only measure pure probe background noise!
+          </div>`;
+      }
+    }
+
+    function setupScalarEvents() {
+      const canvas = document.getElementById('scalar-canvas');
+      if (!canvas) return;
+      const getPos = (e) => {
+        const rect = canvas.getBoundingClientRect();
+        return {
+          x: (e.clientX - rect.left) * (canvas.width / rect.width),
+          y: (e.clientY - rect.top) * (canvas.height / rect.height)
+        };
+      };
+
+      canvas.addEventListener('pointerdown', (e) => {
+        const p = getPos(e);
+        if (Math.hypot(p.x - scalarState.hx, p.y - scalarState.hy) < scalarState.hr * 1.3) {
+          scalarState.dragging = true;
+        }
+      });
+
+      window.addEventListener('pointermove', (e) => {
+        if (!scalarState.dragging) return;
+        const p = getPos(e);
+        scalarState.hx = Math.max(55, Math.min(canvas.width - 55, p.x));
+        scalarState.hy = Math.max(35, Math.min(scalarState.ky - 10, p.y));
+        drawScalarCanvas();
+      });
+
+      window.addEventListener('pointerup', () => {
+        scalarState.dragging = false;
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      setupGeometryEvents();
+      setupInstrumentEvents();
+      setupScalarEvents();
+      setScatteringStep(0);
+      drawGeometryCanvas();
+      updateVarianceSim();
+      drawInstrumentCanvas();
+      drawScalarCanvas();
+    });
+  </script>
+</body>
+</html>
