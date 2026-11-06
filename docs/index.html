@@ -2,44 +2,259 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Quantum Reference Frames Notes</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Quantum Reference Frames Reading Notes</title>
+<meta name="description" content="Interactive guides to two papers on measurement and quantum reference frames in quantum field theory, each available as a long-form reading guide and as a tabbed visual laboratory.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:opsz,wght@6..96,500&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&family=JetBrains+Mono:wght@400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..700;1,8..60,300..700&display=swap">
 <style>
-:root { --paper: #f3f5f8; --ink: #131b2a; --ink-2: #4a5568; --rule: #d5dbe5; --link: #2146c0; color-scheme: light; }
-@media (prefers-color-scheme: dark) { :root { --paper: #0d131e; --ink: #e3e8f1; --ink-2: #a5afc0; --rule: #263145; --link: #7da1ff; color-scheme: dark; } }
-body { margin: 0; background: var(--paper); color: var(--ink); font: 18px/1.6 "Source Serif 4", Georgia, serif; }
-main { max-width: 40rem; margin: 0 auto; padding: 4rem max(16px, env(safe-area-inset-left, 0px)) 4rem max(16px, env(safe-area-inset-right, 0px)); }
-h1 { font-family: "Bodoni Moda", Didot, Georgia, serif; font-weight: 500; font-size: 2.4rem; line-height: 1.1; margin: 0 0 1.5rem; }
-ul { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--rule); }
-li { padding: 1rem 0; border-bottom: 1px solid var(--rule); }
-a { color: var(--link); font-weight: 600; text-underline-offset: 3px; }
-p { margin: 0.3rem 0 0; color: var(--ink-2); font-size: 0.95rem; }
+:root {
+  /* Layout: a catalogue of two papers in reading order; each paper row offers the same two formats side by side, so the formats line up in columns. */
+  --paper: #f3f5f8;
+  --plate: #ffffff;
+  --ink: #131b2a;
+  --ink-2: #4a5568;
+  --ink-3: #848ea0;
+  --rule: #d5dbe5;
+  --guide: #2146c0;   /* reading guides */
+  --lab: #0b7a63;     /* visual laboratories */
+  --K: #a81d74;       /* section numbers, motifs */
+  --display: "Bodoni Moda", "Bodoni 72", Didot, "Times New Roman", serif;
+  --body: "Source Serif 4", "Source Serif Pro", Georgia, "Times New Roman", serif;
+  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  color-scheme: light;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0d131e; --plate: #131b29; --ink: #e3e8f1; --ink-2: #a5afc0; --ink-3: #6e798c; --rule: #263145;
+    --guide: #7da1ff; --lab: #3fc9a7; --K: #f067b5; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0d131e; --plate: #131b29; --ink: #e3e8f1; --ink-2: #a5afc0; --ink-3: #6e798c; --rule: #263145;
+  --guide: #7da1ff; --lab: #3fc9a7; --K: #f067b5; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--paper); color: var(--ink); font-family: var(--body); font-size: 18px; line-height: 1.6; -webkit-font-smoothing: antialiased; }
+.page {
+  max-width: 74rem; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: clamp(2.5rem, 7vw, 5rem) 4rem;
+}
+a { color: inherit; }
+a:focus-visible { outline: 2px solid var(--K); outline-offset: 3px; border-radius: 4px; }
+.eyebrow { font-family: var(--mono); font-size: 0.74rem; letter-spacing: 0.09em; text-transform: uppercase; color: var(--ink-3); }
+h1, h2, h3 { font-family: var(--display); font-weight: 500; text-wrap: balance; margin: 0; }
+h1 { font-size: clamp(2.3rem, 5.4vw, 4rem); line-height: 1.04; letter-spacing: -0.012em; font-weight: 600; margin: 0.4rem 0 1rem; max-width: 16ch; }
+h1 em { font-weight: 500; }
+.lede { font-size: 1.12rem; max-width: 40rem; margin: 0; }
+
+/* the two formats */
+.formats { margin-top: clamp(2.5rem, 5vw, 3.5rem); display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); border-top: 1px solid var(--ink); }
+.fmt { padding: 1.4rem 1.6rem 1.5rem 0; display: grid; grid-template-columns: 4.5rem minmax(0, 1fr); gap: 0 1.2rem; align-content: start; }
+.fmt + .fmt { padding: 1.4rem 0 1.5rem 1.6rem; border-left: 1px solid var(--rule); }
+.fmt svg { width: 4.5rem; height: auto; grid-column: 1; grid-row: 1 / span 4; }
+.fmt > :not(svg) { grid-column: 2; }
+@media (max-width: 420px) { .fmt { grid-template-columns: 3rem minmax(0, 1fr); gap: 0 0.9rem; } .fmt svg { width: 3rem; } }
+.fmt h2 { font-size: 1.55rem; line-height: 1.15; }
+.fmt.guide h2 { color: var(--guide); }
+.fmt.lab h2 { color: var(--lab); }
+.fmt .what { margin: 0.3rem 0 0.6rem; font-size: 0.98rem; }
+.fmt ul { margin: 0; padding: 0; list-style: none; font-size: 0.9rem; color: var(--ink-2); display: grid; gap: 0.3rem; }
+.fmt li { padding-left: 1rem; position: relative; }
+.fmt li::before { content: ""; position: absolute; left: 0; top: 0.65em; width: 0.4rem; height: 1px; background: currentColor; }
+.fmt .use { margin: 0.8rem 0 0; font-size: 0.9rem; }
+.fmt .use b { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-3); font-weight: 500; margin-right: 0.35rem; }
+@media (max-width: 760px) {
+  .formats { grid-template-columns: minmax(0, 1fr); }
+  .fmt, .fmt + .fmt { padding: 1.3rem 0; border-left: 0; }
+  .fmt + .fmt { border-top: 1px solid var(--rule); }
+}
+.ic-line { stroke: currentColor; stroke-width: 1.5; fill: none; stroke-linecap: round; }
+.ic-fill { fill: currentColor; opacity: 0.18; }
+.ic-solid { fill: currentColor; }
+.fmt.guide svg { color: var(--guide); }
+.fmt.lab svg { color: var(--lab); }
+
+/* papers */
+.papers { margin-top: clamp(2.5rem, 5vw, 3.5rem); display: grid; gap: 0; }
+.papers > .eyebrow { margin-bottom: 0.8rem; }
+.paper { display: grid; grid-template-columns: 7.5rem minmax(0, 1fr); gap: clamp(1rem, 3vw, 2.2rem); padding: 1.8rem 0 2rem; border-top: 1px solid var(--ink); }
+.side { display: grid; gap: 0.6rem; justify-items: start; align-content: start; }
+.num { font-family: var(--mono); font-size: 0.8rem; color: var(--K); letter-spacing: 0.08em; }
+.motif { width: 7.5rem; height: auto; color: var(--K); }
+.motif .m-line { stroke: currentColor; stroke-width: 1.4; fill: none; }
+.motif .m-dash { stroke: var(--ink-3); stroke-width: 1; fill: none; stroke-dasharray: 3 3; }
+.motif .m-fill { fill: currentColor; opacity: 0.16; }
+.motif .m-solid { fill: currentColor; opacity: 0.75; }
+.motif .m-obs { stroke: var(--lab); stroke-width: 3; }
+.cite { font-size: 0.9rem; color: var(--ink-2); margin: 0; }
+.cite a { color: var(--ink-2); text-underline-offset: 2px; }
+.paper h3 { font-size: clamp(1.45rem, 2.6vw, 1.9rem); line-height: 1.15; margin: 0.25rem 0 0.6rem; }
+.gist { margin: 0 0 1.2rem; max-width: 46rem; }
+.builds { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.06em; text-transform: uppercase; color: var(--K); }
+.cards { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; }
+@media (max-width: 760px) { .cards { grid-template-columns: minmax(0, 1fr); } .paper { grid-template-columns: minmax(0, 1fr); } .motif { width: 5.5rem; } .side { grid-template-columns: auto auto; align-items: center; gap: 1rem; } }
+.card {
+  position: relative; display: grid; gap: 0.5rem; align-content: start;
+  background: var(--plate); border: 1px solid var(--rule); border-radius: 6px; padding: 1.1rem 1.2rem 1.15rem;
+  transition: border-color 0.15s;
+}
+.card:hover, .card:focus-within { border-color: var(--ink-3); }
+.card.guide { border-top: 3px solid var(--guide); }
+.card.lab { border-top: 3px solid var(--lab); }
+.kind { font-family: var(--mono); font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; }
+.card.guide .kind { color: var(--guide); }
+.card.lab .kind { color: var(--lab); }
+.card h4 { margin: 0; font-family: var(--body); font-size: 1.12rem; line-height: 1.3; font-weight: 600; }
+.card h4 a { text-decoration: none; }
+.card h4 a::after { content: ""; position: absolute; inset: 0; border-radius: 6px; }
+.card h4 .arrow { display: inline-block; transition: transform 0.15s; }
+.card:hover h4 .arrow { transform: translateX(3px); }
+.card p { margin: 0; font-size: 0.92rem; color: var(--ink-2); line-height: 1.5; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 0.2rem; }
+.chip { font-family: var(--mono); font-size: 0.68rem; color: var(--ink-2); border: 1px solid var(--rule); border-radius: 3px; padding: 1px 6px; white-space: nowrap; }
+
+footer { margin-top: 1rem; padding-top: 1.2rem; border-top: 1px solid var(--rule); font-size: 0.86rem; color: var(--ink-2); max-width: 46rem; }
+footer a { color: var(--ink-2); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
 </head>
 <body>
-<main>
-  <h1>Quantum reference frames: reading notes</h1>
-  <ul>
-    <li>
-      <a href="fewster-verch-2020.html">Fewster–Verch measurement scheme (Reading Guide)</a>
-      <p>Interactive reading guide to C. J. Fewster and R. Verch, <i>Quantum Fields and Local Measurements</i>, Commun. Math. Phys. 378, 851–889 (2020).</p>
-    </li>
-    <li>
-      <a href="fewster-verch-2020-visual-guide.html">Fewster–Verch measurement scheme (Interactive Visual Laboratory)</a>
-      <p>Interactive visual deconstruction of C. J. Fewster and R. Verch, <i>Quantum Fields and Local Measurements</i> (2020), featuring a searchable symbol Rosetta Stone, spacetime causal hull explorer, step-by-step scattering morphism builder, variance convolution simulator, and Green's function ray-tracer.</p>
-    </li>
-    <li>
-      <a href="fewster-et-al-2024.html">Quantum clocks and type reduction (Reading Guide)</a>
-      <p>Interactive reading guide to C. J. Fewster, D. W. Janssen, L. D. Loveridge, K. Rejzner and J. Waldron, <i>Quantum Reference Frames, Measurement Schemes and the Type of Local Algebras in Quantum Field Theory</i>, Commun. Math. Phys. 406:19 (2025).</p>
-    </li>
-    <li>
-      <a href="fewster-et-al-2024-visual-guide.html">Quantum clocks and type reduction (Interactive Visual Laboratory)</a>
-      <p>Interactive visual deconstruction of C. J. Fewster, D. W. Janssen, L. D. Loveridge, K. Rejzner and J. Waldron, <i>Quantum Reference Frames, Measurement Schemes and the Type of Local Algebras in Quantum Field Theory</i> (2025), featuring a searchable symbol Rosetta Stone, spacetime symmetry orbit explorer, Cattaneo–Mackey Naimark dilation visualizer, crossed-product and relativisation step-by-step builder, spectral multiplicity and Type III<sub>1</sub> &rarr; II<sub>&infin;</sub> &rarr; II<sub>1</sub> reduction simulator, and de Sitter static patch explorer.</p>
-    </li>
-  </ul>
-</main>
+<div class="page">
+
+<header>
+  <div class="eyebrow">Reading notes · quantum_reference_frames</div>
+  <h1>Measurement and reference frames in <em>quantum field theory</em></h1>
+  <p class="lede">Interactive companions to two papers. The first explains how a local measurement of a quantum field works. The second builds on it: measured relative to a quantum reference frame, the algebra of local observables changes type. Each paper has two guides that cover the same material in different ways.</p>
+</header>
+
+<section class="formats" aria-label="The two kinds of guide">
+  <div class="fmt guide">
+    <svg viewBox="0 0 72 72" aria-hidden="true">
+      <rect class="ic-line" x="12" y="6" width="48" height="60" rx="3"/>
+      <line class="ic-line" x1="20" y1="16" x2="44" y2="16" style="stroke-width:3"/>
+      <line class="ic-line" x1="20" y1="24" x2="52" y2="24"/>
+      <line class="ic-line" x1="20" y1="30" x2="50" y2="30"/>
+      <rect class="ic-fill" x="20" y="36" width="32" height="14" rx="1"/>
+      <path class="ic-line" d="M22 48 L30 40 L38 46 L50 38"/>
+      <line class="ic-line" x1="20" y1="56" x2="52" y2="56"/>
+      <line class="ic-line" x1="20" y1="61" x2="42" y2="61"/>
+    </svg>
+    <h2>Reading guide</h2>
+    <p class="what">One long page that walks through the paper in its own order, explaining each step in prose.</p>
+    <ul>
+      <li>Fourteen sections that follow the paper, with its theorem and equation numbers</li>
+      <li>Key theorems stated in full, each followed by a plain-language gloss</li>
+      <li>Seven or eight interactive figures, placed where each idea first appears</li>
+      <li>Hover any symbol for its definition; follows your light or dark setting</li>
+    </ul>
+    <p class="use"><b>Open when</b>you are working through the paper for the first time, or want the argument in order with the PDF beside you.</p>
+  </div>
+  <div class="fmt lab">
+    <svg viewBox="0 0 72 72" aria-hidden="true">
+      <rect class="ic-line" x="6" y="10" width="60" height="52" rx="3"/>
+      <rect class="ic-solid" x="10" y="14" width="14" height="6" rx="1"/>
+      <rect class="ic-fill" x="26" y="14" width="12" height="6" rx="1"/>
+      <rect class="ic-fill" x="40" y="14" width="12" height="6" rx="1"/>
+      <rect class="ic-fill" x="54" y="14" width="8" height="6" rx="1"/>
+      <rect class="ic-line" x="10" y="25" width="24" height="16" rx="1.5"/>
+      <rect class="ic-line" x="38" y="25" width="24" height="16" rx="1.5"/>
+      <rect class="ic-line" x="10" y="44" width="52" height="14" rx="1.5"/>
+      <circle class="ic-solid" cx="22" cy="33" r="3"/>
+      <path class="ic-line" d="M41 38 Q48 26 59 36"/>
+    </svg>
+    <h2>Visual laboratory</h2>
+    <p class="what">A tabbed dashboard: an overview of the whole paper, then one hands-on lab per part, to visit in any order.</p>
+    <ul>
+      <li>Overview tab with the paper's logical chain at a glance</li>
+      <li>A searchable symbol table, the "Rosetta Stone", mapping notation to meaning</li>
+      <li>Five labs, including step-by-step builders for the key derivations</li>
+      <li>Shorter text per topic; dark interface with a light-mode toggle</li>
+    </ul>
+    <p class="use"><b>Open when</b>you want the big picture on one screen, need to look up a symbol, or want to experiment with one construction on its own.</p>
+  </div>
+</section>
+
+<section class="papers" aria-label="Papers">
+  <div class="eyebrow">The papers, in reading order</div>
+
+  <article class="paper" aria-labelledby="p1-title">
+    <div class="side">
+      <span class="num">Paper 01 · 2020</span>
+      <svg class="motif" viewBox="0 0 120 90" aria-hidden="true">
+        <path class="m-fill" d="M60 38 L98 0 L22 0 Z"/>
+        <path class="m-dash" d="M60 54 L24 90 M60 54 L96 90"/>
+        <ellipse class="m-solid" cx="60" cy="46" rx="11" ry="9"/>
+        <path class="m-line" d="M4 76 Q60 66 116 76"/>
+        <path class="m-line" d="M4 16 Q60 8 116 16" style="opacity:0.5"/>
+        <circle cx="46" cy="18" r="4" fill="var(--lab)"/>
+      </svg>
+    </div>
+    <div>
+      <p class="cite">C. J. Fewster and R. Verch · Commun. Math. Phys. 378, 851–889 (2020) · <a href="https://doi.org/10.1007/s00220-020-03800-6">doi:10.1007/s00220-020-03800-6</a></p>
+      <h3 id="p1-title">Quantum Fields and Local Measurements</h3>
+      <p class="gist">How to measure a quantum field: couple it to a second field, the probe, inside a bounded region, and read the probe later. The paper derives the system observable this measures, where it is localised, how the state updates without any collapse surface, and why successive measurements fit together consistently.</p>
+      <div class="cards">
+        <div class="card guide">
+          <span class="kind">Reading guide</span>
+          <h4><a href="fewster-verch-2020.html">Measuring a quantum field with a quantum field <span class="arrow" aria-hidden="true">→</span></a></h4>
+          <p>Follows §1–§6 with eight figures: a causal-geometry explorer, a walk through the scattering morphism, a live lattice solver for the paper's two-field model, readout noise, post-selection in the causal complement, and the ordering of successive measurements.</p>
+          <div class="chips"><span class="chip">long-form</span><span class="chip">8 figures</span><span class="chip">light &amp; dark</span></div>
+        </div>
+        <div class="card lab">
+          <span class="kind">Visual laboratory</span>
+          <h4><a href="fewster-verch-2020-visual-guide.html">Quantum Fields &amp; Local Measurements, visual guide <span class="arrow" aria-hidden="true">→</span></a></h4>
+          <p>Overview with a symbol table comparing standard quantum mechanics with the Fewster–Verch framework, then labs on spacetime geometry and M<sup>±</sup>, the zoo of morphisms behind Θ, induced observables and sharpness, collapse versus instruments, and a Green's-function ray tracer for the scalar model.</p>
+          <div class="chips"><span class="chip">6 tabs</span><span class="chip">symbol search</span><span class="chip">dark, light toggle</span></div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article class="paper" aria-labelledby="p2-title">
+    <div class="side">
+      <span class="num">Paper 02 · 2025</span>
+      <svg class="motif" viewBox="0 0 120 90" aria-hidden="true">
+        <rect class="m-dash" x="16" y="5" width="80" height="80" style="stroke-dasharray:none"/>
+        <path class="m-fill" d="M16 5 L56 45 L16 85 Z"/>
+        <path class="m-dash" d="M16 5 L96 85 M16 85 L96 5"/>
+        <path class="m-line" d="M16 5 Q42 45 16 85" style="opacity:0.6"/>
+        <path class="m-line" d="M16 5 Q32 45 16 85" style="opacity:0.6"/>
+        <line class="m-obs" x1="16" y1="5" x2="16" y2="85"/>
+        <ellipse class="m-solid" cx="30" cy="45" rx="5" ry="9"/>
+      </svg>
+    </div>
+    <div>
+      <p class="cite">C. J. Fewster, D. W. Janssen, L. D. Loveridge, K. Rejzner and J. Waldron · Commun. Math. Phys. 406:19 (2025) · <a href="https://doi.org/10.1007/s00220-024-05180-7">doi:10.1007/s00220-024-05180-7</a></p>
+      <h3 id="p2-title">Quantum Reference Frames, Measurement Schemes and the Type of Local Algebras in QFT</h3>
+      <p class="gist"><span class="builds">Builds on paper 01.</span> On a background with symmetries you need a reference frame to say which experiment you did. Making that frame quantum and keeping only invariant observables yields a crossed product, and for a thermal frame the type III<sub>1</sub> local algebra becomes type II<sub>1</sub>. This gives an operational account of the de Sitter result of Chandrasekaran, Longo, Penington and Witten.</p>
+      <div class="cards">
+        <div class="card guide">
+          <span class="kind">Reading guide</span>
+          <h4><a href="fewster-et-al-2024.html">What a quantum clock does to a type III algebra <span class="arrow" aria-hidden="true">→</span></a></h4>
+          <p>Follows §1–§7 with a type ladder, a de Sitter Penrose diagram showing an experiment and its symmetric copies, a positive-energy clock, relative position on a line, an explorer for the condition ∫e<sup>−βξ</sup>m(ξ)dξ &lt; ∞, and a six-step map of the main proof.</p>
+          <div class="chips"><span class="chip">long-form</span><span class="chip">7 figures</span><span class="chip">light &amp; dark</span></div>
+        </div>
+        <div class="card lab">
+          <span class="kind">Visual laboratory</span>
+          <h4><a href="fewster-et-al-2024-visual-guide.html">QRFs, Measurement Schemes &amp; Type of Local Algebras, visual guide <span class="arrow" aria-hidden="true">→</span></a></h4>
+          <p>Overview with the paper's five-stage chain and a symbol table, then labs on symmetry orbits and frame resolution, Pauli's theorem and Naimark dilation, a step-by-step derivation of the crossed product, spectral multiplicity and type reduction, and the de Sitter static patch.</p>
+          <div class="chips"><span class="chip">6 tabs</span><span class="chip">symbol search</span><span class="chip">dark, light toggle</span></div>
+        </div>
+      </div>
+    </div>
+  </article>
+</section>
+
+<footer>
+  Both papers are open access under CC BY 4.0; the guides refer to their section, equation and theorem numbers throughout. Source for these pages: <a href="https://github.com/gustavdelius/quantum_reference_frames">github.com/gustavdelius/quantum_reference_frames</a>.
+</footer>
+
+</div>
 </body>
 </html>
