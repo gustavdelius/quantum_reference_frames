@@ -1,0 +1,1758 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QRFs, Measurement Schemes &amp; Type of Local Algebras — Visual Guide to Fewster et al. (2024/2025)</title>
+  <script src="https://www.gstatic.com/antigravity/web/dev/tailwindcss.min.js"></script>
+  <style>
+    :root {
+      --background: #0b0f19;
+      --card: #111827;
+      --foreground: #f8fafc;
+      --muted-foreground: #94a3b8;
+      --border: #1e293b;
+      --primary: #3b82f6;
+      --primary-foreground: #ffffff;
+    }
+    html.light {
+      --background: #f8fafc;
+      --card: #ffffff;
+      --foreground: #0f172a;
+      --muted-foreground: #475569;
+      --border: #e2e8f0;
+      --primary: #2563eb;
+      --primary-foreground: #ffffff;
+    }
+    .math {
+      font-family: 'STIX Two Math', 'Cambria Math', 'Latin Modern Math', 'Times New Roman', Georgia, serif;
+      font-style: italic;
+    }
+    .math-rm {
+      font-family: 'STIX Two Math', 'Cambria Math', 'Latin Modern Math', 'Times New Roman', Georgia, serif;
+      font-style: normal;
+    }
+    .math-cal {
+      font-family: 'STIX Two Math', 'Cambria Math', 'Apple Chancery', 'URW Chancery L', cursive, serif;
+      font-style: italic;
+      font-weight: 600;
+    }
+    .math-frak {
+      font-family: 'STIX Two Math', 'Cambria Math', Georgia, serif;
+      font-weight: 700;
+    }
+    .math-bb {
+      font-family: 'STIX Two Math', 'Cambria Math', Georgia, serif;
+      font-weight: 700;
+      font-style: normal;
+    }
+    .eq-box {
+      font-family: 'STIX Two Math', 'Cambria Math', 'Times New Roman', Georgia, serif;
+    }
+    .frac {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      vertical-align: middle;
+      margin: 0 0.2em;
+      line-height: 1.1;
+    }
+    .frac-num {
+      border-bottom: 1px solid currentColor;
+      padding: 0 0.25em 0.1em;
+    }
+    .frac-den {
+      padding: 0.1em 0.25em 0;
+    }
+    canvas {
+      touch-action: none;
+      user-select: none;
+    }
+    .tab-btn.active {
+      background-color: var(--primary);
+      color: var(--primary-foreground);
+      border-color: var(--primary);
+    }
+    .step-card.active {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 1px var(--primary);
+    }
+  </style>
+</head>
+<body class="bg-[var(--background)] text-[var(--foreground)] antialiased p-4 md:p-6">
+
+  <!-- Top Header Banner -->
+  <header class="max-w-7xl mx-auto mb-6 bg-[var(--card)] border border-[var(--border)] rounded-2xl p-6 shadow-sm">
+    <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+      <div>
+        <div class="flex flex-wrap items-center gap-2 mb-2">
+          <a href="index.html" class="px-2.5 py-0.5 rounded-full text-xs font-medium border border-[var(--border)] hover:bg-[var(--background)] transition">
+            &larr; Reading Notes Index
+          </a>
+          <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-[var(--primary)] text-[var(--primary-foreground)]">
+            Commun. Math. Phys. 406:19 (2025)
+          </span>
+          <span class="px-2.5 py-0.5 rounded-full text-xs font-medium border border-[var(--border)] text-[var(--muted-foreground)]">
+            Fewster, Janssen, Loveridge, Rejzner &amp; Waldron
+          </span>
+          <span class="px-2.5 py-0.5 rounded-full text-xs font-medium border border-[var(--border)] text-[var(--muted-foreground)]">
+            Interactive Mathematical Physics Guide
+          </span>
+          <button onclick="toggleTheme()" class="ml-auto lg:ml-2 px-2.5 py-0.5 rounded-full text-xs font-medium border border-[var(--border)] hover:bg-[var(--background)] transition">
+            Toggle Light/Dark Theme
+          </button>
+        </div>
+        <h1 class="text-2xl md:text-3xl font-bold tracking-tight text-[var(--foreground)]">
+          Quantum Reference Frames, Measurement Schemes &amp; the Type of Local Algebras in QFT
+        </h1>
+        <p class="text-sm text-[var(--muted-foreground)] mt-1 max-w-3xl">
+          An interactive visual deconstruction: how measuring a QFT relative to a Quantum Reference Frame (QRF) on a symmetric spacetime produces crossed-product algebras and reduces local von Neumann algebras from Type <span class="math-rm">III<sub>1</sub></span> to Type <span class="math-rm">II<sub>&infin;</sub></span> or Type <span class="math-rm">II<sub>1</sub></span>.
+        </p>
+      </div>
+
+      <!-- Quick Mental Map Pill Box -->
+      <div class="flex flex-col gap-1.5 bg-[var(--background)] border border-[var(--border)] rounded-xl p-3.5 text-xs shrink-0">
+        <div class="font-semibold text-[var(--foreground)]">Why people get lost in this 81-page paper:</div>
+        <div class="text-[var(--muted-foreground)]">1. <span class="text-[var(--foreground)] font-medium">How <span class="math">G</span> shifts schemes</span> <span class="math">m &mapsto; g.m</span> &amp; why <span class="math">G<sub>s</sub> &sub; G<sub>K</sub></span> forces compact <span class="math">H</span> (&sect;2.3, &sect;4.1)</div>
+        <div class="text-[var(--muted-foreground)]">2. <span class="text-[var(--foreground)] font-medium">Cattaneo–Mackey dilation</span> <span class="math">&mathcal{H}<sub>R</sub> = p(&mathcal{K} &otimes; L<sup>2</sup>(G))</span> (&sect;3, &sect;4.2)</div>
+        <div class="text-[var(--muted-foreground)]">3. <span class="text-[var(--foreground)] font-medium">Relativisation <span class="math-rm">&yen;</span> vs. <span class="math-cal">Z</span></span> &amp; crossed products <span class="math">&mathcal{M}<sub>S</sub> &rtimes;<sub>&alpha;</sub> G</span> (&sect;4.3–4.4)</div>
+        <div class="text-[var(--muted-foreground)]">4. <span class="text-[var(--foreground)] font-medium">Spectral multiplicity <span class="math">m<sub>U<sub>R</sub></sub>(&xi;)</span></span>, KMS weights &amp; Type <span class="math-rm">II<sub>1</sub></span> (&sect;4.5, &sect;5–6)</div>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <nav class="mt-6 pt-4 border-t border-[var(--border)] flex flex-wrap gap-2" id="main-nav">
+      <button onclick="switchTab('overview')" id="tab-overview" class="tab-btn active px-3.5 py-2 rounded-lg text-xs font-semibold border border-[var(--border)] transition">
+        0. Big Picture &amp; Rosetta Stone
+      </button>
+      <button onclick="switchTab('orbits')" id="tab-orbits" class="tab-btn px-3.5 py-2 rounded-lg text-xs font-semibold border border-[var(--border)] transition">
+        1. Symmetries &amp; Orbits <span class="math">[m]</span> (&sect;2.3, &sect;4.1)
+      </button>
+      <button onclick="switchTab('qrf')" id="tab-qrf" class="tab-btn px-3.5 py-2 rounded-lg text-xs font-semibold border border-[var(--border)] transition">
+        2. QRFs &amp; Naimark Dilation (&sect;3, &sect;4.2)
+      </button>
+      <button onclick="switchTab('crossed')" id="tab-crossed" class="tab-btn px-3.5 py-2 rounded-lg text-xs font-semibold border border-[var(--border)] transition">
+        3. Crossed Products &amp; <span class="math-rm">&yen;</span> vs. <span class="math-cal">Z</span> (&sect;4.3–4.4)
+      </button>
+      <button onclick="switchTab('typered')" id="tab-typered" class="tab-btn px-3.5 py-2 rounded-lg text-xs font-semibold border border-[var(--border)] transition">
+        4. Spectral Multiplicity &amp; Type <span class="math-rm">II<sub>1</sub></span> Lab (&sect;4.5, &sect;5)
+      </button>
+      <button onclick="switchTab('desitter')" id="tab-desitter" class="tab-btn px-3.5 py-2 rounded-lg text-xs font-semibold border border-[var(--border)] transition">
+        5. de Sitter Static Patch &amp; Factor Types (&sect;6, Appx D)
+      </button>
+    </nav>
+  </header>
+
+  <main class="max-w-7xl mx-auto">
+
+    <!-- =====================================================================
+         TAB 0: OVERVIEW, ARCHITECTURE & ROSETTA STONE
+         ===================================================================== -->
+    <section id="panel-overview" class="tab-panel space-y-6">
+      <!-- 3-Column Motivation Cards -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-5">
+        <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm">
+          <div class="text-xs font-bold uppercase tracking-wider text-rose-500 mb-1">The Type III<sub>1</sub> Problem in AQFT</div>
+          <h3 class="font-semibold text-base mb-2">No Trace, Divergent Entropies</h3>
+          <p class="text-xs text-[var(--muted-foreground)] leading-relaxed">
+            In standard AQFT, the local von Neumann algebra <span class="math-frak">A</span><span class="math">(M; N) = &pi;(</span><span class="math-cal">A</span><span class="math">(M; N))''</span> of any bounded region <span class="math">N</span> is a hyperfinite <strong>Type <span class="math-rm">III<sub>1</sub></span> factor</strong>. In a Type <span class="math-rm">III</span> factor, every nonzero projection is infinite (<span class="math">&tau;(p) = &infin;</span>): there is <em>no</em> faithful normal semifinite trace, so local von Neumann entropies diverge.
+          </p>
+        </div>
+
+        <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm">
+          <div class="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">The CLPW (2023) Proposal</div>
+          <h3 class="font-semibold text-base mb-2">"Gravitational Dressing" &amp; Type II<sub>1</sub></h3>
+          <p class="text-xs text-[var(--muted-foreground)] leading-relaxed">
+            Chandrasekaran, Longo, Penington &amp; Witten [6] argued that in the static patch of de Sitter spacetime, adjoining an "observer" with Hamiltonian <span class="math">H<sub>obs</sub> = q<sub>+</sub> &ge; 0</span> on <span class="math">L<sup>2</sup>(</span><span class="math-bb">R</span><span class="math"><sub>+</sub>)</span> and imposing boost invariance yields a crossed product that reduces the algebra from <strong>Type <span class="math-rm">III<sub>1</sub></span> to Type <span class="math-rm">II<sub>1</sub></span></strong> (which has a finite trace <span class="math">&tau;(1)=1</span>!).
+          </p>
+        </div>
+
+        <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm">
+          <div class="text-xs font-bold uppercase tracking-wider text-emerald-500 mb-1">Fewster et al.'s Operational Resolution</div>
+          <h3 class="font-semibold text-base mb-2">It's About QRFs, Not Quantum Gravity!</h3>
+          <p class="text-xs text-[var(--muted-foreground)] leading-relaxed">
+            On <em>any</em> background spacetime <span class="math">M</span> with isometries <span class="math">G</span>, a local measurement scheme <span class="math">m</span> in compact <span class="math">K &sub; M</span> breaks <span class="math">G</span>-invariance. Distinguishing <span class="math">m</span> from <span class="math">g.m</span> operationally requires a <strong>Quantum Reference Frame (QRF)</strong>. The <span class="math">G</span>-invariant joint observables form a compressed crossed product whose type reduces to <span class="math-rm">II<sub>&infin;</sub></span> or <span class="math-rm">II<sub>1</sub></span>!
+          </p>
+        </div>
+      </div>
+
+      <!-- 5-Stage Logical Chain -->
+      <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-6 shadow-sm">
+        <h2 class="text-lg font-semibold mb-1">The 5-Stage Mathematical Chain of the Paper</h2>
+        <p class="text-xs text-[var(--muted-foreground)] mb-5">
+          Click any stage below to open its interactive simulator and see how the theorems lock together.
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
+          <div onclick="switchTab('orbits')" class="cursor-pointer bg-[var(--background)] hover:border-blue-500 border border-[var(--border)] rounded-xl p-4 transition">
+            <div class="text-xs font-bold text-blue-500 mb-1">Stage 1 (&sect;2.3 &amp; &sect;4.1)</div>
+            <div class="font-semibold text-sm mb-1.5">Scheme Orbits <span class="math">[m]</span></div>
+            <p class="text-xs text-[var(--muted-foreground)] mb-2">
+              Isometry <span class="math">g &isin; G</span> shifts coupling <span class="math">K &mapsto; g.K</span> and scheme <span class="math">m &mapsto; g.m</span> equivariantly (Thm 2.1):
+            </p>
+            <div class="eq-box text-xs bg-[var(--card)] border border-[var(--border)] rounded p-2 text-center">
+              <span class="math">A<sub>g.m</sub> = &alpha;(g)A<sub>m</sub></span>
+            </div>
+          </div>
+
+          <div onclick="switchTab('qrf')" class="cursor-pointer bg-[var(--background)] hover:border-purple-500 border border-[var(--border)] rounded-xl p-4 transition">
+            <div class="text-xs font-bold text-purple-500 mb-1">Stage 2 (&sect;3 &amp; &sect;4.2)</div>
+            <div class="font-semibold text-sm mb-1.5">Compactly Stabilised QRF</div>
+            <p class="text-xs text-[var(--muted-foreground)] mb-2">
+              Resolving compact <span class="math">K</span> forces compact stabilizer <span class="math">H &sub; G</span> (Prop 4.3). Cattaneo–Mackey dilation (Thm 4.4):
+            </p>
+            <div class="eq-box text-xs bg-[var(--card)] border border-[var(--border)] rounded p-2 text-center">
+              <span class="math">&mathcal{H}<sub>R</sub> &simeq; p(&mathcal{K} &otimes; L<sup>2</sup>(G))</span>
+            </div>
+          </div>
+
+          <div onclick="switchTab('crossed')" class="cursor-pointer bg-[var(--background)] hover:border-emerald-500 border border-[var(--border)] rounded-xl p-4 transition">
+            <div class="text-xs font-bold text-emerald-500 mb-1">Stage 3 (&sect;4.3–4.4)</div>
+            <div class="font-semibold text-sm mb-1.5">Crossed Product &amp; <span class="math-rm">&yen;</span></div>
+            <p class="text-xs text-[var(--muted-foreground)] mb-2">
+              Joint <span class="math">G</span>-invariants are compressed crossed products (Thm 4.9), housing relativised <span class="math">A<sub>[m]</sub></span>:
+            </p>
+            <div class="eq-box text-xs bg-[var(--card)] border border-[var(--border)] rounded p-2 text-center">
+              <span class="math">(1&otimes;p)((&mathcal{M}<sub>S</sub>&rtimes;G)&otimes;B(&mathcal{K}))(1&otimes;p)</span>
+            </div>
+          </div>
+
+          <div onclick="switchTab('typered')" class="cursor-pointer bg-[var(--background)] hover:border-amber-500 border border-[var(--border)] rounded-xl p-4 transition">
+            <div class="text-xs font-bold text-amber-500 mb-1">Stage 4 (&sect;4.5 &amp; &sect;5.1)</div>
+            <div class="font-semibold text-sm mb-1.5">Type Reduction (Thm 5.5)</div>
+            <p class="text-xs text-[var(--muted-foreground)] mb-2">
+              For <span class="math">G = </span><span class="math-bb">R</span><span class="math">&times;H</span> and KMS state <span class="math">&omega;</span> at <span class="math">&beta;</span>, invariant algebra is semifinite, and finite if:
+            </p>
+            <div class="eq-box text-xs bg-[var(--card)] border border-[var(--border)] rounded p-2 text-center">
+              <span class="math">&int;<sub>&mathbb{R}</sub> e<sup>&minus;&beta;&xi;</sup> m<sub>U<sub>R</sub></sub>(&xi;) d&xi; &lt; &infin;</span>
+            </div>
+          </div>
+
+          <div onclick="switchTab('desitter')" class="cursor-pointer bg-[var(--background)] hover:border-rose-500 border border-[var(--border)] rounded-xl p-4 transition">
+            <div class="text-xs font-bold text-rose-500 mb-1">Stage 5 (&sect;5.2 &amp; &sect;6)</div>
+            <div class="font-semibold text-sm mb-1.5">KMS Weight &amp; de Sitter</div>
+            <p class="text-xs text-[var(--muted-foreground)] mb-2">
+              Finiteness of trace &hArr; QRF KMS weight <span class="math">&phi;<sub>&beta;</sub></span> is finite on <span class="math">&mathcal{D}<sub>1</sub></span> (Thm 5.11). Applies to de Sitter static patch!
+            </p>
+            <div class="eq-box text-xs bg-[var(--card)] border border-[var(--border)] rounded p-2 text-center">
+              <span class="math">&phi;<sub>&beta;</sub>(x) = &tau;(1<sub>&mathcal{M}<sub>S</sub></sub> &otimes; I(x)) &lt; &infin;</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Searchable Rosetta Stone Table -->
+      <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-6 shadow-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+          <div>
+            <h2 class="text-lg font-semibold">The Rosetta Stone: Symbols, Spaces &amp; Maps in Fewster et al. (2025)</h2>
+            <p class="text-xs text-[var(--muted-foreground)]">
+              Search any symbol or concept to decode its exact definition, where it appears, and why it is needed.
+            </p>
+          </div>
+          <input
+            type="text"
+            id="rosetta-search"
+            oninput="filterRosetta()"
+            placeholder="Search (e.g. m_UR, ¥, Z, crossed, KMS, p, H_R)..."
+            class="px-3 py-1.5 rounded-lg text-xs bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)] w-full sm:w-80"
+          />
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full text-left border-collapse text-xs" id="rosetta-table">
+            <thead>
+              <tr class="border-b border-[var(--border)] text-[var(--muted-foreground)]">
+                <th class="py-2.5 px-3 font-semibold">Symbol &amp; Ref</th>
+                <th class="py-2.5 px-3 font-semibold">Name</th>
+                <th class="py-2.5 px-3 font-semibold">Mathematical Definition / Type</th>
+                <th class="py-2.5 px-3 font-semibold">Physical Meaning &amp; Key Role</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-[var(--border)]">
+              <tr>
+                <td class="py-2.5 px-3 font-medium"><span class="math-frak">A</span><span class="math">(M; N), &mathcal{M}<sub>S</sub></span><br><span class="text-[var(--muted-foreground)]">&sect;2.1 (Eq. 2.2)</span></td>
+                <td class="py-2.5 px-3 font-medium">System Local von Neumann Algebra</td>
+                <td class="py-2.5 px-3"><span class="math">&pi;(</span><span class="math-cal">A</span><span class="math">(M; N))'' &sub; B(&mathcal{H}<sub>S</sub>)</span></td>
+                <td class="py-2.5 px-3 text-[var(--muted-foreground)]">Double commutant of the AQFT in the GNS Hilbert space <span class="math">&mathcal{H}<sub>S</sub></span> of state <span class="math">&omega;</span>. Generically a Type <span class="math-rm">III<sub>1</sub></span> factor.</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-medium"><span class="math">m &mapsto; g.m</span><br><span class="text-[var(--muted-foreground)]">Thm 2.1, Eq. (4.2)</span></td>
+                <td class="py-2.5 px-3 font-medium">Isometry-Shifted Measurement Scheme</td>
+                <td class="py-2.5 px-3"><span class="math">g.m = (</span><span class="math-cal">B</span><span class="math">, <sup>g</sup></span><span class="math-cal">C</span><span class="math">, g.K, <sup>g</sup>&chi;, <sup>g</sup>&sigma;, &beta;(g)B)</span></td>
+                <td class="py-2.5 px-3 text-[var(--muted-foreground)]">Translates coupling zone <span class="math">K &mapsto; g.K</span> while keeping uncoupled <span class="math-cal">U</span><span class="math"> = </span><span class="math-cal">A</span><span class="math">&otimes;</span><span class="math-cal">B</span> fixed. Induces <span class="math">A<sub>g.m</sub> = &alpha;(g)A<sub>m</sub></span>.</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-medium"><span class="math-frak">M</span><span class="math">, </span><span class="math-frak">M</span><span class="math">/G</span><br><span class="text-[var(--muted-foreground)]">&sect;4.1 (p. 16)</span></td>
+                <td class="py-2.5 px-3 font-medium">Measurement Schemes &amp; Space of Orbits</td>
+                <td class="py-2.5 px-3"><span class="math">[m] = {g.m : g &isin; G} &isin; </span><span class="math-frak">M</span><span class="math">/G</span></td>
+                <td class="py-2.5 px-3 text-[var(--muted-foreground)]">Schemes in the same <span class="math">G</span>-orbit <span class="math">[m]</span> are physically indistinguishable without a reference frame!</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-medium"><span class="math">&mathcal{R} = (U<sub>R</sub>, E, &mathcal{H}<sub>R</sub>)</span><br><span class="text-[var(--muted-foreground)]">Def. 3.1–3.2</span></td>
+                <td class="py-2.5 px-3 font-medium">Quantum Reference Frame (QRF)</td>
+                <td class="py-2.5 px-3"><span class="math">E : Bor(&Sigma;) &rarr; B(&mathcal{H}<sub>R</sub>)</span> with <span class="math">E(g.X) = U<sub>R</sub>(g)E(X)U<sub>R</sub>(g)<sup>*</sup></span></td>
+                <td class="py-2.5 px-3 text-[var(--muted-foreground)]">A system of covariance on homogeneous value space <span class="math">&Sigma; &simeq; G/H</span>. <em>Compactly stabilised</em> if <span class="math">H &sub; G</span> is compact.</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-medium"><span class="math-frak">f</span><span class="math"> : &Sigma; &times; </span><span class="math-frak">M</span><span class="math">/G &rarr; </span><span class="math-frak">M</span><br><span class="text-[var(--muted-foreground)]">Prop. 4.2 (Eq. 4.5)</span></td>
+                <td class="py-2.5 px-3 font-medium">Covariant Scheme Selector Map</td>
+                <td class="py-2.5 px-3"><span class="math-frak">f</span><span class="math">(s, [m]) &isin; [m]</span>, <span class="math-frak">f</span><span class="math">(g.s, [m]) = g.</span><span class="math-frak">f</span><span class="math">(s, [m])</span></td>
+                <td class="py-2.5 px-3 text-[var(--muted-foreground)]">Exists iff <span class="math">&Sigma;</span> <em>resolves</em> <span class="math-frak">M</span> (<span class="math">G<sub>s</sub> &sub; G<sub>m</sub> &sub; G<sub>K</sub></span>). Uses QRF reading <span class="math">s &isin; &Sigma;</span> to pick which <span class="math">m &isin; [m]</span> is performed.</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-medium"><span class="math">W, p = WW<sup>*</sup></span><br><span class="text-[var(--muted-foreground)]">Thm 4.4, Cor 4.5</span></td>
+                <td class="py-2.5 px-3 font-medium">Cattaneo–Mackey Naimark Dilation</td>
+                <td class="py-2.5 px-3"><span class="math">W : &mathcal{H}<sub>R</sub> &hookrightarrow; &mathcal{K} &otimes; L<sup>2</sup>(G)</span>, <span class="math">p &isin; (1<sub>&mathcal{K}</sub>&otimes;&lambda;(G))'</span></td>
+                <td class="py-2.5 px-3 text-[var(--muted-foreground)]">Every compactly stabilised QRF is a compression by a <span class="math">G</span>-invariant projection <span class="math">p</span> of the regular representation on <span class="math">L<sup>2</sup>(G)</span>!</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-medium"><span class="math">&mathcal{M}<sub>S</sub> &rtimes;<sub>&alpha;<sub>S</sub></sub> G</span><br><span class="text-[var(--muted-foreground)]">Def. 4.7, Prop. 4.8</span></td>
+                <td class="py-2.5 px-3 font-medium">Crossed Product von Neumann Algebra</td>
+                <td class="py-2.5 px-3"><span class="math">(&pi;(&mathcal{M}<sub>S</sub>) &cup; &rho;&#771;(G))'' = (&mathcal{M}<sub>S</sub> &otimes; B(L<sup>2</sup>(G)))<sup>&alpha;<sub>S</sub>&otimes;Ad &lambda;</sup></span></td>
+                <td class="py-2.5 px-3 text-[var(--muted-foreground)]">By Takesaki's commutation theorem, the fixed-point algebra under <span class="math">&alpha;<sub>S</sub> &otimes; Ad &lambda;</span> is the crossed product!</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-medium"><span class="math-rm">&yen;</span> vs. <span class="math-cal">Z</span><br><span class="text-[var(--muted-foreground)]">Cor 4.11, Def 4.13</span></td>
+                <td class="py-2.5 px-3 font-medium">Relativisation vs. Extended Relativisation</td>
+                <td class="py-2.5 px-3"><span class="math-rm">&yen;</span><span class="math">(x) = &int;<sub>G/H</sub> &alpha;<sub>S</sub>(g,x) &otimes; dE(gH)</span>; <span class="math-cal">Z</span><span class="math">(&middot;) = W&#771;<sup>*</sup>(&middot;)W&#771;</span></td>
+                <td class="py-2.5 px-3 text-[var(--muted-foreground)]"><span class="math-rm">&yen;</span> relativises <span class="math">H</span>-invariant system operators <span class="math">x &isin; &mathcal{M}<sub>S</sub><sup>&alpha;<sub>S</sub>&upharpoonright;<sub>H</sub></sup></span> into <span class="math">A<sub>[m]</sub></span>; <span class="math-cal">Z</span> surjects onto the <em>entire</em> invariant algebra!</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-medium"><span class="math">m<sub>U<sub>R</sub></sub>(&xi;), N<sub>U<sub>R</sub></sub>(&xi;)</span><br><span class="text-[var(--muted-foreground)]">Def. 4.18, Eq. (5.44)</span></td>
+                <td class="py-2.5 px-3 font-medium">QRF Spectral Multiplicity &amp; Cumulative DoF</td>
+                <td class="py-2.5 px-3"><span class="math">&mathcal{H}<sub>R</sub> &simeq; &int;<sup>&oplus;</sup><sub>&mathbb{R}</sub> &mathcal{K}(&xi;)d&xi;</span>, <span class="math">m<sub>U<sub>R</sub></sub>(&xi;) = dim &mathcal{K}(&xi;)</span></td>
+                <td class="py-2.5 px-3 text-[var(--muted-foreground)]">Counts QRF internal/rotational states at energy <span class="math">&xi;</span>. Type reduction to finite algebra holds if <span class="math">&int; e<sup>&minus;&beta;&xi;</sup> m<sub>U<sub>R</sub></sub>(&xi;)d&xi; &lt; &infin;</span>!</td>
+              </tr>
+              <tr>
+                <td class="py-2.5 px-3 font-medium"><span class="math">&phi;<sub>&beta;</sub>, &mathcal{D}, &mathcal{D}<sub>1</sub></span><br><span class="text-[var(--muted-foreground)]">Def 5.8–5.10, Thm 5.11</span></td>
+                <td class="py-2.5 px-3 font-medium">QRF KMS Weight &amp; Analytic <span class="math">t</span>-Integrable Algebra</td>
+                <td class="py-2.5 px-3"><span class="math">&phi;<sub>&beta;</sub>(x) = &tau;(1<sub>&mathcal{M}<sub>S</sub></sub> &otimes; I(x))</span> on <span class="math">&mathcal{D}<sub>1</sub> &sub; B(&mathcal{H}<sub>R</sub>)</span></td>
+                <td class="py-2.5 px-3 text-[var(--muted-foreground)]">A QRF on <span class="math-bb">R</span> has no normal <span class="math">t</span>-invariant state, but admits a normal KMS weight <span class="math">&phi;<sub>&beta;</sub></span> finite on <span class="math">&mathcal{D}<sub>1</sub></span> iff Eq. (5.17) holds!</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         TAB 1: SPACETIME SYMMETRIES, MEASUREMENT ORBITS & QRF RESOLUTION (&sect;2.3, &sect;4.1)
+         ===================================================================== -->
+    <section id="panel-orbits" class="tab-panel hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Left Interactive Orbit & QRF Smearing Canvas -->
+        <div class="lg:col-span-7 bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm flex flex-col">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+            <div>
+              <h2 class="text-base font-semibold">Interactive Lab: Isometry Orbits <span class="math">[m] &isin; </span><span class="math-frak">M</span><span class="math">/G</span> &amp; QRF Resolution</h2>
+              <p class="text-xs text-[var(--muted-foreground)]">
+                Slide the spacetime isometry <span class="math">g = (t, &theta;) &isin; G</span> and the QRF localization width to see Theorem 2.1 and Corollary 4.16 in action.
+              </p>
+            </div>
+          </div>
+
+          <!-- Controls -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-3 p-3.5 rounded-xl bg-[var(--background)] border border-[var(--border)] text-xs">
+            <div>
+              <div class="flex justify-between font-medium mb-1">
+                <span>Time Shift <span class="math">t &isin; </span><span class="math-bb">R</span></span>
+                <span id="val-orbit-t" class="font-mono text-blue-500">+0.40</span>
+              </div>
+              <input type="range" id="slider-orbit-t" min="-1.5" max="1.5" step="0.05" value="0.4" oninput="drawOrbitCanvas()" class="w-full" />
+              <div class="text-[var(--muted-foreground)] mt-0.5">Shifts <span class="math">K &mapsto; g.K</span> along static flow</div>
+            </div>
+
+            <div>
+              <div class="flex justify-between font-medium mb-1">
+                <span>Rotation <span class="math">&theta; &isin; SO(n&minus;1)</span></span>
+                <span id="val-orbit-theta" class="font-mono text-purple-500">+0.60 rad</span>
+              </div>
+              <input type="range" id="slider-orbit-theta" min="-1.8" max="1.8" step="0.05" value="0.6" oninput="drawOrbitCanvas()" class="w-full" />
+              <div class="text-[var(--muted-foreground)] mt-0.5">Rotates coupling zone in space</div>
+            </div>
+
+            <div>
+              <div class="flex justify-between font-medium mb-1">
+                <span>QRF State Spread <span class="math">&Delta;s</span></span>
+                <span id="val-qrf-spread" class="font-mono text-emerald-500">0.35</span>
+              </div>
+              <input type="range" id="slider-qrf-spread" min="0.05" max="1.4" step="0.05" value="0.35" oninput="drawOrbitCanvas()" class="w-full" />
+              <div class="text-[var(--muted-foreground)] mt-0.5">Norm-1 limit: <span class="math">&Delta;s &rarr; 0</span> recovers <span class="math">A<sub>m</sub></span></div>
+            </div>
+          </div>
+
+          <div class="relative w-full aspect-[16/10] bg-[var(--background)] border border-[var(--border)] rounded-xl overflow-hidden">
+            <canvas id="orbit-canvas" width="720" height="450" class="w-full h-full"></canvas>
+          </div>
+
+          <div id="orbit-status" class="mt-3 p-3.5 rounded-xl bg-[var(--background)] border border-[var(--border)] text-xs">
+          </div>
+        </div>
+
+        <!-- Right Column: Theorem 2.1, Fig. 1, and Proposition 4.2-4.3 -->
+        <div class="lg:col-span-5 space-y-4">
+          <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm">
+            <div class="text-xs font-bold uppercase tracking-wider text-blue-500 mb-1">Theorem 2.1 &amp; Fig. 1 (&sect;2.3, pp. 8–10)</div>
+            <h3 class="font-semibold text-base mb-2">How Isometries Act on Measurement Schemes</h3>
+            <p class="text-xs text-[var(--muted-foreground)] leading-relaxed mb-2">
+              Let <span class="math">G</span> act by time-orientation preserving isometries on <span class="math">M</span>, implemented by <span class="math">&alpha;(g) &isin; Aut(</span><span class="math-cal">A</span><span class="math">(M))</span> and <span class="math">&beta;(g) &isin; Aut(</span><span class="math-cal">B</span><span class="math">(M))</span> with <span class="math">&upsilon;(g) = &alpha;(g) &otimes; &beta;(g)</span>. A coupling in compact <span class="math">K &sub; M</span> breaks <span class="math">G</span>-invariance, but <span class="math">g &isin; G</span> maps the scheme <span class="math">m = (</span><span class="math-cal">B</span><span class="math">, </span><span class="math-cal">C</span><span class="math">, K, &chi;, &sigma;, B)</span> to:
+            </p>
+            <div class="eq-box text-xs bg-[var(--background)] border border-[var(--border)] rounded-lg p-2.5 space-y-1.5 mb-2.5">
+              <div><span class="math">g.m := (</span><span class="math-cal">B</span><span class="math">, <sup>g</sup></span><span class="math-cal">C</span><span class="math">, g.K, <sup>g</sup>&chi;, <sup>g</sup>&sigma;, &beta;(g)B)</span>, &nbsp;&nbsp;<span class="math"><sup>g</sup>&sigma; = &beta;(g<sup>&minus;1</sup>)<sup>*</sup>&sigma;</span></div>
+              <div><span class="math"><sup>g</sup>&Theta; = &upsilon;(g) &circ; &Theta; &circ; &upsilon;(g)<sup>&minus;1</sup></span> &nbsp;&nbsp;(Eq. 2.11)</div>
+              <div class="text-emerald-500 font-semibold"><span class="math"><sup>g</sup>&varepsilon;<sub><sup>g</sup>&sigma;</sub>(&beta;(g)B) = &alpha;(g)&varepsilon;<sub>&sigma;</sub>(B) = &alpha;(g)A<sub>m</sub></span> &nbsp;&nbsp;(Eq. 2.16)</div>
+            </div>
+            <p class="text-xs text-[var(--muted-foreground)] leading-relaxed">
+              <strong>The Philosophical Punchline (p. 10):</strong> Because points in a manifold have no intrinsic operational labels, schemes <span class="math">m</span> and <span class="math">g.m</span> in the same orbit <span class="math">[m] &isin; </span><span class="math-frak">M</span><span class="math">/G</span> cannot be distinguished without a physical reference frame!
+            </p>
+          </div>
+
+          <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm">
+            <div class="text-xs font-bold uppercase tracking-wider text-purple-500 mb-1">Def. 4.1, Prop. 4.2 &amp; Prop. 4.3 (&sect;4.1, pp. 16–19)</div>
+            <h3 class="font-semibold text-base mb-2">Why Resolving Compact <span class="math">K</span> Forces Compact Stabilisers</h3>
+            <p class="text-xs text-[var(--muted-foreground)] leading-relaxed mb-2">
+              To pick a scheme from the orbit <span class="math">[m]</span> using a QRF outcome <span class="math">s &isin; &Sigma; &simeq; G/G<sub>s</sub></span>, we need a <span class="math">G</span>-equivariant selector map <span class="math-frak">f</span><span class="math"> : &Sigma; &times; </span><span class="math-frak">M</span><span class="math">/G &rarr; </span><span class="math-frak">M</span> with <span class="math-frak">f</span><span class="math">(g.s, [m]) = g.</span><span class="math-frak">f</span><span class="math">(s, [m])</span>.
+            </p>
+            <ul class="text-xs text-[var(--muted-foreground)] space-y-2 list-disc pl-4">
+              <li>
+                <strong>Stabiliser Chain (Prop. 4.2 &amp; 4.3):</strong> Equivariance of <span class="math-frak">f</span> requires that if <span class="math">g.s = s</span>, then <span class="math">g.m = m</span>, which in turn requires <span class="math">g.K = K</span>:
+                <div class="eq-box text-center my-1.5 p-1.5 rounded bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)]">
+                  <span class="math">G<sub>s</sub> &sub; G<sub>m</sub> &sub; G<sub>K</sub> := {g &isin; G : g.K = K}</span>
+                </div>
+              </li>
+              <li>
+                <strong>Compactness of <span class="math">G<sub>K</sub></span>:</strong> Because the coupling zone <span class="math">K &sub; M</span> is <strong>compact</strong> (and has non-empty interior), on spacetimes where isometries act properly (such as the de Sitter static patch or Schwarzschild exterior), <span class="math">G<sub>K</sub></span> is compact! Hence the closed subgroup <span class="math">H = G<sub>s</sub> &sub; G<sub>K</sub></span> <em>must</em> be compact—the QRF is necessarily <strong>compactly stabilised</strong>!
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         TAB 2: QRFS, PAULI'S THEOREM & NAIMARK DILATION (&sect;3 & &sect;4.2)
+         ===================================================================== -->
+    <section id="panel-qrf" class="tab-panel hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Left Interactive Naimark Dilation & Pauli Theorem Simulator -->
+        <div class="lg:col-span-7 bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm flex flex-col">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+            <div>
+              <h2 class="text-base font-semibold">Interactive Lab: Pauli's Theorem &amp; Naimark Dilation (<span class="math">&mathcal{H}<sub>R</sub> = p(&mathcal{K}&otimes;L<sup>2</sup>(G))</span>)</h2>
+              <p class="text-xs text-[var(--muted-foreground)]">
+                Explore Example 3 (&sect;3.1) and Theorem 4.4 (&sect;4.2): how projecting the energy spectrum <span class="math">&xi; &isin; V &sub; </span><span class="math-bb">R</span> turns a sharp PVM on <span class="math">L<sup>2</sup>(</span><span class="math-bb">R</span><span class="math">)</span> into an unsharp covariant time POVM <span class="math">E<sup>T</sup>(X) = W<sup>*</sup>P(X)W</span>!
+              </p>
+            </div>
+          </div>
+
+          <!-- Preset Selector for Energy Projection p_V -->
+          <div class="flex flex-wrap gap-2 mb-3">
+            <button onclick="setNaimarkMode('full')" id="nmode-full" class="px-3 py-1.5 rounded-lg text-xs font-semibold border border-[var(--border)]">
+              1. Ideal Frame <span class="math">V = (&minus;&infin;, &infin;)</span> (Sharp PVM, Unphysical <span class="math">H</span>)
+            </button>
+            <button onclick="setNaimarkMode('clpw')" id="nmode-clpw" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-[var(--primary)] text-[var(--primary-foreground)]">
+              2. CLPW Observer <span class="math">V = [0, &infin;)</span> (Semi-Bounded <span class="math">q<sub>+</sub> &ge; 0</span>, Unsharp POVM)
+            </button>
+            <button onclick="setNaimarkMode('band')" id="nmode-band" class="px-3 py-1.5 rounded-lg text-xs font-semibold border border-[var(--border)]">
+              3. Band-Limited Frame <span class="math">V = [0, &Lambda;]</span> (Blurred Resolution)
+            </button>
+          </div>
+
+          <div class="relative w-full aspect-[16/10] bg-[var(--background)] border border-[var(--border)] rounded-xl overflow-hidden">
+            <canvas id="naimark-canvas" width="720" height="450" class="w-full h-full"></canvas>
+          </div>
+
+          <div id="naimark-status" class="mt-3 p-3.5 rounded-xl bg-[var(--background)] border border-[var(--border)] text-xs">
+          </div>
+        </div>
+
+        <!-- Right Column: Taxonomy of QRFs (Def 3.2) & Theorem 4.4 -->
+        <div class="lg:col-span-5 space-y-4">
+          <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm">
+            <div class="text-xs font-bold uppercase tracking-wider text-emerald-500 mb-1">Definition 3.2 (Page 12)</div>
+            <h3 class="font-semibold text-base mb-2">Taxonomy of Quantum Reference Frames <span class="math">(U<sub>R</sub>, E, &mathcal{H}<sub>R</sub>)</span></h3>
+            <div class="grid grid-cols-1 gap-2 text-xs">
+              <div class="p-2.5 rounded bg-[var(--background)] border border-[var(--border)]">
+                <span class="font-bold text-blue-500">Sharp vs. Unsharp:</span>
+                <em>Sharp</em> if <span class="math">E(X)<sup>2</sup> = E(X)</span> is a projection-valued measure (PVM); <em>unsharp</em> if <span class="math">E</span> is a genuine POVM (required whenever energy is bounded below, by Pauli's theorem!).
+              </div>
+              <div class="p-2.5 rounded bg-[var(--background)] border border-[var(--border)]">
+                <span class="font-bold text-purple-500">Principal vs. Homogeneous (<span class="math">&Sigma; &simeq; G/H</span>):</span>
+                <em>Principal</em> if stabilizer <span class="math">H = {1<sub>G</sub>}</span> so <span class="math">&Sigma; &simeq; G</span> (and <em>Ideal</em> if both principal and sharp). <em>Compactly stabilised</em> if <span class="math">&Sigma; &simeq; G/H</span> with <span class="math">H &sub; G</span> compact.
+              </div>
+              <div class="p-2.5 rounded bg-[var(--background)] border border-[var(--border)]">
+                <span class="font-bold text-amber-500">Localisable (Norm-1 Property):</span>
+                For every <span class="math">X &isin; Bor(&Sigma;)</span> with <span class="math">E(X) &ne; 0</span>, <span class="math">||E(X)|| = 1</span>. Equivalent to: there exist frame states <span class="math">(&sigma;<sub>n</sub>)</span> whose probability measure <span class="math">tr[&sigma;<sub>n</sub> E(&middot;)]</span> concentrates arbitrarily tightly around any point <span class="math">s &isin; &Sigma;</span>!
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm">
+            <div class="text-xs font-bold uppercase tracking-wider text-purple-500 mb-1">Theorem 4.4 &amp; Corollary 4.5 (Pages 20–21 &amp; Appx B)</div>
+            <h3 class="font-semibold text-base mb-2">The Master Characterization of Compactly Stabilised QRFs</h3>
+            <p class="text-xs text-[var(--muted-foreground)] leading-relaxed mb-2">
+              Combining <strong>Naimark's Dilation Theorem</strong> (Thm 3.3), <strong>Cattaneo's Theorem</strong> (Prop B.3), and <strong>Mackey's Imprimitivity Theorem</strong> (Prop B.6), Theorem 4.4 proves that <em>every</em> compactly stabilised QRF with value space <span class="math">G/H</span> (<span class="math">H</span> compact) arises from an isometry <span class="math">W : &mathcal{H}<sub>R</sub> &rarr; &mathcal{K} &otimes; L<sup>2</sup>(G)</span> intertwining <span class="math">G</span>:
+            </p>
+            <div class="eq-box text-xs bg-[var(--background)] border border-[var(--border)] rounded-lg p-2.5 space-y-1.5 mb-2">
+              <div><span class="math">W U<sub>R</sub>(g) = (</span><span class="math-bb">1</span><span class="math"><sub>&mathcal{K}</sub> &otimes; &lambda;(g)) W</span></div>
+              <div><span class="math">E(X) = W<sup>*</sup>(</span><span class="math-bb">1</span><span class="math"><sub>&mathcal{K}</sub> &otimes; T<sub>&chi;<sub>q<sup>&minus;1</sup>(X)</sub></sub>) W</span> &nbsp;&nbsp;(Eq. 4.14)</div>
+              <div class="text-[var(--muted-foreground)] pt-1 border-t border-[var(--border)]">
+                Up to unitary equivalence: <span class="math">&mathcal{H}<sub>R</sub> = p(&mathcal{K} &otimes; L<sup>2</sup>(G))</span> for a <span class="math">G</span>-invariant projection <span class="math">p = WW<sup>*</sup> &isin; (</span><span class="math-bb">1</span><span class="math"><sub>&mathcal{K}</sub> &otimes; &lambda;(G))'</span> (Cor 4.5).
+              </div>
+            </div>
+            <p class="text-xs text-[var(--muted-foreground)] leading-relaxed">
+              This single theorem is the engine of the entire paper: it reduces any abstract compactly stabilised QRF to a projection <span class="math">p</span> acting on <span class="math">&mathcal{K} &otimes; L<sup>2</sup>(G)</span>!
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         TAB 3: CROSSED PRODUCTS & RELATIVISATION MAPS (&sect;4.3–4.4)
+         ===================================================================== -->
+    <section id="panel-crossed" class="tab-panel hidden space-y-6">
+      <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-6 shadow-sm">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-5">
+          <div>
+            <h2 class="text-lg font-semibold">Interactive Step-by-Step Derivation: Why QRF Invariants Are Crossed Products (&sect;4.3–4.4)</h2>
+            <p class="text-xs text-[var(--muted-foreground)]">
+              Walk through the 5 steps connecting the physical <span class="math">G</span>-invariant joint algebra <span class="math">(&mathcal{M}<sub>S</sub> &otimes; B(&mathcal{H}<sub>R</sub>))<sup>&alpha;<sub>S</sub>&otimes;Ad U<sub>R</sub></sup></span> to the crossed product <span class="math">&mathcal{M}<sub>S</sub> &rtimes;<sub>&alpha;<sub>S</sub></sub> G</span> and the relativisation maps <span class="math-rm">&yen;</span> and <span class="math-cal">Z</span>.
+            </p>
+          </div>
+          <div class="flex items-center gap-2 shrink-0">
+            <button onclick="prevCrossedStep()" class="px-3 py-1.5 rounded-lg text-xs font-semibold border border-[var(--border)] hover:bg-[var(--background)]">
+              &larr; Prev
+            </button>
+            <span id="crossed-step-indicator" class="text-xs font-bold px-2">Step 1 / 5</span>
+            <button onclick="nextCrossedStep()" class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-[var(--primary)] text-[var(--primary-foreground)]">
+              Next &rarr;
+            </button>
+          </div>
+        </div>
+
+        <!-- Step Selector Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-2.5 mb-5">
+          <button onclick="setCrossedStep(0)" id="cstep-0" class="step-card active text-left p-3 rounded-xl border border-[var(--border)] bg-[var(--background)] text-xs transition">
+            <div class="font-bold text-blue-500 mb-0.5">1. Dilation &amp; Lemma 4.6</div>
+            <div class="text-[var(--muted-foreground)]">Pull <span class="math">G</span>-invariant projection <span class="math">p</span> outside fixed points</div>
+          </button>
+          <button onclick="setCrossedStep(1)" id="cstep-1" class="step-card text-left p-3 rounded-xl border border-[var(--border)] bg-[var(--background)] text-xs transition">
+            <div class="font-bold text-purple-500 mb-0.5">2. Commutation Thm</div>
+            <div class="text-[var(--muted-foreground)]">Prop 4.8: <span class="math">(&mathcal{M}<sub>S</sub>&otimes;B(L<sup>2</sup>(G)))<sup>&alpha;&otimes;Ad &lambda;</sup> = &mathcal{M}<sub>S</sub>&rtimes;G</span></div>
+          </button>
+          <button onclick="setCrossedStep(2)" id="cstep-2" class="step-card text-left p-3 rounded-xl border border-[var(--border)] bg-[var(--background)] text-xs transition">
+            <div class="font-bold text-emerald-500 mb-0.5">3. Theorem 4.9 &amp; <span class="math-cal">Z</span></div>
+            <div class="text-[var(--muted-foreground)]">Full invariant algebra as compressed crossed product</div>
+          </button>
+          <button onclick="setCrossedStep(3)" id="cstep-3" class="step-card text-left p-3 rounded-xl border border-[var(--border)] bg-[var(--background)] text-xs transition">
+            <div class="font-bold text-amber-500 mb-0.5">4. Relativisation <span class="math-rm">&yen;</span></div>
+            <div class="text-[var(--muted-foreground)]">Def 4.13: <span class="math-rm">&yen;</span><span class="math">(x) = (1&otimes;W<sup>*</sup>)(&pi;(x)&otimes;1)(1&otimes;W)</span></div>
+          </button>
+          <button onclick="setCrossedStep(4)" id="cstep-4" class="step-card text-left p-3 rounded-xl border border-[var(--border)] bg-[var(--background)] text-xs transition">
+            <div class="font-bold text-rose-500 mb-0.5">5. Hierarchy (Eq. 4.50)</div>
+            <div class="text-[var(--muted-foreground)]">How <span class="math">A<sub>[m]</sub></span> sits inside the 3 nested algebras</div>
+          </button>
+        </div>
+
+        <!-- Dynamic Step Content -->
+        <div id="crossed-step-detail" class="p-5 rounded-xl bg-[var(--background)] border border-[var(--border)]">
+        </div>
+      </div>
+
+      <!-- Visual Nested Hierarchy of Invariant Algebras (Eq. 4.50) -->
+      <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-6 shadow-sm">
+        <h3 class="text-base font-semibold mb-2">Visual Map of the Nested Invariant Algebras (Eq. 4.50, Page 27)</h3>
+        <p class="text-xs text-[var(--muted-foreground)] mb-4">
+          One of the most clarifying results of Section 4.4 is the exact relationship between the relativised measurement scheme observables <span class="math">A<sub>[m]</sub></span>, the relativisation map <span class="math-rm">&yen;</span>, and the full crossed-product invariant algebra parameterized by <span class="math-cal">Z</span>:
+        </p>
+
+        <div class="p-4 rounded-2xl border-2 border-emerald-500/60 bg-emerald-500/5">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+            <span class="text-xs font-bold uppercase tracking-wider text-emerald-500">Largest: All Joint G-Invariant Operators</span>
+            <span class="eq-box text-xs font-semibold"><span class="math">(&mathcal{M}<sub>S</sub> &otimes; B(&mathcal{H}<sub>R</sub>))<sup>&alpha;<sub>S</sub>&otimes;Ad U<sub>R</sub></sup> = </span><span class="math-cal">Z</span><span class="math">(&mathcal{M}&#771;<sub>S</sub><sup>G</sup> &otimes; B(&mathcal{K})) &simeq; (1&otimes;p)((&mathcal{M}<sub>S</sub> &rtimes;<sub>&alpha;<sub>S</sub></sub> G) &otimes; B(&mathcal{K}))(1&otimes;p)</span></span>
+          </div>
+          <p class="text-xs text-[var(--muted-foreground)] mb-3">
+            Generated by both <span class="math">&pi;(&mathcal{M}<sub>S</sub>)</span> (relativised system operators), <span class="math">&rho;&#771;(G)</span> (joint momentum/boost generators of the frame), and <span class="math">B(&mathcal{K})</span> (ancillary frame degeneracy).
+          </p>
+
+          <div class="p-4 rounded-xl border-2 border-purple-500/60 bg-purple-500/5">
+            <div class="flex flex-wrap items-center justify-between gap-2 mb-2">
+              <span class="text-xs font-bold uppercase tracking-wider text-purple-500">Middle: Invariants Built from System + Frame POVM Effects</span>
+              <span class="eq-box text-xs font-semibold"><span class="math">(&mathcal{M}<sub>S</sub> &otimes; E(Bor(G/H))'')<sup>&alpha;<sub>S</sub>&otimes;Ad U<sub>R</sub></sup></span></span>
+            </div>
+            <p class="text-xs text-[var(--muted-foreground)] mb-3">
+              Restricts the QRF algebra from all of <span class="math">B(&mathcal{H}<sub>R</sub>)</span> to the abelian/POV-generated von Neumann algebra <span class="math">E(Bor(G/H))''</span>. Coincides with the inner box below when <span class="math">E</span> is a sharp PVM!
+            </p>
+
+            <div class="p-4 rounded-xl border-2 border-blue-500/60 bg-blue-500/10">
+              <div class="flex flex-wrap items-center justify-between gap-2 mb-1">
+                <span class="text-xs font-bold uppercase tracking-wider text-blue-500">Core: Image of the Relativisation Map <span class="math-rm">&yen;</span> &amp; Measurement Schemes <span class="math">A<sub>[m]</sub></span></span>
+                <span class="eq-box text-xs font-semibold"><span class="math">A<sub>[m]</sub> := </span><span class="math-rm">&yen;</span><span class="math">(A<sub>&frak;f;(H,[m])</sub>) &isin; </span><span class="math-rm">&yen;</span><span class="math">(&mathcal{M}<sub>S</sub><sup>&alpha;<sub>S</sub>&upharpoonright;<sub>H</sub></sup>)''</span></span>
+              </div>
+              <p class="text-xs text-[var(--muted-foreground)]">
+                Here <span class="math-rm">&yen;</span><span class="math">(x) = (1<sub>&mathcal{H}<sub>S</sub></sub> &otimes; W<sup>*</sup>)(&pi;(x) &otimes; 1<sub>&mathcal{K}</sub>)(1<sub>&mathcal{H}<sub>S</sub></sub> &otimes; W) = &int;<sub>G/H</sub> &alpha;<sub>S</sub>(g, x) &otimes; dE(gH)</span> for <span class="math">H</span>-invariant system observables <span class="math">x &isin; &mathcal{M}<sub>S</sub><sup>&alpha;<sub>S</sub>&upharpoonright;<sub>H</sub></sup></span> (Corollary 4.16).
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         TAB 4: SPECTRAL MULTIPLICITY & TYPE REDUCTION SIMULATOR (&sect;4.5, &sect;5)
+         ===================================================================== -->
+    <section id="panel-typered" class="tab-panel hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Left Interactive Spectral Multiplicity & Trace Integrability Simulator -->
+        <div class="lg:col-span-7 bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm flex flex-col">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+            <div>
+              <h2 class="text-base font-semibold">Interactive Type Reduction Lab (Theorem 5.5, Corollary 5.7 &amp; Theorem 5.11)</h2>
+              <p class="text-xs text-[var(--muted-foreground)]">
+                Test the finiteness criterion <span class="math">&int;<sub>&mathbb{R}</sub> e<sup>&minus;&beta;&xi;</sup> m<sub>U<sub>R</sub></sub>(&xi;) d&xi; &lt; &infin;</span> across 5 QRF models for <span class="math">G = </span><span class="math-bb">R</span><span class="math"> &times; H</span>!
+              </p>
+            </div>
+          </div>
+
+          <!-- QRF Model Selector Buttons -->
+          <div class="flex flex-wrap gap-1.5 mb-3">
+            <button onclick="setTypeModel('clpw')" id="tmod-clpw" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-[var(--primary)] text-[var(--primary-foreground)]">
+              1. CLPW <span class="math">V=[0,&infin;)</span> (Type <span class="math-rm">II<sub>1</sub></span>)
+            </button>
+            <button onclick="setTypeModel('rotor')" id="tmod-rotor" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-[var(--border)]">
+              2. <span class="math">SO(3)</span> Rotor Shells (Eq. 6.21)
+            </button>
+            <button onclick="setTypeModel('hagedorn')" id="tmod-hagedorn" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-[var(--border)]">
+              3. Exponential Growth <span class="math">m(&xi;)&sim;e<sup>&alpha;&xi;</sup></span>
+            </button>
+            <button onclick="setTypeModel('unbounded')" id="tmod-unbounded" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-[var(--border)]">
+              4. Unbounded Clock <span class="math">V=&mathbb{R}</span> (Type <span class="math-rm">II<sub>&infin;</sub></span>)
+            </button>
+            <button onclick="setTypeModel('degenerate')" id="tmod-degenerate" class="px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-[var(--border)]">
+              5. Uncoupled <span class="math">L<sup>2</sup>(SO(3))</span> (<span class="math">m=&infin;</span>)
+            </button>
+          </div>
+
+          <!-- Sliders -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-3 p-3.5 rounded-xl bg-[var(--background)] border border-[var(--border)] text-xs">
+            <div>
+              <div class="flex justify-between font-medium mb-1">
+                <span>Inverse Temperature <span class="math">&beta; = 1/T</span></span>
+                <span id="val-beta" class="font-mono text-blue-500">1.20</span>
+              </div>
+              <input type="range" id="slider-beta" min="0.25" max="2.5" step="0.05" value="1.2" oninput="updateTypeSim()" class="w-full" />
+              <div class="text-[var(--muted-foreground)] mt-0.5">Boltzmann suppression <span class="math">e<sup>&minus;&beta;&xi;</sup></span> from modular trace</div>
+            </div>
+
+            <div>
+              <div class="flex justify-between font-medium mb-1">
+                <span id="label-param2">QRF Energy Scale / Growth <span class="math">&alpha;</span></span>
+                <span id="val-param2" class="font-mono text-purple-500">0.60</span>
+              </div>
+              <input type="range" id="slider-param2" min="0.15" max="2.0" step="0.05" value="0.6" oninput="updateTypeSim()" class="w-full" />
+              <div class="text-[var(--muted-foreground)] mt-0.5" id="desc-param2">Controls rotational spacing or exponential density of states</div>
+            </div>
+          </div>
+
+          <div class="relative w-full aspect-[16/9] bg-[var(--background)] border border-[var(--border)] rounded-xl overflow-hidden">
+            <canvas id="type-canvas" width="680" height="380" class="w-full h-full"></canvas>
+          </div>
+
+          <!-- Live Type & Trace Readout Cards -->
+          <div id="type-readout" class="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs">
+          </div>
+        </div>
+
+        <!-- Right Column: Deep Explanation of Theorem 5.3, 5.5, and 5.11 -->
+        <div class="lg:col-span-5 space-y-4">
+          <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm">
+            <div class="text-xs font-bold uppercase tracking-wider text-amber-500 mb-1">How Type Reduction Works (&sect;5.1, Theorem 5.5)</div>
+            <h3 class="font-semibold text-base mb-2">From Modular Flow to <span class="math">&tau;(1<sub>&mathcal{H}<sub>S</sub></sub> &otimes; p) = &beta; &int; e<sup>&minus;&beta;&xi;</sup> m<sub>U<sub>R</sub></sub>(&xi;) d&xi;</span></h3>
+            <ol class="text-xs text-[var(--muted-foreground)] space-y-2 list-decimal pl-4">
+              <li>
+                <strong>Geometric Modular Flow:</strong> If <span class="math">&omega;</span> is a KMS state on <span class="math">&mathcal{M}<sub>S</sub></span> at inverse temperature <span class="math">&beta; &gt; 0</span> for time translations <span class="math">&alpha;<sub>S</sub>&upharpoonright;<sub>&mathbb{R}</sub></span>, then Tomita–Takesaki modular flow is <span class="math">&sigma;(t, &middot;) = &alpha;<sub>S</sub>(&minus;&beta;t, &middot;)</span>.
+              </li>
+              <li>
+                <strong>Semifinite Modular Crossed Product (Thm 5.3):</strong> By Takesaki duality, <span class="math">&mathcal{M}<sub>S</sub> &rtimes;<sub>&sigma;</sub> </span><span class="math-bb">R</span> is <strong>semifinite</strong> (Type <span class="math-rm">II<sub>&infin;</sub></span> when <span class="math">&mathcal{M}<sub>S</sub></span> is Type <span class="math-rm">III<sub>1</sub></span>), with semifinite trace <span class="math">&tau;<sub>1</sub>(p<sub>U</sub>) = &int;<sub>U</sub> e<sup>&xi;</sup> d&xi;</span>. Rescaling <span class="math">t &mapsto; &minus;t/&beta;</span> gives <span class="math">e<sup>&minus;&beta;&xi;</sup></span>!
+              </li>
+              <li>
+                <strong>Spectral Multiplicity <span class="math">m<sub>U<sub>R</sub></sub>(&xi;)</span> (Prop 4.17 &amp; Def 4.18):</strong> Fourier-transforming <span class="math">L<sup>2</sup>(</span><span class="math-bb">R</span><span class="math">)</span> decomposes <span class="math">&mathcal{H}<sub>R</sub> = p(L<sup>2</sup>(</span><span class="math-bb">R</span><span class="math">)&otimes;L<sup>2</sup>(H)&otimes;&mathcal{K})</span> into energy fibers <span class="math">&mathcal{H}<sub>R</sub> &simeq; &int;<sup>&oplus;</sup><sub>&mathbb{R}</sub> &mathcal{K}(&xi;) d&xi;</span> where <span class="math">&mathcal{K}(&xi;) = p&#770;(&xi;)(L<sup>2</sup>(H)&otimes;&mathcal{K})</span> has dimension <span class="math">m<sub>U<sub>R</sub></sub>(&xi;) = &tau;<sub>2</sub>(p&#770;(&xi;))</span>.
+              </li>
+              <li>
+                <strong>Trace of the Identity (Eq. 5.39–5.43):</strong> Combining the modular trace <span class="math">&tau;&#771;<sub>1</sub></span> and the Type I trace <span class="math">&tau;<sub>2</sub></span> on <span class="math">B(L<sup>2</sup>(H)&otimes;&mathcal{K})</span> yields:
+                <div class="eq-box text-center my-1.5 p-2 rounded bg-[var(--background)] border border-[var(--border)] text-[var(--foreground)]">
+                  <span class="math">&tau;(1<sub>&mathcal{H}<sub>S</sub></sub> &otimes; p) = &beta; &int;<sub>&mathbb{R}</sub> e<sup>&minus;&beta;&xi;</sup> m<sub>U<sub>R</sub></sub>(&xi;) d&xi;</span>
+                </div>
+                When this integral is finite, the compressed algebra <span class="math">(&mathcal{M}<sub>S</sub>&otimes;B(&mathcal{H}<sub>R</sub>))<sup>Ad(U<sub>S</sub>&otimes;U<sub>R</sub>)</sup></span> has finite identity trace <span class="math">&tau;(1) &lt; &infin;</span> and is a <strong>finite von Neumann algebra (Type <span class="math-rm">II<sub>1</sub></span>)!</strong>
+              </li>
+            </ol>
+          </div>
+
+          <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm">
+            <div class="text-xs font-bold uppercase tracking-wider text-emerald-500 mb-1">Thermodynamic Meaning (&sect;5.2, Theorem 5.11)</div>
+            <h3 class="font-semibold text-base mb-2">QRF Nuclearity &amp; Why the QRF Has a KMS Weight (Not a State!)</h3>
+            <p class="text-xs text-[var(--muted-foreground)] leading-relaxed mb-2">
+              Why can't a compactly stabilised QRF on <span class="math">&Sigma; = </span><span class="math-bb">R</span><span class="math"> &times; H/H'</span> have a normal time-translation invariant <em>state</em> <span class="math">&omega;<sub>R</sub></span>?
+            </p>
+            <div class="eq-box text-xs bg-[var(--background)] border border-[var(--border)] rounded-lg p-2 text-center mb-2">
+              <span class="math">&sum;<sub>n=&minus;N</sub><sup>N</sup> E([n, n+1)&times;H/H') &le; 1 &rArr; (2N+1)&omega;<sub>R</sub>(E(X<sub>0</sub>)) &le; 1 &rArr; &omega;<sub>R</sub>(E(X<sub>n</sub>)) = 0!</span>
+            </div>
+            <p class="text-xs text-[var(--muted-foreground)] leading-relaxed">
+              Instead, the QRF admits a normal <strong>KMS Weight <span class="math">&phi;<sub>&beta;</sub></span></strong> (Eq. 5.58). Integrating by parts shows <span class="math">&int; e<sup>&minus;&beta;&xi;</sup> m<sub>U<sub>R</sub></sub>(&xi;)d&xi; &lt; &infin; &rArr; &int;<sub>&xi;<sub>0</sub></sub><sup>&infin;</sup> e<sup>&minus;&beta;&xi;</sup> N<sub>U<sub>R</sub></sub>(&xi;)d&xi; &lt; &infin;</span> (a <strong>QRF nuclearity condition</strong> bounding how fast cumulative degrees of freedom <span class="math">N<sub>U<sub>R</sub></sub>(&xi;)</span> can grow with energy!), and Theorem 5.11 proves <span class="math">&phi;<sub>&beta;</sub></span> is finite on the dense Gaussian-smeared subalgebra <span class="math">&mathcal{D}<sub>1</sub></span> <em>if and only if</em> Eq. (5.17) holds!
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- =====================================================================
+         TAB 5: DE SITTER STATIC PATCH & FACTOR TYPES (&sect;6 &amp; APPX D)
+         ===================================================================== -->
+    <section id="panel-desitter" class="tab-panel hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+        <!-- Left Interactive de Sitter Static Patch Canvas -->
+        <div class="lg:col-span-7 bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm flex flex-col">
+          <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+            <div>
+              <h2 class="text-base font-semibold">Interactive de Sitter Static Patch Explorer (&sect;6, Eq. 6.1–6.27)</h2>
+              <p class="text-xs text-[var(--muted-foreground)]">
+                Drag the <span class="font-semibold text-amber-500">Coupling Zone K</span> inside the static patch <span class="math">M = {|x<sup>0</sup>| &lt; x<sup>1</sup>}</span> or slide the boost time <span class="math">t</span> to see the static Killing flow and why <span class="math">G<sub>K</sub></span> is compact!
+              </p>
+            </div>
+            <div class="flex items-center gap-2 text-xs">
+              <span>Boost <span class="math">t/\rho</span>:</span>
+              <input type="range" id="slider-ds-boost" min="-1.2" max="1.2" step="0.05" value="0.0" oninput="drawDeSitterCanvas()" class="w-32" />
+            </div>
+          </div>
+
+          <div class="relative w-full aspect-[16/10] bg-[var(--background)] border border-[var(--border)] rounded-xl overflow-hidden">
+            <canvas id="desitter-canvas" width="720" height="450" class="w-full h-full"></canvas>
+          </div>
+
+          <div id="desitter-status" class="mt-3 p-3.5 rounded-xl bg-[var(--background)] border border-[var(--border)] text-xs">
+          </div>
+        </div>
+
+        <!-- Right Column: de Sitter Examples & Von Neumann Factor Classification (Appx D) -->
+        <div class="lg:col-span-5 space-y-4">
+          <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm">
+            <div class="text-xs font-bold uppercase tracking-wider text-rose-500 mb-1">Section 6 (Pages 45–49)</div>
+            <h3 class="font-semibold text-base mb-2">Two Concrete QRFs on the 4D de Sitter Static Patch</h3>
+            <p class="text-xs text-[var(--muted-foreground)] leading-relaxed mb-2">
+              The static patch is the causal hull of an observer's timelike geodesic <span class="math">(x<sup>0</sup>, x<sup>1</sup>) = (&rho; sinh(&tau;/&rho;), &rho; cosh(&tau;/&rho;))</span> with isometry group <span class="math">G = </span><span class="math-bb">R</span><span class="math"> &times; SO(3)</span> and Gibbons–Hawking KMS state at <span class="math">&beta; = 2&pi;&rho;</span>:
+            </p>
+            <div class="space-y-2.5 text-xs text-[var(--muted-foreground)]">
+              <div class="p-2.5 rounded bg-[var(--background)] border border-[var(--border)]">
+                <span class="font-bold text-blue-500">Example 1 (Trivial <span class="math">SO(3)</span> action, Eq. 6.7–6.14):</span>
+                <span class="math">&mathcal{H}<sub>R</sub> = p<sub>V</sub> L<sup>2</sup>(</span><span class="math-bb">R</span><span class="math">)</span> with <span class="math">m<sub>U<sub>R</sub></sub>(&xi;) = &chi;<sub>V</sub>(&xi;)</span>. The full <span class="math">G</span>-invariant algebra is <span class="math">(1&otimes;p<sub>V</sub>)(&mathcal{M}<sub>S</sub><sup>Ad U<sub>S</sub>&upharpoonright;<sub>SO(3)</sub></sup> &rtimes; </span><span class="math-bb">R</span><span class="math">)(1&otimes;p<sub>V</sub>)</span>, which is finite whenever <span class="math">inf V &gt; &minus;&infin;</span> (such as <span class="math">V = [0, &infin;)</span> in CLPW [6]).
+              </div>
+              <div class="p-2.5 rounded bg-[var(--background)] border border-[var(--border)]">
+                <span class="font-bold text-purple-500">Example 2 (Principal <span class="math">&mathbb{R}&times;SO(3)</span> QRF via Peter–Weyl, Eq. 6.18–6.27):</span>
+                Decompose <span class="math">L<sup>2</sup>(SO(3)) &simeq; &bigoplus;<sub>l=0</sub><sup>&infin;</sup> &mathcal{H}<sub>l</sub><sup>&oplus;(2l+1)</sup></span> where each spin-<span class="math">l</span> Casimir eigenspace has dimension <span class="math">(2l+1)<sup>2</sup></span> and energy threshold <span class="math">V<sub>l</sub> = [E<sub>l</sub>, &infin;)</span>. Then <span class="math">m<sub>U<sub>R</sub></sub>(&xi;) = &sum;<sub>l=0</sub><sup>&infin;</sup> (2l+1)<sup>2</sup> &chi;<sub>[E<sub>l</sub>,&infin;)</sub>(&xi;)</span>, and Eq. (5.17) holds <strong>if and only if</strong> the rotational Hamiltonian <span class="math">H&#770;<sub>SO(3)</sub> = &sum; E<sub>l</sub> p&#771;<sub>l</sub></span> has a finite Gibbs partition function:
+                <div class="eq-box text-center mt-1.5 text-[var(--foreground)]">
+                  <span class="math">&tau;(e<sup>&minus;&beta;H&#770;<sub>SO(3)</sub></sup>) = &sum;<sub>l=0</sub><sup>&infin;</sup> (2l+1)<sup>2</sup> e<sup>&minus;&beta;E<sub>l</sub></sup> &lt; &infin;</span> &nbsp;(Eq. 6.22 &amp; 6.24)
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Von Neumann Factor Classification Table (Appendix D) -->
+          <div class="bg-[var(--card)] border border-[var(--border)] rounded-xl p-5 shadow-sm">
+            <div class="text-xs font-bold uppercase tracking-wider text-emerald-500 mb-1">Appendix D &amp; Section 7 Conclusion</div>
+            <h3 class="font-semibold text-base mb-2">Murray–von Neumann–Connes Factor Types &amp; Final Verdict</h3>
+            <table class="w-full text-left border-collapse text-xs mb-3">
+              <thead>
+                <tr class="border-b border-[var(--border)] text-[var(--muted-foreground)]">
+                  <th class="py-1.5 px-2">Factor Type</th>
+                  <th class="py-1.5 px-2">Trace <span class="math">&tau;(&mathcal{M}<sub>p</sub>)</span> on Projections</th>
+                  <th class="py-1.5 px-2">Where It Appears in This Paper</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-[var(--border)]">
+                <tr>
+                  <td class="py-1.5 px-2 font-bold text-blue-500">Type <span class="math-rm">I<sub>n</sub>, I<sub>&infin;</sub></span></td>
+                  <td class="py-1.5 px-2"><span class="math">{0, 1, &hellip;, n}</span> or <span class="math">&mathbb{N}<sub>0</sub>&cup;{&infin;}</span></td>
+                  <td class="py-1.5 px-2 text-[var(--muted-foreground)]">QRF algebra <span class="math">B(&mathcal{H}<sub>R</sub>)</span> &amp; auxiliary <span class="math">B(L<sup>2</sup>(H)&otimes;&mathcal{K})</span></td>
+                </tr>
+                <tr>
+                  <td class="py-1.5 px-2 font-bold text-emerald-500">Type <span class="math-rm">II<sub>1</sub></span></td>
+                  <td class="py-1.5 px-2">Continuous <span class="math">[0, 1]</span> (Finite!)</td>
+                  <td class="py-1.5 px-2 text-[var(--muted-foreground)]">Invariant algebra when <span class="math">&int; e<sup>&minus;&beta;&xi;</sup>m<sub>U<sub>R</sub></sub>(&xi;)d&xi; &lt; &infin;</span> (Cor 5.7)</td>
+                </tr>
+                <tr>
+                  <td class="py-1.5 px-2 font-bold text-amber-500">Type <span class="math-rm">II<sub>&infin;</sub></span></td>
+                  <td class="py-1.5 px-2">Continuous <span class="math">[0, &infin;]</span> (Semifinite)</td>
+                  <td class="py-1.5 px-2 text-[var(--muted-foreground)]">Modular crossed product <span class="math">&mathcal{M}<sub>S</sub> &rtimes;<sub>&sigma;</sub> &mathbb{R}</span> (Prop D.9)</td>
+                </tr>
+                <tr>
+                  <td class="py-1.5 px-2 font-bold text-rose-500">Type <span class="math-rm">III<sub>1</sub></span></td>
+                  <td class="py-1.5 px-2"><span class="math">{0, &infin;}</span> (No semifinite trace!)</td>
+                  <td class="py-1.5 px-2 text-[var(--muted-foreground)]">Bare AQFT local algebra <span class="math">&mathcal{M}<sub>S</sub> = &frak;A;(M; N)</span> (<span class="math">S(&mathcal{M})=[0,&infin;)</span>)</td>
+                </tr>
+              </tbody>
+            </table>
+            <p class="text-xs text-[var(--muted-foreground)] leading-relaxed">
+              <strong>Authors' Verdict (&sect;7, p. 50):</strong> Should we abandon Type <span class="math-rm">III<sub>1</sub></span> algebras in QFT? <strong>No!</strong> Type reduction requires (1) non-trivial spacetime isometries <span class="math">G</span>, (2) a state whose modular flow is geometric, and (3) coupling to a QRF with bounded thermal multiplicity growth. Generic curved spacetimes have no isometries and no geometric modular flow!
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    function toggleTheme() {
+      document.documentElement.classList.toggle("light");
+      drawOrbitCanvas();
+      drawNaimarkCanvas();
+      updateTypeSim();
+      drawDeSitterCanvas();
+    }
+
+    // =========================================================================
+    // TAB NAVIGATION
+    // =========================================================================
+    function switchTab(tabId) {
+      const panels = ['overview', 'orbits', 'qrf', 'crossed', 'typered', 'desitter'];
+      panels.forEach(id => {
+        const panel = document.getElementById('panel-' + id);
+        const btn = document.getElementById('tab-' + id);
+        if (id === tabId) {
+          panel.classList.remove('hidden');
+          btn.classList.add('active');
+        } else {
+          panel.classList.add('hidden');
+          btn.classList.remove('active');
+        }
+      });
+      if (tabId === 'orbits') drawOrbitCanvas();
+      if (tabId === 'qrf') drawNaimarkCanvas();
+      if (tabId === 'crossed') setCrossedStep(currentCrossedStep);
+      if (tabId === 'typered') updateTypeSim();
+      if (tabId === 'desitter') drawDeSitterCanvas();
+    }
+
+    function filterRosetta() {
+      const q = document.getElementById('rosetta-search').value.toLowerCase();
+      const rows = document.querySelectorAll('#rosetta-table tbody tr');
+      rows.forEach(row => {
+        row.style.display = row.innerText.toLowerCase().includes(q) ? '' : 'none';
+      });
+    }
+
+    function getThemeColors() {
+      const isLight = document.documentElement.classList.contains('light');
+      return {
+        isLight,
+        bg: isLight ? '#f8fafc' : '#0f172a',
+        grid: isLight ? 'rgba(100,116,139,0.16)' : 'rgba(148,163,184,0.12)',
+        text: isLight ? '#0f172a' : '#f1f5f9',
+        muted: isLight ? '#475569' : '#94a3b8'
+      };
+    }
+
+    // =========================================================================
+    // MODULE 1: SPACETIME SYMMETRIES & MEASUREMENT ORBITS CANVAS
+    // =========================================================================
+    function drawOrbitCanvas() {
+      const canvas = document.getElementById('orbit-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const W = canvas.width;
+      const H = canvas.height;
+      const tc = getThemeColors();
+
+      const tShift = parseFloat(document.getElementById('slider-orbit-t').value);
+      const thetaShift = parseFloat(document.getElementById('slider-orbit-theta').value);
+      const spread = parseFloat(document.getElementById('slider-qrf-spread').value);
+
+      document.getElementById('val-orbit-t').innerText = (tShift >= 0 ? '+' : '') + tShift.toFixed(2);
+      document.getElementById('val-orbit-theta').innerText = (thetaShift >= 0 ? '+' : '') + thetaShift.toFixed(2) + ' rad';
+      document.getElementById('val-qrf-spread').innerText = spread.toFixed(2);
+
+      ctx.clearRect(0, 0, W, H);
+      ctx.fillStyle = tc.bg;
+      ctx.fillRect(0, 0, W, H);
+
+      // Left half: Spacetime cylinder / static patch orbit of K under G = R x SO(n-1)
+      // Right half: Value space \Sigma = G/H with probability measure \mu_R = \omega_R \circ E and resulting relativised expectation
+      const splitX = 415;
+
+      // Grid on left
+      ctx.strokeStyle = tc.grid;
+      ctx.lineWidth = 1;
+      for (let x = 40; x < splitX - 20; x += 45) {
+        ctx.beginPath();
+        ctx.moveTo(x, 30);
+        ctx.lineTo(x, H - 30);
+        ctx.stroke();
+      }
+      for (let y = 45; y < H - 30; y += 45) {
+        ctx.beginPath();
+        ctx.moveTo(30, y);
+        ctx.lineTo(splitX - 20, y);
+        ctx.stroke();
+      }
+
+      // Divider
+      ctx.strokeStyle = tc.grid;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(splitX, 15);
+      ctx.lineTo(splitX, H - 15);
+      ctx.stroke();
+
+      // Reference Coupling Zone K_0 (Base scheme m_0 = f(eH, [m]))
+      const baseKx = 215;
+      const baseKy = 235;
+      const shiftedKx = baseKx + thetaShift * 75;
+      const shiftedKy = baseKy - tShift * 85;
+
+      // Draw QRF-smeared cloud of coupling zones g.K weighted by \mu_R(gH)
+      const nSamples = 9;
+      for (let i = -nSamples; i <= nSamples; i++) {
+        for (let j = -3; j <= 3; j++) {
+          const dt = (i / nSamples) * spread * 1.6;
+          const dth = (j / 3) * spread * 1.1;
+          const weight = Math.exp(-0.5 * ((dt / spread) ** 2 + (dth / spread) ** 2));
+          if (weight < 0.12) continue;
+          const sx = shiftedKx + dth * 75;
+          const sy = shiftedKy - dt * 85;
+          ctx.fillStyle = `rgba(16, 185, 129, ${weight * 0.12})`;
+          ctx.beginPath();
+          ctx.ellipse(sx, sy, 36, 22, 0, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+
+      // Draw Base Scheme K (dashed outline)
+      ctx.save();
+      ctx.setLineDash([5, 4]);
+      ctx.strokeStyle = tc.muted;
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.ellipse(baseKx, baseKy, 36, 22, 0, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+      ctx.fillStyle = tc.muted;
+      ctx.font = 'bold 11px sans-serif';
+      ctx.fillText('Reference K (s = eH)', baseKx - 52, baseKy + 36);
+
+      // Draw Arrow from K to g.K
+      if (Math.hypot(shiftedKx - baseKx, shiftedKy - baseKy) > 10) {
+        ctx.strokeStyle = '#3b82f6';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(baseKx, baseKy);
+        ctx.lineTo(shiftedKx, shiftedKy);
+        ctx.stroke();
+      }
+
+      // Draw Shifted Coupling Zone g.K (Active scheme g.m)
+      ctx.fillStyle = 'rgba(59, 130, 246, 0.85)';
+      ctx.strokeStyle = '#2563eb';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.ellipse(shiftedKx, shiftedKy, 38, 23, 0, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 12px sans-serif';
+      ctx.fillText('g.K (g.m)', shiftedKx - 28, shiftedKy + 4);
+
+      ctx.fillStyle = tc.text;
+      ctx.font = 'bold 13px sans-serif';
+      ctx.fillText('Spacetime M: Orbit of Schemes [m] ∈ 𝔐/G', 30, 28);
+      ctx.fillStyle = tc.muted;
+      ctx.font = '11px sans-serif';
+      ctx.fillText('← Spatial Rotation θ ∈ SO(n−1) →', 115, H - 14);
+      ctx.save();
+      ctx.translate(18, H / 2 + 40);
+      ctx.rotate(-Math.PI / 2);
+      ctx.fillText('Time Flow t ∈ ℝ →', 0, 0);
+      ctx.restore();
+
+      // Right Panel: QRF Value Space Distribution \mu_R = \omega_R \circ E on \Sigma
+      const rPadL = splitX + 25;
+      const rW = W - rPadL - 20;
+      ctx.fillStyle = tc.text;
+      ctx.font = 'bold 13px sans-serif';
+      ctx.fillText('QRF Measure μ_R = ω_R ∘ E on Σ = G/H', rPadL, 28);
+
+      // Plot 1D slice of \mu_R(s) around s_0 = (tShift, thetaShift) and the system expectation \omega_S(\alpha_S(g, A_m))
+      const plotT = 65, plotH = 155;
+      ctx.strokeStyle = tc.grid;
+      ctx.strokeRect(rPadL, plotT, rW, plotH);
+
+      const sMin = -2.2, sMax = 2.2;
+      const sToX = s => rPadL + ((s - sMin) / (sMax - sMin)) * rW;
+
+      // System observable profile \omega_S(\alpha_S(s, A)) (Blue curve)
+      const sysVal = s => 0.5 + 0.38 * Math.cos(1.7 * s - 0.4) * Math.exp(-0.15 * s * s);
+      ctx.strokeStyle = '#3b82f6';
+      ctx.lineWidth = 2.2;
+      ctx.beginPath();
+      for (let px = 0; px <= rW; px += 2) {
+        const s = sMin + (px / rW) * (sMax - sMin);
+        const y = plotT + plotH - sysVal(s) * plotH;
+        if (px === 0) ctx.moveTo(rPadL + px, y);
+        else ctx.lineTo(rPadL + px, y);
+      }
+      ctx.stroke();
+
+      // QRF probability distribution \mu_R(s) centered at tShift with width `spread` (Emerald shaded)
+      ctx.fillStyle = 'rgba(16, 185, 129, 0.22)';
+      ctx.strokeStyle = '#10b981';
+      ctx.lineWidth = 2.2;
+      ctx.beginPath();
+      for (let px = 0; px <= rW; px += 2) {
+        const s = sMin + (px / rW) * (sMax - sMin);
+        const gVal = Math.exp(-0.5 * ((s - tShift) / spread) ** 2);
+        const y = plotT + plotH - gVal * (plotH * 0.82);
+        if (px === 0) ctx.moveTo(rPadL + px, y);
+        else ctx.lineTo(rPadL + px, y);
+      }
+      ctx.stroke();
+      ctx.lineTo(rPadL + rW, plotT + plotH);
+      ctx.lineTo(rPadL, plotT + plotH);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.font = 'bold 11px sans-serif';
+      ctx.fillStyle = '#3b82f6';
+      ctx.fillText('― ω_S(α_S(g, A_m))', rPadL + 8, plotT + 18);
+      ctx.fillStyle = '#10b981';
+      ctx.fillText('― QRF PDF d(ω_R ∘ E)(gH)', rPadL + 8, plotT + 34);
+
+      // Compute exact vs QRF-relativised expectation (Corollary 4.16, Eq. 4.49)
+      const exactExpect = sysVal(tShift);
+      let num = 0, den = 0;
+      for (let s = -4; s <= 4; s += 0.02) {
+        const w = Math.exp(-0.5 * ((s - tShift) / spread) ** 2);
+        num += sysVal(s) * w;
+        den += w;
+      }
+      const relExpect = num / den;
+      const err = Math.abs(relExpect - exactExpect);
+
+      // Bottom right summary box on canvas
+      const boxY = 245;
+      ctx.fillStyle = tc.isLight ? 'rgba(15,23,42,0.04)' : 'rgba(255,255,255,0.04)';
+      ctx.fillRect(rPadL, boxY, rW, 180);
+      ctx.strokeStyle = tc.grid;
+      ctx.strokeRect(rPadL, boxY, rW, 180);
+
+      ctx.fillStyle = tc.text;
+      ctx.font = 'bold 12px sans-serif';
+      ctx.fillText('Corollary 4.16 (Eq. 4.49) Comparison:', rPadL + 12, boxY + 24);
+
+      ctx.font = '12px monospace';
+      ctx.fillStyle = '#3b82f6';
+      ctx.fillText(`Ideal ω_S(A_{g.m})       = ${exactExpect.toFixed(4)}`, rPadL + 12, boxY + 52);
+      ctx.fillStyle = '#10b981';
+      ctx.fillText(`Relativised (ω_S⊗ω_R)(A_[m]) = ${relExpect.toFixed(4)}`, rPadL + 12, boxY + 76);
+      ctx.fillStyle = err < 0.02 ? '#10b981' : '#f59e0b';
+      ctx.fillText(`Smearing Discrepancy     = ${err.toFixed(4)}`, rPadL + 12, boxY + 100);
+
+      ctx.fillStyle = tc.muted;
+      ctx.font = '11px sans-serif';
+      ctx.fillText('As Δs → 0 (Norm-1 localisable QRF, §3.2):', rPadL + 12, boxY + 132);
+      ctx.fillText('d(ω_R ∘ E) → δ_g, so A_[m] reproduces A_{g.m}!', rPadL + 12, boxY + 150);
+
+      document.getElementById('orbit-status').innerHTML = `
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="px-2 py-0.5 rounded bg-blue-500/20 text-blue-500 font-bold">Relativised Measurement Observable A<sub>[m]</sub> := ¥(A<sub>𝔣(H,[m])</sub>)</span>
+          <span class="text-[var(--muted-foreground)]">
+            Instead of breaking <span class="math">G</span>-invariance by hand, the experimenter prepares the QRF in state <span class="math">&omega;<sub>R</sub></span> centered around <span class="math">gH &isin; G/H</span>. Evaluating the <span class="math">G</span>-invariant operator <span class="math">A<sub>[m]</sub> &isin; (&mathcal{M}<sub>S</sub>&otimes;B(&mathcal{H}<sub>R</sub>))<sup>&alpha;<sub>S</sub>&otimes;Ad U<sub>R</sub></sup></span> in <span class="math">&omega;<sub>S</sub> &otimes; &omega;<sub>R</sub></span> samples the measurement scheme <span class="math-frak">f</span><span class="math">(gH, [m])</span> with probability <span class="math">d(&omega;<sub>R</sub> &circ; E)(gH)</span>!
+          </span>
+        </div>`;
+    }
+
+    // =========================================================================
+    // MODULE 2: NAIMARK DILATION & PAULI THEOREM SIMULATOR (&sect;3.1 & &sect;4.2)
+    // =========================================================================
+    let currentNaimarkMode = 'clpw';
+
+    function setNaimarkMode(m) {
+      currentNaimarkMode = m;
+      ['full', 'clpw', 'band'].forEach(id => {
+        const btn = document.getElementById('nmode-' + id);
+        if (id === m) {
+          btn.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold bg-[var(--primary)] text-[var(--primary-foreground)]';
+        } else {
+          btn.className = 'px-3 py-1.5 rounded-lg text-xs font-semibold border border-[var(--border)]';
+        }
+      });
+      drawNaimarkCanvas();
+    }
+
+    function drawNaimarkCanvas() {
+      const canvas = document.getElementById('naimark-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const W = canvas.width;
+      const H = canvas.height;
+      const tc = getThemeColors();
+
+      ctx.clearRect(0, 0, W, H);
+      ctx.fillStyle = tc.bg;
+      ctx.fillRect(0, 0, W, H);
+
+      // Top Half: Frequency / Energy Space L^2(R_\xi) showing the Naimark projection p_V = \chi_V(\xi)
+      // Bottom Half: Time Value Space \Sigma = R showing the resulting POVM density / kernel <t | E^T(dt') | t>
+      const midY = H / 2;
+      ctx.strokeStyle = tc.grid;
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(20, midY);
+      ctx.lineTo(W - 20, midY);
+      ctx.stroke();
+
+      // Top Plot: Energy Spectrum \xi \in [-6, 6]
+      ctx.fillStyle = tc.text;
+      ctx.font = 'bold 13px sans-serif';
+      ctx.fillText('1. Dilation Energy Space ℱℋ_R = χ_V(ξ) L²(ℝ): Projection p_V in Energy ξ', 30, 26);
+
+      const padL = 60, padR = 40;
+      const plotW = W - padL - padR;
+      const eZeroX = padL + plotW * 0.5;
+      const eBaseY = midY - 35;
+      const eHeight = 110;
+
+      // Axis
+      ctx.strokeStyle = tc.muted;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(padL, eBaseY);
+      ctx.lineTo(W - padR, eBaseY);
+      ctx.moveTo(eZeroX, eBaseY + 10);
+      ctx.lineTo(eZeroX, eBaseY - eHeight - 15);
+      ctx.stroke();
+
+      ctx.fillStyle = tc.muted;
+      ctx.font = '11px sans-serif';
+      ctx.fillText('ξ < 0 (Negative Energy in L²(ℝ))', padL + 35, eBaseY + 20);
+      ctx.fillText('ξ = 0', eZeroX - 14, eBaseY + 20);
+      ctx.fillText('ξ > 0 (Physical QRF Spectrum)', eZeroX + 75, eBaseY + 20);
+
+      // Draw full dilated space L^2(R) in dashed outline
+      ctx.save();
+      ctx.setLineDash([5, 4]);
+      ctx.strokeStyle = '#64748b';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(padL + 10, eBaseY - eHeight, plotW - 20, eHeight);
+      ctx.restore();
+
+      // Shade active projection region V
+      ctx.fillStyle = 'rgba(59, 130, 246, 0.28)';
+      ctx.strokeStyle = '#3b82f6';
+      ctx.lineWidth = 2.5;
+      if (currentNaimarkMode === 'full') {
+        ctx.fillRect(padL + 10, eBaseY - eHeight, plotW - 20, eHeight);
+        ctx.strokeRect(padL + 10, eBaseY - eHeight, plotW - 20, eHeight);
+      } else if (currentNaimarkMode === 'clpw') {
+        ctx.fillRect(eZeroX, eBaseY - eHeight, (plotW / 2) - 10, eHeight);
+        ctx.strokeRect(eZeroX, eBaseY - eHeight, (plotW / 2) - 10, eHeight);
+      } else {
+        const bandW = plotW * 0.24;
+        ctx.fillRect(eZeroX, eBaseY - eHeight, bandW, eHeight);
+        ctx.strokeRect(eZeroX, eBaseY - eHeight, bandW, eHeight);
+      }
+
+      ctx.fillStyle = '#3b82f6';
+      ctx.font = 'bold 12px sans-serif';
+      ctx.fillText('Projected QRF Space ℋ_R = p_V L²(ℝ)', eZeroX + 14, eBaseY - eHeight / 2);
+
+      // Bottom Plot: Resulting Time POVM E^T(X) = W^* P(X) W on Value Space \Sigma = R
+      ctx.fillStyle = tc.text;
+      ctx.font = 'bold 13px sans-serif';
+      ctx.fillText('2. Compressed Time POVM E^T(X) = W* P(X) W: Resolution & Non-Orthogonality in Time t', 30, midY + 28);
+
+      const tBaseY = H - 35;
+      const tHeight = 125;
+      ctx.strokeStyle = tc.muted;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(padL, tBaseY);
+      ctx.lineTo(W - padR, tBaseY);
+      ctx.stroke();
+
+      // Draw indicator interval X = [-0.5, 0.5] and its compressed POVM profile
+      const tMin = -5, tMax = 5;
+      const xIntL = padL + (( -0.7 - tMin) / (tMax - tMin)) * plotW;
+      const xIntR = padL + ((  0.7 - tMin) / (tMax - tMin)) * plotW;
+
+      // Sharp PVM P(X) on dilated space L^2(R)
+      ctx.save();
+      ctx.setLineDash([4, 4]);
+      ctx.strokeStyle = '#10b981';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(xIntL, tBaseY - tHeight, xIntR - xIntL, tHeight);
+      ctx.restore();
+
+      // Compressed POVM response curve in H_R = p_V L^2(R)
+      ctx.strokeStyle = '#f43f5e';
+      ctx.lineWidth = 2.5;
+      ctx.fillStyle = 'rgba(244, 63, 94, 0.2)';
+      ctx.beginPath();
+      for (let px = 0; px <= plotW; px += 2) {
+        const t = tMin + (px / plotW) * (tMax - tMin);
+        let val = 0;
+        if (currentNaimarkMode === 'full') {
+          val = Math.abs(t) <= 0.7 ? 1.0 : 0.0;
+        } else if (currentNaimarkMode === 'clpw') {
+          // Hardy-space / half-spectrum projection creates 1/(1 + t^2) dispersive tails while preserving ||E^T(X)|| = 1!
+          val = Math.abs(t) <= 0.7 ? 0.96 - 0.15 * t * t : 0.85 / (1 + 2.8 * (Math.abs(t) - 0.7) ** 2);
+        } else {
+          // Band-limited sinc^2 kernel
+          val = 0.72 * Math.exp(-0.35 * t * t) * (1 + 0.15 * Math.cos(3 * t));
+        }
+        const cy = tBaseY - val * tHeight;
+        if (px === 0) ctx.moveTo(padL + px, cy);
+        else ctx.lineTo(padL + px, cy);
+      }
+      ctx.stroke();
+      ctx.lineTo(padL + plotW, tBaseY);
+      ctx.lineTo(padL, tBaseY);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.font = 'bold 11px sans-serif';
+      ctx.fillStyle = '#10b981';
+      ctx.fillText('--- Dilated Sharp PVM P(X) on L²(ℝ)', padL + 12, midY + 52);
+      ctx.fillStyle = '#f43f5e';
+      ctx.fillText('― Compressed QRF Effect E^T(X) = W*P(X)W on ℋ_R', padL + 12, midY + 70);
+
+      const statusEl = document.getElementById('naimark-status');
+      if (currentNaimarkMode === 'full') {
+        statusEl.innerHTML = `
+          <div class="text-amber-500 font-bold mb-1">Ideal Principal Frame V = (−∞, ∞): Sharp PVM (E(X)² = E(X)), but Unphysical Spectrum!</div>
+          <div class="text-[var(--muted-foreground)]">
+            When <span class="math">V = </span><span class="math-bb">R</span>, <span class="math">W = id</span> and <span class="math">E<sup>T</sup>(X) = P(X)</span> is a sharp projection-valued measure. However, the generator of time translations has spectrum <span class="math">(&minus;&infin;, &infin;)</span> (unbounded below), and the trace integral <span class="math">&int;<sub>&minus;&infin;</sub><sup>&infin;</sup> e<sup>&minus;&beta;&xi;</sup> d&xi; = &infin;</span> diverges—giving a <strong>Type <span class="math-rm">II<sub>&infin;</sub></span></strong> algebra rather than Type <span class="math-rm">II<sub>1</sub></span>!
+          </div>`;
+      } else if (currentNaimarkMode === 'clpw') {
+        statusEl.innerHTML = `
+          <div class="text-emerald-500 font-bold mb-1">CLPW Observer Frame V = [0, ∞) (Example 3, p. 14 &amp; §6 Example 1): Unsharp, Localisable &amp; Type II₁!</div>
+          <div class="text-[var(--muted-foreground)]">
+            Restricting the energy spectrum to <span class="math">V = [0, &infin;)</span> via <span class="math">W : L<sup>2</sup>(</span><span class="math-bb">R</span><span class="math"><sub>+</sub>) &hookrightarrow; L<sup>2</sup>(</span><span class="math-bb">R</span><span class="math">)</span> satisfies positivity of energy (<span class="math">q<sub>+</sub> &ge; 0</span>). By Pauli's theorem, <span class="math">E<sup>T</sup>(X) = W<sup>*</sup>P(X)W</span> is <strong>unsharp</strong> (<span class="math">E<sup>T</sup>(X)<sup>2</sup> &lt; E<sup>T</sup>(X)</span>, note the Hardy-space tails outside <span class="math">X</span>), yet still satisfies the <strong>norm-1 localisability property</strong> (<span class="math">||E<sup>T</sup>(X)|| = 1</span>) AND makes <span class="math">&int;<sub>0</sub><sup>&infin;</sup> e<sup>&minus;&beta;&xi;</sup> d&xi; = 1/&beta; &lt; &infin;</span> (<strong>Type <span class="math-rm">II<sub>1</sub></span></strong>)!
+          </div>`;
+      } else {
+        statusEl.innerHTML = `
+          <div class="text-blue-500 font-bold mb-1">Band-Limited Frame V = [0, Λ]: Strongly Unsharp (||E(X)|| &lt; 1 for small X), Finite Type II₁ Trace</div>
+          <div class="text-[var(--muted-foreground)]">
+            Cutting off high frequencies at <span class="math">&Lambda;</span> makes every wavepacket in <span class="math">&mathcal{H}<sub>R</sub> = p<sub>[0,&Lambda;]</sub>L<sup>2</sup>(</span><span class="math-bb">R</span><span class="math">)</span> analytic with minimum width <span class="math">&sim; 1/&Lambda;</span>. Thus <span class="math">E<sup>T</sup></span> loses the norm-1 property on intervals smaller than <span class="math">1/&Lambda;</span>, imposing a fundamental resolution floor on the QRF!
+          </div>`;
+      }
+    }
+
+    // =========================================================================
+    // MODULE 3: CROSSED PRODUCTS & RELATIVISATION STEP BUILDER (&sect;4.3–4.4)
+    // =========================================================================
+    let currentCrossedStep = 0;
+
+    const crossedStepsData = [
+      {
+        title: 'Step 1: Dilate the QRF via W : ℋ_R ↪ L²(G) ⊗ 𝒦 and Apply Lemma 4.6',
+        html: `
+          <div class="space-y-2.5 text-xs text-[var(--muted-foreground)] leading-relaxed">
+            <p>
+              We want to characterize all <span class="math">G</span>-invariant operators in the joint system+QRF von Neumann algebra:
+              <span class="math">(&mathcal{M}<sub>S</sub> &otimes; B(&mathcal{H}<sub>R</sub>))<sup>&alpha;<sub>S</sub> &otimes; Ad U<sub>R</sub></sup></span>.
+            </p>
+            <p>
+              By Corollary 4.5, any compactly stabilised QRF is unitarily equivalent to <span class="math">&mathcal{H}<sub>R</sub> = p(L<sup>2</sup>(G) &otimes; &mathcal{K})</span> for a <span class="math">G</span>-invariant projection <span class="math">p &isin; &lambda;(G)' &otimes; B(&mathcal{K})</span>. Now apply <strong>Lemma 4.6</strong>: for any von Neumann algebra <span class="math">&mathcal{M}</span> with <span class="math">G</span>-action <span class="math">&alpha;</span> and <span class="math">G</span>-invariant projection <span class="math">p &isin; &mathcal{M}<sup>&alpha;</sup></span>, taking fixed points commutes with compressing by <span class="math">p</span>:
+            </p>
+            <div class="eq-box text-sm p-3 rounded-lg bg-[var(--card)] border border-[var(--border)] text-center text-[var(--foreground)]">
+              <span class="math">(p &mathcal{M} p)<sup>&alpha;</sup> = p &mathcal{M}<sup>&alpha;</sup> p &nbsp;&rArr;&nbsp; (&mathcal{M}<sub>S</sub> &otimes; B(&mathcal{H}<sub>R</sub>))<sup>&alpha;<sub>S</sub>&otimes;Ad U<sub>R</sub></sup> = (1 &otimes; p)(&mathcal{M}<sub>S</sub> &otimes; B(L<sup>2</sup>(G) &otimes; &mathcal{K}))<sup>&alpha;<sub>S</sub>&otimes;Ad(&lambda;&otimes;1<sub>&mathcal{K}</sub>)</sup>(1 &otimes; p)</span>
+            </div>
+          </div>`
+      },
+      {
+        title: 'Step 2: Factor Out B(𝒦) and Invoke the Crossed Product Commutation Theorem (Prop. 4.8)',
+        html: `
+          <div class="space-y-2.5 text-xs text-[var(--muted-foreground)] leading-relaxed">
+            <p>
+              Because <span class="math">G</span> acts trivially on the multiplicity space <span class="math">&mathcal{K}</span>, the fixed-point algebra factors as:
+              <span class="math">(&mathcal{M}<sub>S</sub> &otimes; B(L<sup>2</sup>(G) &otimes; &mathcal{K}))<sup>&alpha;<sub>S</sub>&otimes;Ad(&lambda;&otimes;1<sub>&mathcal{K}</sub>)</sup> &simeq; (&mathcal{M}<sub>S</sub> &otimes; B(L<sup>2</sup>(G)))<sup>&alpha;<sub>S</sub>&otimes;Ad &lambda;</sup> &otimes; B(&mathcal{K})</span> (Eq. 4.20).
+            </p>
+            <p>
+              Now invoke <strong>Proposition 4.8 (Takesaki–Van Daele Commutation Theorem)</strong>: the fixed-point subalgebra of <span class="math">&mathcal{M}<sub>S</sub> &otimes; B(L<sup>2</sup>(G))</span> under <span class="math">&alpha;<sub>S</sub> &otimes; Ad &lambda;</span> is <em>precisely</em> the <strong>Crossed Product von Neumann Algebra</strong> <span class="math">&mathcal{M}<sub>S</sub> &rtimes;<sub>&alpha;<sub>S</sub></sub> G</span>!
+            </p>
+            <div class="eq-box text-sm p-3 rounded-lg bg-[var(--card)] border border-[var(--border)] text-center text-[var(--foreground)]">
+              <span class="math">(&mathcal{M}<sub>S</sub> &otimes; B(L<sup>2</sup>(G)))<sup>&alpha;<sub>S</sub>&otimes;Ad &lambda;</sup> = &mathcal{M}<sub>S</sub> &rtimes;<sub>&alpha;<sub>S</sub></sub> G := (&pi;(&mathcal{M}<sub>S</sub>) &cup; &rho;&#771;(G))'' &sub; B(L<sup>2</sup>(G, &mathcal{H}<sub>S</sub>))</span> &nbsp;&nbsp;(Def. 4.7 &amp; Prop. 4.8)
+            </div>
+            <p>
+              where <span class="math">(&pi;(a)&phi;)(g) = &alpha;<sub>S</sub>(g, a)&phi;(g)</span> (orbit-modulated system operator) and <span class="math">(&rho;&#771;(g)&phi;)(g') = &Delta;<sub>G</sub>(g)&phi;(g'g)</span> (right translation on <span class="math">G</span>, which commutes with left translation <span class="math">&lambda;(G)</span>!).
+            </p>
+          </div>`
+      },
+      {
+        title: 'Step 3: Theorem 4.9 & The Extended Relativisation Map mathscr{Z} (Corollary 4.11)',
+        html: `
+          <div class="space-y-2.5 text-xs text-[var(--muted-foreground)] leading-relaxed">
+            <p>
+              Putting Step 1 and Step 2 together yields <strong>Theorem 4.9 (Eq. 4.25)</strong>:
+            </p>
+            <div class="eq-box text-sm p-3 rounded-lg bg-[var(--card)] border border-[var(--border)] text-center text-[var(--foreground)]">
+              <span class="math">(&mathcal{M}<sub>S</sub> &otimes; B(&mathcal{H}<sub>R</sub>))<sup>&alpha;<sub>S</sub>&otimes;Ad U<sub>R</sub></sup> &simeq; (1<sub>&mathcal{H}<sub>S</sub></sub> &otimes; p)((&mathcal{M}<sub>S</sub> &rtimes;<sub>&alpha;<sub>S</sub></sub> G) &otimes; B(&mathcal{K}))(1<sub>&mathcal{H}<sub>S</sub></sub> &otimes; p)</span>
+            </div>
+            <p>
+              When <span class="math">&alpha;<sub>S</sub> = Ad U<sub>S</sub></span> is unitarily implemented, conjugating by the twisting unitary <span class="math">(V&phi;)(g) = U<sub>S</sub>(g)&phi;(g)</span> (Prop 4.10) defines the surjective completely positive <strong>Extended Relativisation Map <span class="math-cal">Z</span></strong> (Corollary 4.11, Eq. 4.31):
+              <span class="math-cal">Z</span><span class="math">(&middot;) = W&#771;<sup>*</sup>(&middot;)W&#771; : &mathcal{M}&#771;<sub>S</sub><sup>G</sup> &otimes; B(&mathcal{K}) &twoheadrightarrow; (&mathcal{M}<sub>S</sub> &otimes; B(&mathcal{H}<sub>R</sub>))<sup>Ad(U<sub>S</sub>&otimes;U<sub>R</sub>)</sup></span>, where <span class="math">&mathcal{M}&#771;<sub>S</sub><sup>G</sup> = {x U<sub>S</sub>(g) &otimes; &rho;(g)}''</span>.
+            </p>
+          </div>`
+      },
+      {
+        title: 'Step 4: The Relativisation Map ¥ for Compactly Stabilised QRFs (Def. 4.13 & Prop. 4.14)',
+        html: `
+          <div class="space-y-2.5 text-xs text-[var(--muted-foreground)] leading-relaxed">
+            <p>
+              What if we only want to relativise a specific system operator <span class="math">x &isin; &mathcal{M}<sub>S</sub></span> using the QRF POVM <span class="math">E : Bor(G/H) &rarr; B(&mathcal{H}<sub>R</sub>)</span>, generalizing Loveridge–Miyadera–Busch's formula <span class="math-rm">&yen;</span><span class="math">(A) = &int;<sub>G</sub> U<sub>S</sub>(g)AU<sub>S</sub>(g)<sup>*</sup> &otimes; dE(g)</span> to homogeneous spaces <span class="math">G/H</span>?
+            </p>
+            <p>
+              <strong>Lemma 4.12 &amp; Definition 4.13:</strong> Because <span class="math">E</span> only resolves cosets <span class="math">gH &isin; G/H</span>, <span class="math">x</span> must be invariant under the compact stabilizer <span class="math">H</span> (<span class="math">x &isin; &mathcal{M}<sub>S</sub><sup>&alpha;<sub>S</sub>&upharpoonright;<sub>H</sub></sup></span>). Then <span class="math">&pi;(x)</span> commutes with <span class="math">&rho;(H)</span>, and compressing <span class="math">&pi;(x) &otimes; 1<sub>&mathcal{K}</sub></span> by the Naimark isometry <span class="math">W</span> defines:
+            </p>
+            <div class="eq-box text-sm p-3 rounded-lg bg-[var(--card)] border border-[var(--border)] text-center text-[var(--foreground)]">
+              <span class="math-rm">&yen;</span><span class="math">(x) := (1<sub>&mathcal{H}<sub>S</sub></sub> &otimes; W<sup>*</sup>)(&pi;(x) &otimes; 1<sub>&mathcal{K}</sub>)(1<sub>&mathcal{H}<sub>S</sub></sub> &otimes; W) = &int;<sub>G/H</sub> &alpha;<sub>S</sub>(g, x) &otimes; dE(gH)</span> &nbsp;&nbsp;(Eq. 4.43 &amp; 4.46)
+            </div>
+            <p>
+              <strong>Proposition 4.14:</strong> <span class="math-rm">&yen;</span> is uniquely defined (independent of the choice of dilation <span class="math">W</span>!), normal, unital, completely positive, and is a <span class="math">*</span>-isomorphism whenever <span class="math">E</span> is a sharp PVM!
+            </p>
+          </div>`
+      },
+      {
+        title: 'Step 5: Closing the Loop — Relativised Measurement Schemes A_[m] (Corollary 4.16)',
+        html: `
+          <div class="space-y-2.5 text-xs text-[var(--muted-foreground)] leading-relaxed">
+            <p>
+              Now apply <span class="math-rm">&yen;</span> to an equivalence class <span class="math">[m] &isin; </span><span class="math-frak">M</span><span class="math">/G</span> of Fewster–Verch measurement schemes! Let <span class="math-frak">f</span><span class="math"> : G/H &times; </span><span class="math-frak">M</span><span class="math">/G &rarr; </span><span class="math-frak">M</span> be the covariant selector map (Prop 4.2). At the origin coset <span class="math">eH &isin; G/H</span>, the selected scheme <span class="math-frak">f</span><span class="math">(H, [m])</span> has stabilizer containing <span class="math">H</span>, so its induced observable <span class="math">A<sub>&frak;f;(H,[m])</sub></span> lies in <span class="math">&mathcal{M}<sub>S</sub><sup>&alpha;<sub>S</sub>&upharpoonright;<sub>H</sub></sup></span>!
+            </p>
+            <div class="eq-box text-sm p-3 rounded-lg bg-[var(--card)] border border-[var(--border)] text-center text-[var(--foreground)]">
+              <span class="math">A<sub>[m]</sub> := </span><span class="math-rm">&yen;</span><span class="math">(A<sub>&frak;f;(H,[m])</sub>), &nbsp;&nbsp;(&omega;<sub>S</sub> &otimes; &omega;<sub>R</sub>)(A<sub>[m]</sub>) = &int;<sub>G/H</sub> &omega;<sub>S</sub>(A<sub>&frak;f;(gH,[m])</sub>) d(&omega;<sub>R</sub> &circ; E)(gH)</span> &nbsp;&nbsp;(Eq. 4.48–4.49)
+            </div>
+            <p>
+              This rigorously constructs the <span class="math">G</span>-invariant operator <span class="math">A<sub>[m]</sub></span> without ever needing ill-defined operator-valued integrals, and places <span class="math">A<sub>[m]</sub></span> inside the compressed crossed product so we can analyze its von Neumann algebra type!
+            </p>
+          </div>`
+      }
+    ];
+
+    function setCrossedStep(idx) {
+      currentCrossedStep = idx;
+      document.getElementById('crossed-step-indicator').innerText = `Step ${idx + 1} / 5`;
+      for (let i = 0; i < 5; i++) {
+        const btn = document.getElementById('cstep-' + i);
+        if (i === idx) btn.classList.add('active');
+        else btn.classList.remove('active');
+      }
+      const step = crossedStepsData[idx];
+      document.getElementById('crossed-step-detail').innerHTML =
+        `<h3 class="font-semibold text-base mb-2 text-[var(--foreground)]">${step.title}</h3>` + step.html;
+    }
+
+    function nextCrossedStep() {
+      setCrossedStep((currentCrossedStep + 1) % 5);
+    }
+    function prevCrossedStep() {
+      setCrossedStep((currentCrossedStep + 4) % 5);
+    }
+
+    // =========================================================================
+    // MODULE 4: SPECTRAL MULTIPLICITY & TYPE REDUCTION SIMULATOR (&sect;4.5 & &sect;5)
+    // =========================================================================
+    let currentTypeModel = 'clpw';
+
+    function setTypeModel(m) {
+      currentTypeModel = m;
+      ['clpw', 'rotor', 'hagedorn', 'unbounded', 'degenerate'].forEach(id => {
+        const btn = document.getElementById('tmod-' + id);
+        if (id === m) {
+          btn.className = 'px-2.5 py-1.5 rounded-lg text-xs font-semibold bg-[var(--primary)] text-[var(--primary-foreground)]';
+        } else {
+          btn.className = 'px-2.5 py-1.5 rounded-lg text-xs font-semibold border border-[var(--border)]';
+        }
+      });
+      updateTypeSim();
+    }
+
+    function updateTypeSim() {
+      const beta = parseFloat(document.getElementById('slider-beta').value);
+      const param2 = parseFloat(document.getElementById('slider-param2').value);
+      document.getElementById('val-beta').innerText = beta.toFixed(2);
+      document.getElementById('val-param2').innerText = param2.toFixed(2);
+
+      const canvas = document.getElementById('type-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const W = canvas.width;
+      const H = canvas.height;
+      const tc = getThemeColors();
+
+      ctx.clearRect(0, 0, W, H);
+      ctx.fillStyle = tc.bg;
+      ctx.fillRect(0, 0, W, H);
+
+      const padL = 55, padR = 30, padT = 35, padB = 42;
+      const plotW = W - padL - padR;
+      const plotH = H - padT - padB;
+
+      // Grid
+      ctx.strokeStyle = tc.grid;
+      ctx.lineWidth = 1;
+      for (let i = 0; i <= 4; i++) {
+        const y = padT + (plotH * i) / 4;
+        ctx.beginPath();
+        ctx.moveTo(padL, y);
+        ctx.lineTo(W - padR, y);
+        ctx.stroke();
+      }
+
+      const xiMin = -2.5, xiMax = 6.5;
+      const xiToX = xi => padL + ((xi - xiMin) / (xiMax - xiMin)) * plotW;
+      const zeroX = xiToX(0);
+
+      // Vertical line at \xi = 0
+      ctx.strokeStyle = tc.muted;
+      ctx.beginPath();
+      ctx.moveTo(zeroX, padT);
+      ctx.lineTo(zeroX, padT + plotH);
+      ctx.stroke();
+
+      // Define m_{U_R}(\xi) according to currentTypeModel
+      const mFunc = (xi) => {
+        if (currentTypeModel === 'clpw') {
+          return xi >= 0 ? 1.0 : 0.0;
+        } else if (currentTypeModel === 'rotor') {
+          if (xi < 0) return 0.0;
+          // Sum_{l=0}^4 (2l+1)^2 \Theta(\xi - param2 * l(l+1)*0.25) scaled for plotting
+          let sum = 0;
+          for (let l = 0; l <= 5; l++) {
+            const El = param2 * 0.22 * l * (l + 1);
+            if (xi >= El) sum += ((2 * l + 1) ** 2) * 0.08;
+          }
+          return sum;
+        } else if (currentTypeModel === 'hagedorn') {
+          return xi >= 0 ? Math.exp(param2 * xi) : 0.0;
+        } else if (currentTypeModel === 'unbounded') {
+          return 1.0;
+        } else {
+          // degenerate
+          return xi >= 0 ? 12.0 : 0.0;
+        }
+      };
+
+      const yMax = 5.5;
+      const yToPx = y => padT + plotH - (Math.min(y, yMax) / yMax) * plotH;
+
+      // 1. Plot Spectral Multiplicity m_{U_R}(\xi) (Purple curve)
+      ctx.strokeStyle = '#a855f7';
+      ctx.lineWidth = 2.2;
+      ctx.beginPath();
+      for (let px = 0; px <= plotW; px += 2) {
+        const xi = xiMin + (px / plotW) * (xiMax - xiMin);
+        const m = mFunc(xi);
+        const cy = yToPx(m);
+        if (px === 0) ctx.moveTo(padL + px, cy);
+        else ctx.lineTo(padL + px, cy);
+      }
+      ctx.stroke();
+
+      // 2. Plot Boltzmann Factor e^{-\beta \xi} (Blue dashed curve)
+      ctx.save();
+      ctx.setLineDash([5, 4]);
+      ctx.strokeStyle = '#3b82f6';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      for (let px = 0; px <= plotW; px += 2) {
+        const xi = xiMin + (px / plotW) * (xiMax - xiMin);
+        const bVal = Math.exp(-beta * xi);
+        const cy = yToPx(bVal);
+        if (px === 0) ctx.moveTo(padL + px, cy);
+        else ctx.lineTo(padL + px, cy);
+      }
+      ctx.stroke();
+      ctx.restore();
+
+      // 3. Plot Trace Integrand e^{-\beta \xi} m_{U_R}(\xi) (Emerald filled curve)
+      const isConvergent =
+        currentTypeModel === 'clpw' ||
+        currentTypeModel === 'rotor' ||
+        (currentTypeModel === 'hagedorn' && beta > param2);
+
+      const fillColor = isConvergent ? 'rgba(16, 185, 129, 0.28)' : 'rgba(244, 63, 94, 0.28)';
+      const strokeColor = isConvergent ? '#10b981' : '#f43f5e';
+
+      ctx.strokeStyle = strokeColor;
+      ctx.lineWidth = 2.6;
+      ctx.beginPath();
+      for (let px = 0; px <= plotW; px += 2) {
+        const xi = xiMin + (px / plotW) * (xiMax - xiMin);
+        const prod = Math.exp(-beta * xi) * mFunc(xi);
+        const cy = yToPx(prod);
+        if (px === 0) ctx.moveTo(padL + px, cy);
+        else ctx.lineTo(padL + px, cy);
+      }
+      ctx.stroke();
+      ctx.lineTo(padL + plotW, yToPx(0));
+      ctx.lineTo(padL, yToPx(0));
+      ctx.closePath();
+      ctx.fillStyle = fillColor;
+      ctx.fill();
+
+      // Legend
+      ctx.font = 'bold 12px sans-serif';
+      ctx.fillStyle = '#a855f7';
+      ctx.fillText('― Spectral Multiplicity m_UR(ξ) = dim 𝒦(ξ)', padL + 14, padT + 18);
+      ctx.fillStyle = '#3b82f6';
+      ctx.fillText('--- Modular Boltzmann Weight exp(−βξ)', padL + 14, padT + 36);
+      ctx.fillStyle = strokeColor;
+      ctx.fillText('― Trace Integrand exp(−βξ) m_UR(ξ) (Area = τ(1)/β, Eq. 5.43)', padL + 14, padT + 54);
+
+      ctx.fillStyle = tc.muted;
+      ctx.font = '12px sans-serif';
+      ctx.fillText('QRF Energy / Frequency Spectrum ξ ∈ ℝ', W / 2 - 105, H - 10);
+
+      // Compute analytical/numerical trace value and update cards
+      let traceText = '';
+      let typeBadge = '';
+      let kmsStatus = '';
+
+      if (currentTypeModel === 'clpw') {
+        const tau1 = 1.0; // \beta * (1/\beta) = 1
+        traceText = `∫ e^{-βξ} dξ = ${(1 / beta).toFixed(3)} < ∞`;
+        typeBadge = 'Type II₁ Factor (Finite!)';
+        kmsStatus = 'Finite KMS Weight φ_β on 𝒟₁ (Thm 5.11)';
+      } else if (currentTypeModel === 'rotor') {
+        let zRot = 0;
+        for (let l = 0; l <= 30; l++) {
+          const El = param2 * 0.22 * l * (l + 1);
+          zRot += ((2 * l + 1) ** 2) * Math.exp(-beta * El);
+        }
+        traceText = `Z_SO(3)(β)/β = ${(zRot / beta).toFixed(3)} < ∞`;
+        typeBadge = 'Finite Type II₁ Algebra!';
+        kmsStatus = 'Gibbs State ρ_β on L²(SO(3)) Exists (Eq. 6.25)';
+      } else if (currentTypeModel === 'hagedorn') {
+        if (beta > param2) {
+          traceText = `1/(β − α) = ${(1 / (beta - param2)).toFixed(3)} < ∞`;
+          typeBadge = 'Type II₁ (β > α: Finite!)';
+          kmsStatus = 'Below Hagedorn Temp: φ_β Finite on 𝒟₁';
+        } else {
+          traceText = '∞ (Diverges at ξ → +∞ for β ≤ α!)';
+          typeBadge = 'Type II_∞ (Semifinite, Infinite Trace)';
+          kmsStatus = 'Above Hagedorn Temp: Nuclearity Fails!';
+        }
+      } else if (currentTypeModel === 'unbounded') {
+        traceText = '∞ (Diverges at ξ → −∞!)';
+        typeBadge = 'Type II_∞ Factor (Semifinite)';
+        kmsStatus = 'φ_β ≡ ∞ (Unbounded Below Spectrum)';
+      } else {
+        traceText = '∞ (m_UR(ξ) = ∞ for ξ ≥ 0!)';
+        typeBadge = 'Semifinite (Type II_∞)';
+        kmsStatus = 'Infinite Angular Momentum Degeneracy';
+      }
+
+      const badgeColor = isConvergent ? 'text-emerald-500 border-emerald-500/40' : 'text-rose-500 border-rose-500/40';
+      document.getElementById('type-readout').innerHTML = `
+        <div class="p-3 rounded-lg bg-[var(--background)] border ${badgeColor}">
+          <div class="font-bold">Eq. (5.17) Trace Integral</div>
+          <div class="text-sm font-mono font-bold mt-0.5">${traceText}</div>
+          <div class="text-[var(--muted-foreground)]"><span class="math">&tau;(1<sub>&mathcal{H}<sub>S</sub></sub> &otimes; p) = &beta; &int; e<sup>&minus;&beta;&xi;</sup>m<sub>U<sub>R</sub></sub>(&xi;)d&xi;</span></div>
+        </div>
+        <div class="p-3 rounded-lg bg-[var(--background)] border ${badgeColor}">
+          <div class="font-bold">Resulting Algebra Type</div>
+          <div class="text-sm font-bold mt-0.5">${typeBadge}</div>
+          <div class="text-[var(--muted-foreground)]">Reduced from bare Type <span class="math-rm">III<sub>1</sub></span> QFT!</div>
+        </div>
+        <div class="p-3 rounded-lg bg-[var(--background)] border border-[var(--border)]">
+          <div class="font-bold text-blue-500">QRF Thermal Status (Thm 5.11)</div>
+          <div class="text-xs font-semibold mt-0.5">${kmsStatus}</div>
+          <div class="text-[var(--muted-foreground)]"><span class="math">&phi;<sub>&beta;</sub>(E(f)) = ||f||<sub>L<sup>1</sup></sub> &int; e<sup>&minus;&beta;&xi;</sup>m<sub>U<sub>R</sub></sub>(&xi;)d&xi;</span></div>
+        </div>
+      `;
+    }
+
+    // =========================================================================
+    // MODULE 5: DE SITTER STATIC PATCH CANVAS (&sect;6)
+    // =========================================================================
+    const dsState = {
+      kx: 495,
+      ky: 225,
+      kr: 34,
+      dragging: false
+    };
+
+    function drawDeSitterCanvas() {
+      const canvas = document.getElementById('desitter-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      const W = canvas.width;
+      const H = canvas.height;
+      const tc = getThemeColors();
+
+      const boost = parseFloat(document.getElementById('slider-ds-boost').value);
+
+      ctx.clearRect(0, 0, W, H);
+      ctx.fillStyle = tc.bg;
+      ctx.fillRect(0, 0, W, H);
+
+      const cx = W * 0.42;
+      const cy = H * 0.5;
+      const scale = 175;
+
+      // Shade right wedge |x^0| < x^1 (The Static Patch M!)
+      ctx.fillStyle = 'rgba(59, 130, 246, 0.12)';
+      ctx.beginPath();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(W, cy - (W - cx));
+      ctx.lineTo(W, cy + (W - cx));
+      ctx.closePath();
+      ctx.fill();
+
+      // Draw Bifurcate Killing Horizons x^0 = \pm x^1
+      ctx.strokeStyle = '#f59e0b';
+      ctx.lineWidth = 2.2;
+      ctx.beginPath();
+      ctx.moveTo(cx - 210, cy - 210);
+      ctx.lineTo(cx + 260, cy + 260);
+      ctx.moveTo(cx - 210, cy + 210);
+      ctx.lineTo(cx + 260, cy - 260);
+      ctx.stroke();
+
+      // Bifurcation sphere at (cx, cy)
+      ctx.fillStyle = '#f43f5e';
+      ctx.beginPath();
+      ctx.arc(cx, cy, 6, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = '#f43f5e';
+      ctx.font = 'bold 11px sans-serif';
+      ctx.fillText('Bifurcation Surface (Non-compact stabiliser!)', cx - 235, cy + 4);
+
+      // Draw static flow hyperbolas (x^1)^2 - (x^0)^2 = r^2 inside static patch
+      ctx.strokeStyle = tc.grid;
+      ctx.lineWidth = 1.4;
+      [0.45, 0.85, 1.25].forEach(r => {
+        ctx.beginPath();
+        for (let u = -1.6; u <= 1.6; u += 0.05) {
+          const x1 = r * Math.cosh(u) * scale;
+          const x0 = r * Math.sinh(u) * scale;
+          const px = cx + x1;
+          const py = cy - x0;
+          if (u === -1.6) ctx.moveTo(px, py);
+          else ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+      });
+
+      // Draw Observer Geodesic \gamma(\tau) (bold blue hyperbola at r = 1.0)
+      ctx.strokeStyle = '#3b82f6';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      for (let u = -1.5; u <= 1.5; u += 0.05) {
+        const x1 = 1.0 * Math.cosh(u) * scale;
+        const x0 = 1.0 * Math.sinh(u) * scale;
+        const px = cx + x1;
+        const py = cy - x0;
+        if (u === -1.5) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      }
+      ctx.stroke();
+      ctx.fillStyle = '#3b82f6';
+      ctx.font = 'bold 12px sans-serif';
+      ctx.fillText('Observer Geodesic γ(τ)', cx + scale + 10, cy - 8);
+
+      // Compute boosted position of coupling region K under Eq. (6.3)
+      const dx1 = (dsState.kx - cx) / scale;
+      const dx0 = (cy - dsState.ky) / scale;
+      const bx1 = dx1 * Math.cosh(boost) + dx0 * Math.sinh(boost);
+      const bx0 = dx0 * Math.cosh(boost) + dx1 * Math.sinh(boost);
+      const bkx = cx + bx1 * scale;
+      const bky = cy - bx0 * scale;
+
+      // Draw Coupling Zone g.K
+      ctx.fillStyle = 'rgba(16, 185, 129, 0.85)';
+      ctx.strokeStyle = '#059669';
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.ellipse(bkx, bky, dsState.kr, dsState.kr * 0.65, -boost * 0.35, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 12px sans-serif';
+      ctx.fillText('g.K (drag)', bkx - 28, bky + 4);
+
+      ctx.fillStyle = tc.text;
+      ctx.font = 'bold 13px sans-serif';
+      ctx.fillText('Static Patch M = {|x⁰| < x¹} = J⁺(γ) ∩ J⁻(γ)', cx + 45, 28);
+      ctx.fillStyle = '#f59e0b';
+      ctx.font = 'bold 12px sans-serif';
+      ctx.fillText('Future Horizon H⁺ (x⁰ = +x¹)', cx + 75, cy - 95);
+      ctx.fillText('Past Horizon H⁻ (x⁰ = −x¹)', cx + 75, cy + 105);
+
+      const insideWedge = dx1 > Math.abs(dx0) + 0.12;
+      const statusEl = document.getElementById('desitter-status');
+      if (insideWedge) {
+        statusEl.innerHTML = `
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-500 font-bold">K ⊂ Static Patch M (Compact Stabiliser G_K ⊂ SO(3)!)</span>
+            <span class="text-[var(--muted-foreground)]">
+              Inside the static patch <span class="math">|x<sup>0</sup>| &lt; x<sup>1</sup></span>, any non-zero boost <span class="math">t &ne; 0</span> moves <span class="math">K</span> along the hyperbolic flow, so no boost can fix a compact set <span class="math">K</span>! Thus <span class="math">G<sub>K</sub> &sub; {0} &times; SO(3)</span> is <strong>compact</strong>, satisfying Proposition 4.3!
+            </span>
+          </div>`;
+      } else {
+        statusEl.innerHTML = `
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="px-2 py-0.5 rounded bg-rose-500/20 text-rose-500 font-bold">Warning: Near Bifurcation Surface (x⁰ = x¹ = 0)</span>
+            <span class="text-[var(--muted-foreground)]">
+              As noted on page 19, the bifurcation 2-sphere at <span class="math">x<sup>0</sup> = x<sup>1</sup> = 0</span> is fixed by <em>all</em> boosts <span class="math">t &isin; </span><span class="math-bb">R</span> (non-compact stabiliser!), which is why it is excluded from the open static patch <span class="math">|x<sup>0</sup>| &lt; x<sup>1</sup></span> (or ruled out by requiring coupling zones <span class="math">K</span> to have non-empty interior!).
+            </span>
+          </div>`;
+      }
+    }
+
+    function setupDeSitterEvents() {
+      const canvas = document.getElementById('desitter-canvas');
+      if (!canvas) return;
+      const getPos = (e) => {
+        const rect = canvas.getBoundingClientRect();
+        return {
+          x: (e.clientX - rect.left) * (canvas.width / rect.width),
+          y: (e.clientY - rect.top) * (canvas.height / rect.height)
+        };
+      };
+
+      canvas.addEventListener('pointerdown', (e) => {
+        const p = getPos(e);
+        if (Math.hypot(p.x - dsState.kx, p.y - dsState.ky) < dsState.kr * 1.8) {
+          dsState.dragging = true;
+          document.getElementById('slider-ds-boost').value = 0;
+        }
+      });
+
+      window.addEventListener('pointermove', (e) => {
+        if (!dsState.dragging) return;
+        const p = getPos(e);
+        dsState.kx = Math.max(260, Math.min(canvas.width - 45, p.x));
+        dsState.ky = Math.max(50, Math.min(canvas.height - 50, p.y));
+        drawDeSitterCanvas();
+      });
+
+      window.addEventListener('pointerup', () => {
+        dsState.dragging = false;
+      });
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      setupDeSitterEvents();
+      setCrossedStep(0);
+      drawOrbitCanvas();
+      drawNaimarkCanvas();
+      updateTypeSim();
+      drawDeSitterCanvas();
+    });
+  </script>
+</body>
+</html>
