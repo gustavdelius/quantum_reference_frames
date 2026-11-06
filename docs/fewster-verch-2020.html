@@ -1678,7 +1678,8 @@ function fieldFigure(cfg) {
     });
     d.text('labels', view.x0 + 0.15, view.t1 - 0.25, 'J^+(K) boundary', 'lbl small future', 'start', 0.78);
   };
-  const run = rafThrottle(() => { solve(); heat(); d.redraw(); report(numbers()); });
+  const runNow = () => { solve(); heat(); d.redraw(); report(numbers()); };
+  const run = rafThrottle(runNow);
   st.h.forEach((h, k) => d.addHandle({ label: k ? 'Second readout h′' : 'Readout h', pos: () => [h.x, h.t], r: 22, move: (x, t) => { h.x = x; h.t = t; fitH(h); run(); } }));
   d.addHandle({
     label: 'Coupling region K', pos: () => [st.kx, st.kt], rw: () => Math.min(shapes[st.shape].rx, shapes[st.shape].rt, 0.6),
@@ -1691,7 +1692,7 @@ function fieldFigure(cfg) {
   slider(cfg.id + '-mpsi', v => { st.mpsi = v; run(); });
   themeFns.push(() => { readColors(); heat(); });
   st.h.forEach(fitH);
-  run();
+  runNow();
 }
 fieldFigure({ id: 'f3', shape: 'lump', two: false, label: 'Lattice computation of the induced test function' });
 fieldFigure({ id: 'f5', shape: 'wline', two: true, label: 'Two readouts and their induced test functions' });

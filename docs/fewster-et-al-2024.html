@@ -1,0 +1,1278 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Quantum Clocks and Type Reduction</title>
+<meta name="description" content="An interactive reading guide to Fewster, Janssen, Loveridge, Rejzner and Waldron, Quantum Reference Frames, Measurement Schemes and the Type of Local Algebras in Quantum Field Theory (Commun. Math. Phys. 2025).">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&family=JetBrains+Mono:wght@400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..700;1,8..60,300..700&display=swap">
+<style>
+:root {
+  /* Layout: the same lab notebook as the Fewster–Verch guide. One ~40rem reading column; figure plates break out to 74rem; every claim carries a chip pointing back to the paper. */
+  --paper: #f3f5f8;
+  --plate: #ffffff;
+  --ink: #131b2a;
+  --ink-2: #4a5568;
+  --ink-3: #848ea0;
+  --rule: #d5dbe5;
+  --grid: #e4e9f0;
+  --sys: #2146c0;      /* system field, 𝓜_S */
+  --frame: #0b7a63;    /* quantum reference frame */
+  --K: #a81d74;        /* coupling region */
+  --patch: #6b40c4;    /* static patch */
+  --therm: #cf5317;    /* Boltzmann weight, temperature */
+  --heat-pos: #cf5317;
+  color-scheme: light;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  --display: "Bodoni Moda", "Bodoni 72", Didot, "Times New Roman", serif;
+  --body: "Source Serif 4", "Source Serif Pro", Georgia, "Times New Roman", serif;
+  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --measure: 40rem;
+  --wide: 74rem;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0d131e; --plate: #131b29; --ink: #e3e8f1; --ink-2: #a5afc0; --ink-3: #6e798c;
+    --rule: #263145; --grid: #1b2433;
+    --sys: #7da1ff; --frame: #3fc9a7; --K: #f067b5; --patch: #a98bff; --therm: #ff8a4a; --heat-pos: #ff8a4a;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0d131e; --plate: #131b29; --ink: #e3e8f1; --ink-2: #a5afc0; --ink-3: #6e798c;
+  --rule: #263145; --grid: #1b2433;
+  --sys: #7da1ff; --frame: #3fc9a7; --K: #f067b5; --patch: #a98bff; --therm: #ff8a4a; --heat-pos: #ff8a4a;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+img { max-width: 100%; }
+body {
+  margin: 0;
+  background: var(--paper); color: var(--ink);
+  font-family: var(--body); font-size: 18px; line-height: 1.62;
+  font-optical-sizing: auto;
+  -webkit-font-smoothing: antialiased;
+}
+.page {
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0 4rem;
+}
+.prose { max-width: var(--measure); margin-inline: auto; }
+.wide { max-width: var(--wide); margin-inline: auto; }
+a { color: var(--sys); text-underline-offset: 2px; }
+a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid var(--K); outline-offset: 2px; }
+h1, h2, h3 { font-family: var(--display); font-weight: 500; text-wrap: balance; color: var(--ink); }
+h1 { font-size: clamp(2.3rem, 5.2vw, 3.9rem); line-height: 1.04; letter-spacing: -0.012em; margin: 0.35em 0 0.4em; font-weight: 600; }
+h1 em { font-style: italic; font-weight: 500; }
+h2 { font-size: clamp(1.7rem, 3.2vw, 2.35rem); line-height: 1.12; margin: 0.2em 0 0.55em; }
+h3 { font-size: 1.32rem; line-height: 1.25; margin: 1.8em 0 0.4em; font-weight: 600; }
+p { margin: 0 0 1em; }
+.eyebrow {
+  font-family: var(--mono); font-size: 0.74rem; letter-spacing: 0.09em; text-transform: uppercase;
+  color: var(--ink-3); display: flex; flex-wrap: wrap; gap: 0.4rem 0.9rem; align-items: baseline;
+}
+.eyebrow .num { color: var(--K); font-weight: 500; }
+.eyebrow a { color: var(--ink-3); }
+.ref {
+  font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.02em; white-space: nowrap;
+  color: var(--ink-2); border: 1px solid var(--rule); border-radius: 3px; padding: 0 0.32rem; vertical-align: 0.12em;
+  background: var(--plate);
+}
+.term { border-bottom: 1px dotted var(--ink-3); cursor: help; }
+.sys { color: var(--sys); } .frm { color: var(--frame); } .kcol { color: var(--K); } .thm-c { color: var(--therm); }
+.c-sys { color: var(--sys); } .c-frame { color: var(--frame); } .c-K { color: var(--K); } .c-therm { color: var(--therm); }
+[class*="gx-"] { cursor: help; }
+mjx-container[display="true"] { overflow-x: auto; overflow-y: hidden; max-width: 100%; padding-block: 2px; }
+mjx-container { outline: none; }
+
+/* hero */
+.hero { padding-block: clamp(2rem, 6vw, 4.5rem) 1.5rem; }
+.hero-grid { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr); gap: clamp(1.5rem, 4vw, 3.5rem); align-items: center; }
+.lede { font-size: 1.13rem; }
+.hero-note { font-size: 0.93rem; color: var(--ink-2); }
+.hero-fig { background: var(--plate); border: 1px solid var(--rule); border-radius: 6px; padding: 10px; margin: 0; }
+.hero-fig figcaption { font-size: 0.82rem; color: var(--ink-2); padding: 8px 6px 2px; line-height: 1.45; }
+.answers { list-style: none; padding: 0; margin: 2.5rem 0 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--ink); }
+.answers li { padding: 0.9rem 1.1rem 0.6rem 0; border-right: 1px solid var(--rule); margin-right: 1.1rem; font-size: 0.93rem; line-height: 1.5; color: var(--ink-2); }
+.answers li:last-child { border-right: 0; margin-right: 0; }
+.answers b { display: block; color: var(--ink); font-size: 1rem; margin-bottom: 0.3rem; line-height: 1.3; }
+.answers .ref { margin-top: 0.4rem; display: inline-block; }
+@media (max-width: 960px) {
+  .hero-grid { grid-template-columns: minmax(0, 1fr); }
+  .answers { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .answers li:nth-child(2) { border-right: 0; margin-right: 0; }
+}
+@media (max-width: 560px) {
+  .answers { grid-template-columns: minmax(0, 1fr); }
+  .answers li { border-right: 0; margin-right: 0; border-bottom: 1px solid var(--rule); }
+}
+
+/* route */
+.route { margin-block: 3rem 1rem; }
+.route ol { list-style: none; padding: 0; margin: 0.6rem 0 0; columns: 2 18rem; column-gap: 2.5rem; counter-reset: r; }
+.route li { counter-increment: r; break-inside: avoid; display: grid; grid-template-columns: 2rem minmax(0, 1fr) auto; gap: 0.4rem; padding: 0.38rem 0; border-bottom: 1px solid var(--rule); font-size: 0.96rem; align-items: baseline; }
+.route li::before { content: counter(r, decimal-leading-zero); font-family: var(--mono); font-size: 0.74rem; color: var(--ink-3); }
+.route a { color: var(--ink); text-decoration: none; }
+.route a:hover { color: var(--K); }
+
+/* sections */
+section.sec { padding-top: 3.2rem; scroll-margin-top: 1rem; }
+section.sec + section.sec { border-top: 1px solid var(--rule); margin-top: 2.6rem; }
+dl.defs { margin: 1.2rem 0; display: grid; gap: 0.8rem; }
+dl.defs > div { display: grid; grid-template-columns: 11.5rem minmax(0, 1fr); gap: 1rem; }
+dl.defs dt { font-weight: 600; line-height: 1.4; }
+dl.defs dt small { display: block; font-weight: 400; color: var(--ink-2); }
+dl.defs dd { margin: 0; }
+@media (max-width: 620px) { dl.defs > div { grid-template-columns: minmax(0, 1fr); gap: 0.15rem; } }
+.thm { margin: 1.6rem 0; padding: 0.9rem 1.1rem; background: var(--plate); border-top: 1px solid var(--ink); border-bottom: 1px solid var(--rule); }
+.thm .h { font-weight: 700; font-variant: small-caps; letter-spacing: 0.03em; }
+.thm .nm { color: var(--ink-2); }
+.thm .st { font-style: italic; }
+.thm ol { margin: 0.5em 0 0; padding-left: 1.5em; }
+.gloss { color: var(--ink-2); }
+.tag { font-family: var(--mono); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--K); margin-right: 0.4rem; }
+.aside { font-size: 0.95rem; color: var(--ink-2); padding: 0.2rem 0 0.2rem 1.1rem; position: relative; }
+.aside::before { content: ""; position: absolute; left: 0; top: 0.5rem; bottom: 0.5rem; width: 1px; background: var(--ink-3); }
+.model { margin: 1.8rem 0; padding: 1.1rem 1.25rem 0.4rem; border: 1px dashed var(--ink-3); border-radius: 4px; }
+.model > .tag { display: block; margin-bottom: 0.4rem; }
+table.cmp { width: 100%; border-collapse: collapse; font-size: 0.93rem; line-height: 1.45; }
+.tablewrap { overflow-x: auto; margin: 1.4rem 0; }
+table.cmp th, table.cmp td { text-align: left; padding: 0.55rem 0.7rem; border-bottom: 1px solid var(--rule); vertical-align: top; }
+table.cmp thead th { font-family: var(--mono); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-3); font-weight: 500; border-bottom: 1px solid var(--ink); }
+table.cmp tbody th { font-weight: 600; white-space: nowrap; }
+
+/* figures */
+.fig { max-width: var(--wide); margin: 2.4rem auto; background: var(--plate); border: 1px solid var(--rule); border-radius: 6px; padding: clamp(12px, 2vw, 22px); }
+.fig-head { display: flex; flex-wrap: wrap; gap: 0.3rem 0.8rem; align-items: baseline; margin-bottom: 0.9rem; }
+.fig-head .fno { font-family: var(--mono); font-size: 0.74rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--K); }
+.fig-head .ftitle { font-family: var(--display); font-size: 1.3rem; font-weight: 500; }
+.fig-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: clamp(14px, 2.4vw, 28px); align-items: start; }
+.fig-grid.even { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+@media (max-width: 880px) { .fig-grid, .fig-grid.even { grid-template-columns: minmax(0, 1fr); } }
+.fig-cap { font-size: 0.9rem; color: var(--ink-2); margin-top: 1rem; line-height: 1.5; }
+.fig-cap ul { margin: 0.3rem 0 0; padding-left: 1.2rem; }
+.fig-cap li { margin: 0.2rem 0; }
+.panel { display: grid; gap: 14px; font-size: 0.92rem; min-width: 0; }
+.ctl { display: grid; gap: 6px; }
+.ctl-label { font-family: var(--mono); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-3); }
+.seg { display: flex; flex-wrap: wrap; gap: 4px; }
+.seg button, .btn {
+  font: inherit; font-size: 0.84rem; line-height: 1.2; padding: 0.38rem 0.62rem; border: 1px solid var(--rule); background: var(--paper);
+  color: var(--ink); border-radius: 4px; cursor: pointer;
+}
+.seg button:hover, .btn:hover { border-color: var(--ink-3); }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--plate); border-color: var(--ink); }
+.sl { display: grid; grid-template-columns: 8rem minmax(0, 1fr) 3.3rem; align-items: center; gap: 8px; }
+.sl span { font-size: 0.86rem; }
+.sl output { font-family: var(--mono); font-size: 0.8rem; text-align: right; font-variant-numeric: tabular-nums; }
+input[type="range"] { width: 100%; accent-color: var(--K); margin: 0; }
+.chk { display: flex; gap: 0.5rem; align-items: center; font-size: 0.88rem; cursor: pointer; }
+.chk input { accent-color: var(--K); width: 1rem; height: 1rem; margin: 0; }
+.readout { border-top: 1px solid var(--rule); padding-top: 12px; display: grid; gap: 8px; line-height: 1.5; }
+.mono { font-family: var(--mono); font-size: 0.8rem; font-variant-numeric: tabular-nums; }
+.pill { display: inline-block; font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.03em; padding: 2px 8px; border-radius: 999px; justify-self: start; }
+.pill.good { background: color-mix(in srgb, var(--frame) 16%, transparent); color: color-mix(in srgb, var(--frame) 75%, var(--ink)); }
+.pill.bad { background: color-mix(in srgb, var(--therm) 16%, transparent); color: color-mix(in srgb, var(--therm) 75%, var(--ink)); }
+.pill.mute { background: color-mix(in srgb, var(--ink) 8%, transparent); color: var(--ink-2); }
+
+/* diagrams */
+.diagram { position: relative; width: 100%; min-height: 120px; user-select: none; -webkit-user-select: none; }
+.dsvg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; overflow: hidden; }
+.ly-grid line { stroke: var(--grid); stroke-width: 1; }
+.pen-sq { fill: color-mix(in srgb, var(--ink) 3%, transparent); stroke: var(--ink-3); stroke-width: 1.2; }
+.f-patch { fill: color-mix(in srgb, var(--patch) 14%, transparent); stroke: none; }
+.f-patch2 { fill: color-mix(in srgb, var(--ink) 4%, transparent); stroke: none; }
+.horizon { stroke: var(--ink-3); stroke-width: 1.3; stroke-dasharray: 6 4; fill: none; }
+.worldline { stroke: var(--frame); stroke-width: 4; stroke-linecap: round; fill: none; }
+.orbit { stroke: var(--patch); stroke-width: 1; fill: none; opacity: 0.55; }
+.f-K { fill: color-mix(in srgb, var(--K) 50%, transparent); stroke: var(--K); stroke-width: 1.5; stroke-linejoin: round; }
+.f-Kghost { fill: color-mix(in srgb, var(--K) 10%, transparent); stroke: var(--K); stroke-width: 1; stroke-dasharray: 3 3; }
+.f-Kcopy { fill: var(--K); stroke: none; }
+.flow-arrow { fill: none; stroke: var(--patch); stroke-width: 1.4; }
+.arrowhead { fill: var(--patch); }
+.lbl { font-family: var(--body); font-style: italic; fill: var(--ink); paint-order: stroke; stroke: var(--plate); stroke-width: 3.5px; stroke-linejoin: round; }
+.lbl.up { font-style: normal; }
+.lbl.small { font-style: normal; font-family: var(--mono); fill: var(--ink-2); }
+.lbl.K { fill: color-mix(in srgb, var(--K) 80%, var(--ink)); }
+.lbl.patch { fill: color-mix(in srgb, var(--patch) 80%, var(--ink)); }
+.lbl.frame { fill: color-mix(in srgb, var(--frame) 80%, var(--ink)); }
+.handle { cursor: grab; touch-action: none; outline: none; }
+.handle.dragging { cursor: grabbing; }
+.handle .hit { fill: transparent; }
+.handle .ring { fill: var(--plate); stroke: var(--ink); stroke-width: 1.5; }
+.handle .dot { fill: var(--ink); }
+.handle:hover .ring { stroke-width: 2.4; }
+.handle:focus-visible .ring { stroke: var(--K); stroke-width: 3; }
+
+/* charts */
+.chart { position: relative; width: 100%; }
+.chart svg { display: block; width: 100%; overflow: hidden; }
+.chart .ax { stroke: var(--ink-3); stroke-width: 1; fill: none; }
+.chart .tick text, .chart .axl { fill: var(--ink-2); font-family: var(--mono); font-size: 10.5px; }
+.chart .tick line { stroke: var(--grid); stroke-width: 1; }
+.c-sysfill { fill: color-mix(in srgb, var(--sys) 22%, transparent); stroke: var(--sys); stroke-width: 1.6; }
+.c-sysline { fill: none; stroke: var(--sys); stroke-width: 1.6; stroke-dasharray: 5 4; }
+.c-framefill { fill: color-mix(in srgb, var(--frame) 22%, transparent); stroke: var(--frame); stroke-width: 1.6; }
+.c-frameline { fill: none; stroke: var(--frame); stroke-width: 2; }
+.c-ink { fill: none; stroke: var(--ink); stroke-width: 2.2; }
+.c-therm { fill: none; stroke: var(--therm); stroke-width: 1.8; stroke-dasharray: 6 4; }
+.c-int { fill: color-mix(in srgb, var(--K) 22%, transparent); stroke: var(--K); stroke-width: 2; }
+.c-intline { fill: none; stroke: var(--K); stroke-width: 2; }
+.c-forbid { fill: color-mix(in srgb, var(--ink) 9%, transparent); }
+.c-hatch { fill: url(#hatch); }
+.c-mark { fill: var(--K); }
+.c-note { fill: var(--ink-2); font-family: var(--mono); font-size: 10.5px; }
+.legend-row { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 0.8rem; color: var(--ink-2); margin-top: 6px; }
+.legend-row i { display: inline-block; width: 18px; height: 0; border-top: 2px solid; vertical-align: middle; margin-right: 5px; }
+.chart-title { font-size: 0.86rem; font-weight: 600; margin-bottom: 4px; }
+.charts2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; }
+@media (max-width: 760px) { .charts2 { grid-template-columns: minmax(0, 1fr); } }
+
+/* type ladder */
+.ladder { display: grid; gap: 0; }
+.ladder .row { display: grid; grid-template-columns: 4.2rem minmax(0, 1fr) minmax(0, 15rem); gap: 1rem; align-items: center; padding: 0.7rem 0; border-bottom: 1px solid var(--rule); }
+.ladder .row:first-child { border-top: 1px solid var(--ink); }
+.ladder .ty { font-family: var(--display); font-size: 1.35rem; }
+.ladder .line { position: relative; height: 26px; }
+.ladder .line::before { content: ""; position: absolute; left: 0; right: 0; top: 12px; height: 1px; background: var(--ink-3); }
+.ladder .dot { position: absolute; top: 7px; width: 11px; height: 11px; margin-left: -5.5px; border-radius: 50%; background: var(--frame); }
+.ladder .seg2 { position: absolute; top: 9px; height: 7px; background: var(--frame); border-radius: 4px; }
+.ladder .none { position: absolute; left: 0; top: 0; font-size: 0.82rem; color: var(--ink-2); font-style: italic; background: var(--plate); padding-right: 0.5rem; line-height: 24px; }
+.ladder .ex { font-size: 0.85rem; color: var(--ink-2); line-height: 1.4; }
+.ladder .ex b { color: var(--ink); font-weight: 600; }
+.ladder .axis { position: relative; height: 18px; font-family: var(--mono); font-size: 0.7rem; color: var(--ink-3); }
+.ladder .axis span { position: absolute; transform: translateX(-50%); }
+.ladder .row.hl { background: color-mix(in srgb, var(--frame) 7%, transparent); }
+@media (max-width: 680px) { .ladder .row { grid-template-columns: 3.4rem minmax(0, 1fr); } .ladder .ex { grid-column: 1 / -1; } }
+
+/* roadmap */
+.road { list-style: none; padding: 0; margin: 1.4rem 0; display: grid; gap: 0; counter-reset: s; }
+.road li { counter-increment: s; display: grid; grid-template-columns: 2.4rem minmax(0, 1fr); gap: 0.8rem; position: relative; padding-bottom: 1.1rem; }
+.road li::before { content: counter(s); font-family: var(--mono); font-size: 0.8rem; width: 2rem; height: 2rem; border-radius: 50%; border: 1px solid var(--ink); display: grid; place-items: center; background: var(--plate); position: relative; z-index: 1; }
+.road li::after { content: ""; position: absolute; left: 1rem; top: 2rem; bottom: 0; width: 1px; background: var(--ink-3); }
+.road li:last-child::after { display: none; }
+.road b { display: block; }
+.road .tool { font-family: var(--mono); font-size: 0.72rem; color: var(--K); letter-spacing: 0.04em; text-transform: uppercase; }
+.road div { font-size: 0.95rem; min-width: 0; }
+
+.gens { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px; margin: 1.4rem 0; }
+.gens > div { border: 1px solid var(--rule); border-radius: 4px; padding: 0.8rem 1rem; background: var(--plate); min-width: 0; }
+.gens .tag { display: block; margin-bottom: 0.3rem; }
+@media (max-width: 640px) { .gens { grid-template-columns: minmax(0, 1fr); } }
+.strip-wrap { overflow-x: auto; }
+.strip-wrap svg { display: block; min-width: 460px; width: 100%; max-width: 640px; margin: 0 auto; }
+.strip-wrap .s-fill { fill: color-mix(in srgb, var(--therm) 10%, transparent); }
+.strip-wrap .s-edge { stroke: var(--therm); stroke-width: 2; }
+.strip-wrap .s-ax { stroke: var(--ink-3); stroke-width: 1; }
+.strip-wrap text { fill: var(--ink); font-family: var(--body); font-size: 14px; }
+.strip-wrap text.m { font-family: var(--mono); font-size: 11px; fill: var(--ink-2); }
+
+.summary ol { padding-left: 1.4rem; }
+.summary li { margin: 0.35rem 0; }
+footer.colophon { margin-top: 4rem; padding-top: 1.2rem; border-top: 1px solid var(--ink); font-size: 0.86rem; color: var(--ink-2); }
+
+/* notation */
+.notation-btn {
+  position: fixed; z-index: 40;
+  right: calc(16px + env(safe-area-inset-right, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase;
+  background: var(--ink); color: var(--plate); border: 0; border-radius: 999px; padding: 0.6rem 1rem; cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+}
+.drawer {
+  position: fixed; z-index: 45; top: 0; right: 0; bottom: 0; width: min(27rem, 100vw);
+  background: var(--plate); border-left: 1px solid var(--rule); overflow-y: auto;
+  padding: calc(18px + env(safe-area-inset-top, 0px)) calc(18px + env(safe-area-inset-right, 0px)) calc(24px + env(safe-area-inset-bottom, 0px)) 20px;
+  box-shadow: -10px 0 30px rgba(0,0,0,0.12);
+}
+.drawer-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem; }
+.drawer-head h2 { font-size: 1.5rem; margin: 0; }
+.drawer h3 { font-family: var(--mono); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-3); font-weight: 500; margin: 1.4rem 0 0.4rem; }
+.drawer .ent { display: grid; grid-template-columns: 6.4rem minmax(0, 1fr); gap: 0.7rem; padding: 0.55rem 0; border-bottom: 1px solid var(--rule); font-size: 0.86rem; line-height: 1.45; }
+.drawer .ent .sym { overflow-x: auto; }
+.drawer .ent b { display: block; }
+.drawer .ent .ref { margin-top: 0.2rem; display: inline-block; }
+.tip {
+  position: fixed; z-index: 60; max-width: min(22rem, calc(100vw - 24px)); pointer-events: none;
+  background: var(--ink); color: var(--plate); border-radius: 5px; padding: 0.6rem 0.75rem; font-size: 0.84rem; line-height: 1.45;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.22);
+}
+.tip b { display: block; font-size: 0.9rem; margin-bottom: 0.15rem; }
+.tip .r { display: block; margin-top: 0.35rem; font-family: var(--mono); font-size: 0.7rem; opacity: 0.75; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<script>
+window.MathJax = {
+  loader: { load: ['[tex]/html'] },
+  tex: {
+    packages: { '[+]': ['html'] },
+    inlineMath: [['\\(', '\\)']],
+    displayMath: [['\\[', '\\]']],
+    macros: {
+      MS: '\\class{gx-MS c-sys}{\\mathcal{M}_S}',
+      HR: '\\class{gx-HR c-frame}{\\mathcal{H}_R}',
+      HS: '\\class{gx-MS c-sys}{\\mathcal{H}_S}',
+      UR: '\\class{gx-UR c-frame}{U_R}',
+      US: '\\class{gx-US c-sys}{U_S}',
+      E: '\\class{gx-E c-frame}{E}',
+      Sig: '\\class{gx-Sig}{\\Sigma}',
+      aS: '\\class{gx-US}{\\alpha_S}',
+      Yen: '\\class{gx-yen}{\\yen}',
+      etas: '\\class{gx-eta}{\\eta_\\sigma}',
+      cp: '\\class{gx-cp}{\\rtimes}',
+      Kc: '\\class{gx-Kc}{\\mathcal{K}}',
+      mU: '\\class{gx-mU c-frame}{m_{U_R}}',
+      bet: '\\class{gx-beta c-therm}{\\beta}',
+      K: '\\class{gx-K c-K}{K}',
+      inv: ['(#1)^{\\class{gx-inv}{G}}', 1],
+      Mod: '\\class{gx-mod}{\\sigma^{\\omega}}',
+      Del: '\\class{gx-mod}{\\Delta}',
+      tr: '\\class{gx-trace}{\\tau}',
+      Br: '\\mathcal{B}',
+      one: '\\mathbf{1}'
+    }
+  },
+  svg: { fontCache: 'global' },
+  options: { enableMenu: false }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js" async></script>
+</head>
+<body>
+
+<div class="page">
+
+<!-- ================= HERO ================= -->
+<header class="hero wide">
+  <div class="hero-grid">
+    <div>
+      <div class="eyebrow"><span>Reading guide</span><span>Fewster, Janssen, Loveridge, Rejzner &amp; Waldron · Commun. Math. Phys. 406:19 (2025)</span><a href="index.html">All notes</a></div>
+      <h1>What a quantum clock does to a type&nbsp;III algebra</h1>
+      <p class="lede">Every local algebra of a reasonable QFT is the same type III<sub>1</sub> factor: no trace, no density matrices, no finite entanglement entropy. Chandrasekaran, Longo, Penington and Witten found that adding an observer to the de Sitter static patch turns the algebra into type II<sub>1</sub>. This paper explains why in operational terms. On a background with symmetries you cannot even say <em>which</em> experiment you did without a <span class="frm">reference frame</span>. Make that frame quantum, keep only symmetry-invariant observables, and the algebra changes type.</p>
+      <p class="hero-note">This guide builds on the measurement framework of Fewster and Verch (2020); the <a href="fewster-verch-2020.html">reading guide to that paper</a> covers it in detail. Hover over any coloured symbol or dotted term for its definition, or open the <b>Notation</b> panel. Section, equation and theorem numbers refer to the paper.</p>
+    </div>
+    <figure class="hero-fig">
+      <div id="hero-diagram"></div>
+      <figcaption>Penrose diagram of de Sitter space. The observer's geodesic runs up the left edge; its causal hull is the static patch (violet). A measurement couples system and probe in a region <i>K</i>. The symmetry flow (curves) carries <i>K</i> to copies that no local fact distinguishes.</figcaption>
+    </figure>
+  </div>
+  <ol class="answers" aria-label="The main results">
+    <li><b>Symmetries move experiments.</b>An isometry carries a measurement scheme to another one that measures the transformed observable. Telling them apart needs a reference. <span class="ref">Thm 2.1 · §4.1</span></li>
+    <li><b>Frames must be compactly stabilised.</b>To pick out one experiment among its copies, a quantum frame's value space must be <i>G</i>/<i>H</i> with <i>H</i> compact. <span class="ref">Prop 4.3</span></li>
+    <li><b>Invariants form a crossed product.</b>The symmetry-invariant system-plus-frame observables are a corner of 𝓜<sub>S</sub> ⋊ <i>G</i>. <span class="ref">Thm 4.9</span></li>
+    <li><b>A thermal frame gives type II<sub>1</sub>.</b>With a KMS state at inverse temperature β, the invariants are semifinite, and finite if ∫ e<sup>−βξ</sup> m(ξ) dξ &lt; ∞. <span class="ref">Thm 5.5 · Cor 5.7</span></li>
+  </ol>
+</header>
+
+<nav class="route wide" aria-label="Sections">
+  <div class="eyebrow"><span>Route through the paper</span></div>
+  <ol>
+    <li><a href="#question">The question</a><span class="ref">§1</span></li>
+    <li><a href="#types">Types of von Neumann algebras</a><span class="ref">App. D</span></li>
+    <li><a href="#symmetric">Measuring on a symmetric background</a><span class="ref">§2.3</span></li>
+    <li><a href="#qrf">Quantum reference frames</a><span class="ref">§3</span></li>
+    <li><a href="#relative">Relative observables</a><span class="ref">§3.2</span></li>
+    <li><a href="#select">A frame selects the experiment</a><span class="ref">§4.1</span></li>
+    <li><a href="#crossed">Invariants are a crossed product</a><span class="ref">§4.2–4.4</span></li>
+    <li><a href="#energy">How much energy a frame has</a><span class="ref">§4.5</span></li>
+    <li><a href="#modular">Modular theory on one page</a><span class="ref">§5</span></li>
+    <li><a href="#main">The main theorem</a><span class="ref">§5.1</span></li>
+    <li><a href="#thermal">A thermal reading of the condition</a><span class="ref">§5.2</span></li>
+    <li><a href="#desitter">The de Sitter static patch</a><span class="ref">§6</span></li>
+    <li><a href="#scope">What this does and does not show</a><span class="ref">§7</span></li>
+    <li><a href="#summary">The paper in eight lines</a><span class="ref">§1, §7</span></li>
+  </ol>
+</nav>
+
+<main>
+
+<!-- ================= 1 ================= -->
+<section class="sec" id="question">
+  <div class="prose">
+    <div class="eyebrow"><span class="num">01</span><span>Paper §1</span></div>
+    <h2>The question</h2>
+    <p>In algebraic QFT, the observables localised in a region form a von Neumann algebra. A striking structural result says these are all the same: for well-behaved theories and regular regions, every local algebra is the unique hyperfinite factor of type III<sub>1</sub>. What distinguishes one QFT from another is how the algebras of different regions sit relative to each other, not the algebras themselves.</p>
+    <p>Type III<sub>1</sub> has a practical cost. Such an algebra has no trace, so states cannot be written as density matrices and entropies cannot be computed; naive attempts diverge. Chandrasekaran, Longo, Penington and Witten (CLPW, 2022) argued that in the de Sitter static patch, once an observer is included and observables are required to be invariant under the patch's time translations, the algebra becomes type II<sub>1</sub>. A type II<sub>1</sub> algebra has a finite trace, and entropies make sense.</p>
+    <p>CLPW model the observer as a quantum system with a Hamiltonian but do not say how it is coupled to the field. This paper supplies an operational account. Its claims:</p>
+    <ul>
+      <li>Measuring a field on a background with symmetries requires a reference frame. This follows from the Fewster–Verch measurement framework.</li>
+      <li>CLPW's observer is a <span class="term" data-g="qrf">quantum reference frame</span> (QRF).</li>
+      <li>Type reduction comes from including the frame and keeping only invariant observables. It is not directly gravitational in origin.</li>
+      <li>The result holds for a large class of frames and symmetry groups ℝ × <i>H</i>, with a clean condition on the frame.</li>
+    </ul>
+    <p>The argument needs four toolkits: measurement theory in QFT, quantum reference frames, crossed products, and Tomita–Takesaki modular theory. The sections below introduce each where it is first used.</p>
+  </div>
+</section>
+
+<!-- ================= 2 ================= -->
+<section class="sec" id="types">
+  <div class="prose">
+    <div class="eyebrow"><span class="num">02</span><span>Paper App. D · Defs D.4–D.8</span></div>
+    <h2>Types of von Neumann algebras</h2>
+    <p>A von Neumann algebra is a *-algebra of bounded operators equal to its double commutant. A <em>factor</em> has trivial centre; every von Neumann algebra on a separable Hilbert space decomposes into factors. Factors are classified by the traces they carry. A <span class="term" data-g="trace">trace</span> is a weight \(\tr:\mathcal M_+\to[0,\infty]\) with \(\tr(x^*x)=\tr(xx^*)\). The algebra is <em>finite</em> if it has a faithful normal trace with \(\tr(\one)&lt;\infty\), and <em>semifinite</em> if every nonzero positive element dominates one of finite trace. On a semifinite factor the trace is unique up to scale, so the set of values it takes on projections is an invariant.</p>
+  </div>
+  <figure class="fig" id="fig1" aria-labelledby="fig1-title">
+    <div class="fig-head"><span class="fno">Figure 1</span><span class="ftitle" id="fig1-title">The type ladder: values of the trace on projections</span></div>
+    <div class="ladder" role="table" aria-label="Types of factors">
+      <div class="row" role="row"><div class="ty" role="cell">I<sub>n</sub></div><div class="line" role="cell" id="lad-In"></div><div class="ex" role="cell"><b>n × n matrices.</b> Trace normalised to 1 takes values 0, 1/n, …, 1.</div></div>
+      <div class="row" role="row"><div class="ty" role="cell">I<sub>∞</sub></div><div class="line" role="cell" id="lad-Iinf"></div><div class="ex" role="cell"><b>𝓑(𝓗), ordinary quantum mechanics.</b> Projections have trace equal to their rank.</div></div>
+      <div class="row hl" role="row"><div class="ty" role="cell">II<sub>1</sub></div><div class="line" role="cell" id="lad-II1"></div><div class="ex" role="cell"><b>Invariants with a good clock</b> (this paper, CLPW). Every value in [0, 1]; τ(𝟏) finite, so there are density matrices and entropies.</div></div>
+      <div class="row" role="row"><div class="ty" role="cell">II<sub>∞</sub></div><div class="line" role="cell" id="lad-IIinf"></div><div class="ex" role="cell"><b>𝓜 ⋊<sub>σ</sub> ℝ</b> for a III<sub>1</sub> factor 𝓜: an ideal clock with unbounded energy.</div></div>
+      <div class="row" role="row"><div class="ty" role="cell">III</div><div class="line" role="cell"><span class="none">no faithful normal semifinite trace at all</span></div><div class="ex" role="cell"><b>Local QFT algebras</b> (type III<sub>1</sub>, refined by the spectrum of the modular operator).</div></div>
+      <div class="row" role="row" style="border-bottom:0"><div></div><div class="axis" id="lad-axis"></div><div></div></div>
+    </div>
+    <div class="fig-cap">The horizontal scale is linear on [0, 1] and compressed on (1, ∞]. Type III is subdivided by the modular spectrum: III<sub>1</sub> means it is all of [0, ∞). The highlighted row is where the paper's main theorem lands.</div>
+  </figure>
+  <div class="prose">
+    <p>Two facts from modular theory drive the paper. Takesaki showed that the crossed product of any von Neumann algebra by its modular flow is semifinite, and that for a type III<sub>1</sub> factor it is a type II<sub>∞</sub> factor <span class="ref">Thm 5.3 · Prop D.9</span>. A corner \(p\,\mathcal N p\) of a II<sub>∞</sub> factor 𝒩 is again a factor, and it is type II<sub>1</sub> exactly when \(\tr(p)&lt;\infty\). The paper's job is to show that a quantum reference frame produces such a corner, and to compute \(\tr(p)\).</p>
+  </div>
+</section>
+
+<!-- ================= 3 ================= -->
+<section class="sec" id="symmetric">
+  <div class="prose">
+    <div class="eyebrow"><span class="num">03</span><span>Paper §2.2–2.3 · Thm 2.1</span></div>
+    <h2>Measuring on a symmetric background</h2>
+    <p>Recall the Fewster–Verch scheme <a href="fewster-verch-2020.html">(guide)</a>. A system QFT \(\mathcal A\) is coupled to a probe QFT \(\mathcal B\) inside a compact region \(\K\). Preparing the probe in a state \(\sigma\) and reading a probe observable \(B\) late amounts to measuring the induced system observable \(\varepsilon_\sigma(B)=\eta_\sigma(\Theta(\one\otimes B))\). The whole package is a measurement scheme \(m=(\mathcal B,\mathcal C,\K,\chi,\sigma,B)\).</p>
+    <p>Now let a group \(G\) of isometries act on spacetime, and on both theories by automorphisms \(\alpha(g)\), \(\beta(g)\), commuting with gauge symmetries. Moving the coupling region by \(g\) gives a new coupled theory \({}^g\mathcal C\) with coupling region \(g.\K\) and scattering map \(\upsilon(g)\circ\Theta\circ\upsilon(g)^{-1}\), where \(\upsilon=\alpha\otimes\beta\).</p>
+    <div class="thm"><span class="h">Theorem 2.1</span> <span class="st">If \((\mathcal B,\mathcal C,\K,\chi,\sigma,B)\) is a measurement scheme for \(A\), then \((\mathcal B,{}^g\mathcal C,g.\K,{}^g\chi,\beta(g^{-1})^*\sigma,\beta(g)B)\) is a measurement scheme for \(\alpha(g)A\).</span></div>
+    <p>Any single scheme breaks the symmetry, because it has a definite coupling region. But \(G\) acts on the set of all schemes, and the induced observables transform covariantly. In general relativity points have no meaning of their own, so neither does "the coupling region is <em>here</em>". On a fixed background only isometries matter, but the conclusion is the same: \(m\) and \(g.m\) cannot be told apart by anything intrinsic. Distinguishing them requires a physical system that itself transforms under \(G\). If that system is quantum, it is a quantum reference frame.</p>
+    <p>The paper's main example is the static patch of de Sitter space: the causal hull of an observer's complete timelike geodesic, the largest region in which that observer can both start an experiment and hear its result. Its isometry group is \(G=\mathbb R\times SO(n-1)\): time translations along the geodesic (the static flow) and rotations about it.</p>
+  </div>
+  <figure class="fig" id="fig2" aria-labelledby="fig2-title">
+    <div class="fig-head"><span class="fno">Figure 2</span><span class="ftitle" id="fig2-title">One experiment and its symmetric copies</span></div>
+    <div class="fig-grid">
+      <div id="f2-diagram" style="max-width:560px;width:100%;justify-self:center"></div>
+      <div class="panel">
+        <label class="sl" for="f2-s"><span>Static time shift s</span><input type="range" id="f2-s" min="-2.5" max="2.5" step="0.02" value="0"><output id="f2-s-o"></output></label>
+        <label class="chk" for="f2-ghosts"><input type="checkbox" id="f2-ghosts" checked> Show the orbit of copies g<sub>s</sub>.K</label>
+        <div class="readout" aria-live="polite">
+          <span class="pill mute" id="f2-pill"></span>
+          <div id="f2-text"></div>
+        </div>
+        <p class="gloss" style="font-size:0.9rem;margin:0">Each point of the diagram stands for an (<i>n</i>−2)-sphere; the rotations <i>SO</i>(<i>n</i>−1) act on it and are not drawn. The static flow is a boost in the embedding space; in the Penrose diagram its orbits run from the bottom to the top corner of the patch, bunching up near the horizons.</p>
+      </div>
+    </div>
+    <div class="fig-cap">Drag <i>K</i> to place the coupling region, and move the slider to apply a symmetry. The dashed outlines are other members of the same orbit [<i>m</i>]. Near the corners the copies look smaller only because the Penrose diagram compresses distances there; the isometry does not change the region's intrinsic size.</div>
+  </figure>
+</section>
+
+<!-- ================= 4 ================= -->
+<section class="sec" id="qrf">
+  <div class="prose">
+    <div class="eyebrow"><span class="num">04</span><span>Paper §3 · Defs 3.1, 3.2 · Thm 3.3</span></div>
+    <h2>Quantum reference frames</h2>
+    <p>The paper follows the operational approach to QRFs (Loveridge, Miyadera, Busch and others), in which observables are POVMs. A <em>value space</em> \(\Sig\) is a homogeneous \(G\)-space, so \(\Sig\cong G/H\) for the stabiliser \(H\) of any point.</p>
+    <div class="thm"><span class="h">Definition 3.1</span> <span class="st">A quantum reference frame \((\UR,\E,\HR)\) is a strongly continuous unitary representation \(\UR\) of \(G\) on \(\HR\) together with a POVM \(\E:\mathrm{Bor}(\Sig)\to\Br(\HR)\) that is covariant:</span>
+      \[ \E(g.X)=\UR(g)\,\E(X)\,\UR(g)^*\qquad\text{for all }g\in G,\ X\in\mathrm{Bor}(\Sig). \]
+    </div>
+    <p>The frame observable \(\E\) answers "where is the frame?" with values in \(\Sig\), and the answer moves correctly when the frame is moved. Frames come with adjectives:</p>
+    <dl class="defs">
+      <div><dt>Sharp</dt><dd>\(\E\) is projection-valued. Otherwise unsharp.</dd></div>
+      <div><dt>Principal</dt><dd>\(\Sig\) is a principal homogeneous space, i.e. a copy of \(G\) itself.</dd></div>
+      <div><dt>Ideal</dt><dd>Principal and sharp.</dd></div>
+      <div><dt>Compactly stabilised</dt><dd>\(\Sig\cong G/H\) with \(H\) compact. The class that matters in this paper.</dd></div>
+      <div><dt>Localisable</dt><dd>Every nonzero \(\E(X)\) has norm 1: some state makes the frame's reading lie in \(X\) with probability as close to 1 as you like.</dd></div>
+      <div><dt>Complete</dt><dd>No nontrivial subgroup acts trivially on all the effects of \(\E\).</dd></div>
+    </dl>
+    <p>Examples: position of a particle on a line, covariant under translations (ideal); a smeared position (unsharp); the phase of an oscillator, covariant under phase shifts. The most important example is a <em>clock</em>.</p>
+    <h3>Clocks with positive energy</h3>
+    <p>A clock is a frame for time translations \(\mathbb R\), with \(\UR(t)=e^{iHt}\). Pauli's theorem says that if \(H\) is bounded below, no projection-valued measure \(P\) satisfies \(e^{itH}P(X)e^{-itH}=P(X+t)\). There is no self-adjoint time operator. Covariant POVMs do exist. CLPW's observer has Hamiltonian \(q_+\) on \(L^2(\mathbb R_+)\), and a covariant time observable is obtained by Naimark dilation <span class="ref">Thm 3.3</span>: embed \(L^2(\mathbb R_+)\) in \(L^2(\mathbb R)\) and compress the spectral measure of the variable conjugate to energy. In practice the time distribution of a clock state is \(|\check\psi(t)|^2\), the squared Fourier transform of its energy wavefunction.</p>
+  </div>
+  <figure class="fig" id="fig3" aria-labelledby="fig3-title">
+    <div class="fig-head"><span class="fno">Figure 3</span><span class="ftitle" id="fig3-title">A clock whose energy is bounded below</span></div>
+    <div class="charts2">
+      <div><div class="chart-title">Energy distribution |ψ(ξ)|²</div><div id="f3-energy" class="chart"></div></div>
+      <div><div class="chart-title">Time distribution ⟨ψ, E<sub>T</sub>(dt) ψ⟩ = |ψ̌(t)|² dt</div><div id="f3-time" class="chart"></div></div>
+    </div>
+    <div class="fig-grid" style="margin-top:14px">
+      <div class="panel">
+        <label class="sl" for="f3-mean"><span>Mean energy</span><input type="range" id="f3-mean" min="0" max="6" step="0.05" value="1.5"><output id="f3-mean-o"></output></label>
+        <label class="sl" for="f3-width"><span>Energy spread</span><input type="range" id="f3-width" min="0.1" max="2.5" step="0.05" value="0.6"><output id="f3-width-o"></output></label>
+        <label class="sl" for="f3-t0"><span>Evolve by t₀</span><input type="range" id="f3-t0" min="-6" max="6" step="0.05" value="0"><output id="f3-t0-o"></output></label>
+      </div>
+      <div class="readout mono" id="f3-read" aria-live="polite" style="font-size:0.82rem"></div>
+    </div>
+    <div class="fig-cap">The clock's energy is confined to ξ ≥ 0 (grey: no states). Evolving the clock by <i>t</i>₀ only changes the phase of ψ(ξ), so the energy distribution stays put while the time distribution moves by <i>t</i>₀: this is covariance. Widening the energy spread sharpens the time reading as much as you like, which is the norm-1 property. But no state has a time distribution supported in a bounded interval, and readings at different times are never perfectly distinguishable: <i>E</i><sub>T</sub> is a POVM, not a projection-valued measure.</div>
+  </figure>
+  <div class="prose">
+    <h3>The invariance principle</h3>
+    <p>Given a system with von Neumann algebra \(\MS\) on which \(G\) acts by \(\aS\), the operational approach declares that the physical observables are the <em>invariant</em> elements of the joint algebra:</p>
+    \[ \inv{\MS\otimes\Br(\HR)}=\{x\in\MS\otimes\Br(\HR):\ (\aS(g)\otimes\mathrm{Ad}\,\UR(g))(x)=x\ \ \forall g\}. \]
+    <p>This is not only a postulate. A strong form of the Wigner–Araki–Yanase theorem says that if a system has a conserved quantity, all of its measurable observables must be invariant under the symmetry that quantity generates.</p>
+  </div>
+</section>
+
+<!-- ================= 5 ================= -->
+<section class="sec" id="relative">
+  <div class="prose">
+    <div class="eyebrow"><span class="num">05</span><span>Paper §3.2 · eq. (3.5)</span></div>
+    <h2>Relative observables</h2>
+    <p>For a principal frame there is a standard way to manufacture invariants from system observables, the <span class="term" data-g="yen">relativisation map</span> (written with a yen sign in this literature):</p>
+    \[ \Yen(A)=\int_G \US(g)\,A\,\US(g)^*\otimes d\E(g). \]
+    <p>Read it as "\(A\), as seen from wherever the frame is". It is completely positive, normal and unital, and it is multiplicative exactly when \(\E\) is sharp. On a line with \(G=\mathbb R\) acting by translations, the system's position \(Q_S\) relativises to the relative position \(Q_S\otimes\one-\one\otimes Q_R\).</p>
+    <p>How does this square with ordinary quantum mechanics, where absolute positions seem to work? Compose with the restriction map \(\etas(A\otimes B)=\sigma(B)A\), which fixes the frame in a state \(\sigma\). If the frame is localisable, there are frame states \(\sigma_n\) with \(\eta_{\sigma_n}\circ\Yen\to\mathrm{id}\): a well-localised frame at the origin reproduces the usual description. A badly localised frame cannot.</p>
+  </div>
+  <figure class="fig" id="fig4" aria-labelledby="fig4-title">
+    <div class="fig-head"><span class="fno">Figure 4</span><span class="ftitle" id="fig4-title">Relative position: a particle measured against a quantum frame</span></div>
+    <div class="charts2">
+      <div><div class="chart-title">Absolute positions (not observable)</div><div id="f4-abs" class="chart"></div>
+        <div class="legend-row"><span><i style="border-color:var(--sys)"></i>system particle</span><span><i style="border-color:var(--frame)"></i>frame particle</span></div></div>
+      <div><div class="chart-title">Relative position Q<sub>S</sub> − Q<sub>R</sub> (observable)</div><div id="f4-rel" class="chart"></div>
+        <div class="legend-row"><span><i style="border-color:var(--ink)"></i>distribution of ¥(Q<sub>S</sub>)</span><span><i style="border-color:var(--sys);border-top-style:dashed"></i>system alone, frame sharp at 0</span></div></div>
+    </div>
+    <div class="fig-grid" style="margin-top:14px">
+      <div class="panel">
+        <label class="sl" for="f4-shift"><span>Translate both</span><input type="range" id="f4-shift" min="-4" max="4" step="0.05" value="0"><output id="f4-shift-o"></output></label>
+        <label class="sl" for="f4-xs"><span>System offset</span><input type="range" id="f4-xs" min="-4" max="4" step="0.05" value="1.5"><output id="f4-xs-o"></output></label>
+        <label class="sl" for="f4-sr"><span>Frame spread</span><input type="range" id="f4-sr" min="0.05" max="2.5" step="0.05" value="0.8"><output id="f4-sr-o"></output></label>
+      </div>
+      <div class="readout mono" id="f4-read" aria-live="polite" style="font-size:0.82rem"></div>
+    </div>
+    <div class="fig-cap">Both particles are in Gaussian states; the system has spread 0.6. Translating both changes every absolute quantity and nothing on the right. In a product state, the distribution of the relativised observable is the system's distribution smeared by the frame's, as eq. (4.45) says in general: \((\omega_S\otimes\omega_R)(\Yen(x))=\int\omega_S(\aS(g,x))\,d(\omega_R\circ\E)(g)\). Shrink the frame spread and the relative distribution approaches the dashed one.</div>
+  </figure>
+</section>
+
+<!-- ================= 6 ================= -->
+<section class="sec" id="select">
+  <div class="prose">
+    <div class="eyebrow"><span class="num">06</span><span>Paper §4.1 · Def 4.1 · Props 4.2, 4.3 · eqs. (4.10)–(4.12)</span></div>
+    <h2>A frame selects the experiment</h2>
+    <p>An experimenter has a set \(\mathcal M\) of measurement schemes, closed under \(G\). Its orbits \([m]\in\mathcal M/G\) are the experiments that the background alone cannot tell apart. A frame with value space \(\Sig\) <em>resolves</em> \(\mathcal M\) if for every orbit some \(s\in\Sig\) and some \(m\in[m]\) have stabilisers \(G_s\subset G_m\). Equivalently (Prop. 4.2), there is a covariant labelling</p>
+    \[ f:\Sig\times\mathcal M/G\to\mathcal M,\qquad f(s,[m])\in[m],\qquad f(g.s,[m])=g.f(s,[m]). \]
+    <p>The procedure is then: read the frame, get a value \(s\), and perform the scheme \(f(s,[m])\). The reading is random, with distribution \(\mu_R=\omega_R\circ\E\), so the expected outcome is</p>
+    \[ \mathbb E\bigl[\omega_S(A_{f(S,[m])})\bigr]=\int_{\Sig}\omega_S\bigl(A_{f(s,[m])}\bigr)\,d(\omega_R\circ\E)(s)=(\omega_S\otimes\omega_R)(A_{[m]}), \]
+    <p>where \(A_{[m]}=\int A_{f(s,[m])}\otimes d\E(s)\) is a \(G\)-invariant operator in \(\inv{\MS\otimes\Br(\HR)}\). The paper makes this formula rigorous in §4.4 as a relativised observable.</p>
+  </div>
+  <figure class="fig" id="fig5" aria-labelledby="fig5-title">
+    <div class="fig-head"><span class="fno">Figure 5</span><span class="ftitle" id="fig5-title">The clock reading picks the copy</span></div>
+    <div class="fig-grid">
+      <div id="f5-diagram" style="max-width:560px;width:100%;justify-self:center"></div>
+      <div class="panel">
+        <label class="sl" for="f5-mean"><span>Clock state: mean</span><input type="range" id="f5-mean" min="-2" max="2" step="0.02" value="0.4"><output id="f5-mean-o"></output></label>
+        <label class="sl" for="f5-spread"><span>Clock state: spread</span><input type="range" id="f5-spread" min="0.02" max="1.5" step="0.02" value="0.5"><output id="f5-spread-o"></output></label>
+        <div class="chart-title" style="margin:4px 0 0">Distribution μ<sub>R</sub> of the clock reading s</div>
+        <div id="f5-mu" class="chart"></div>
+        <div class="readout" id="f5-text" aria-live="polite" style="font-size:0.9rem"></div>
+      </div>
+    </div>
+    <div class="fig-cap">The frame is a clock for the static flow, carried along the observer's geodesic. Each translucent region is the coupling region of the scheme <i>f</i>(<i>s</i>, [<i>m</i>]) = <i>g<sub>s</sub></i>.<i>m</i>, drawn with opacity proportional to the probability density of reading <i>s</i>. What gets measured is the mixture of these experiments. As the spread goes to zero you approach a single, classical choice; for a quantum clock it never reaches it exactly.</div>
+  </figure>
+  <div class="prose">
+    <div class="thm"><span class="h">Proposition 4.3</span> <span class="st">Suppose every nonempty compact \(\K\subset M\) has a compact stabiliser \(G_\K\), and \(\mathcal M\) consists of schemes with nonempty compact coupling regions. Then any frame that resolves \(\mathcal M\) is compactly stabilised.</span></div>
+    <p class="gloss"><span class="tag">Why</span>A symmetry fixing a scheme must fix its coupling region, so \(G_m\subset G_\K\). Resolution needs \(G_s\subset G_m\) for some \(s\), so \(G_s\) is a closed subgroup of a compact group. The hypothesis holds on the de Sitter static patch and the Schwarzschild exterior, whose isometry groups act properly.</p>
+  </div>
+</section>
+
+<!-- ================= 7 ================= -->
+<section class="sec" id="crossed">
+  <div class="prose">
+    <div class="eyebrow"><span class="num">07</span><span>Paper §4.2–4.4 · Thms 4.4, 4.9 · Prop 4.8 · Def 4.13</span></div>
+    <h2>Invariants are a crossed product</h2>
+    <p>The first structural result says that every compactly stabilised frame is a piece of one standard frame. Let \(\lambda\) be the left regular representation of \(G\) on \(L^2(G)\) and \(P\) the obvious projection-valued measure on \(G/H\) (multiplication by indicator functions).</p>
+    <div class="thm"><span class="h">Theorem 4.4</span> <span class="st">If \((\UR,\E,\HR)\) is a compactly stabilised frame with value space \(G/H\), there is a separable Hilbert space \(\Kc\) and an isometry \(W:\HR\to\Kc\otimes L^2(G)\) with</span>
+      \[ W\,\UR(g)=(\one_{\Kc}\otimes\lambda(g))\,W,\qquad \E(X)=W^*(\one_{\Kc}\otimes P(X))\,W. \]
+      <span class="st">Conversely, any isometry whose range projection commutes with \(\one\otimes\lambda(G)\) defines such a frame.</span>
+    </div>
+    <p class="gloss"><span class="tag">In words</span>Up to equivalence a compactly stabilised frame is the regular representation (with multiplicity \(\Kc\)) restricted to an invariant subspace \(p(\Kc\otimes L^2(G))\). The proof combines Naimark dilation with Mackey's imprimitivity theorem, in Cattaneo's form for systems of covariance (App. B).</p>
+    <p>The invariant algebra then reduces to a classical object. The <span class="term" data-g="cp">crossed product</span> \(\mathcal M\cp_\alpha G\) acts on \(L^2(G,\mathcal H)\) and is generated by the operators \(\pi(a)\), \((\pi(a)\varphi)(g)=\alpha(g,a)\varphi(g)\), and the right translations \(\tilde\rho(G)\). Takesaki's commutation theorem identifies it as a fixed-point algebra <span class="ref">Prop 4.8</span>:</p>
+    \[ \mathcal M\cp_\alpha G=\bigl(\mathcal M\otimes\Br(L^2(G))\bigr)^{\alpha\otimes\mathrm{Ad}\,\lambda}. \]
+    <div class="thm"><span class="h">Theorem 4.9</span> <span class="st">For a compactly stabilised frame there are \(\Kc\) and a projection \(p\in\lambda(G)'\otimes\Br(\Kc)\) such that, spatially,</span>
+      \[ \inv{\MS\otimes\Br(\HR)}\;\cong\;(\one\otimes p)\bigl((\MS\cp_{\aS}G)\otimes\Br(\Kc)\bigr)(\one\otimes p). \]
+    </div>
+    <p>The invariant observables are a corner of the crossed product, tensored with a type I factor. This generalises the parameterisation CLPW used for \(G=\mathbb R\) and \(\Kc=\mathbb C\).</p>
+    <div class="gens">
+      <div><span class="tag">Generator type 1</span>System observables read at the clock's time. For an ideal clock on \(L^2(\mathbb R)\) with position \(\hat q\) and momentum \(\hat p\):<br>\(\Yen(a)=e^{iH_S\otimes\hat q}\,(a\otimes\one)\,e^{-iH_S\otimes\hat q}\), with \(a\in\MS\).</div>
+      <div><span class="tag">Generator type 2</span>The clock's own energy, \(\one\otimes\hat p\), which commutes with the joint time translation.<br>Conjugating by \(e^{-iH_S\otimes\hat q}\) turns the pair into \(a\otimes\one\) and \(H_S\otimes\one+\one\otimes\hat p\).</div>
+    </div>
+    <p class="gloss">So for \(G=\mathbb R\) the invariants are generated by the system's observables together with the <em>total</em> energy of system plus clock (signs depend on conventions). For a type III algebra the generator \(H_S\) of the symmetry is not in \(\MS\), so adding it changes the algebra; this is the form in which CLPW state their result. A clock with energy restricted to a set \(V\) cuts this down to a corner by the spectral projection \(p_V\) of \(\hat p\).</p>
+    <p>The relativisation map extends to compactly stabilised frames <span class="ref">Def 4.13 · Prop 4.14</span>: for \(H\)-invariant \(x\in\MS\), \(\Yen(x)=W^*(\pi(x)\otimes\one)W\). It is completely positive, unital and normal, and a *-isomorphism onto its image when \(\E\) is sharp. The invariant operators \(A_{[m]}=\Yen(A_{f(H,[m])})\) of the previous section are exactly of this form <span class="ref">Cor 4.16</span>. A further map \(Z\) (Cor. 4.11) parameterises all invariants, not just relativised ones.</p>
+  </div>
+</section>
+
+<!-- ================= 8 ================= -->
+<section class="sec" id="energy">
+  <div class="prose">
+    <div class="eyebrow"><span class="num">08</span><span>Paper §4.5 · Prop 4.17 · Def 4.18</span></div>
+    <h2>How much energy a frame has</h2>
+    <p>From here on \(G=\mathbb R\times H\) with \(H\) compact: time translations times something like rotations. Fourier transforming the \(L^2(\mathbb R)\) factor in Theorem 4.4 decomposes the frame's Hilbert space over the energy \(\xi\) conjugate to time:</p>
+    \[ \HR\cong\int_{\mathbb R}^{\oplus}\Kc(\xi)\,d\xi,\qquad (U(t,h)\psi)(\xi)=e^{it\xi}\,U_H(\xi)(h)\,\psi(\xi). \]
+    <p>The <span class="term" data-g="mU">spectral multiplicity function</span> \(\mU(\xi)=\dim\Kc(\xi)\) counts the frame's degrees of freedom at energy \(\xi\). Covariance forces the energy spectrum to be absolutely continuous, so \(\mU\) is a density, not a list of eigenvalues. For a clock on \(L^2(\mathbb R)\) with energy restricted to a set \(V\), \(\mU=\chi_V\). This single function is all of the frame that enters the main theorem.</p>
+  </div>
+</section>
+
+<!-- ================= 9 ================= -->
+<section class="sec" id="modular">
+  <div class="prose">
+    <div class="eyebrow"><span class="num">09</span><span>Paper §5 · Def 5.1 · Thms 5.2, 5.3 · Prop 5.4</span></div>
+    <h2>Modular theory on one page</h2>
+    <p><b>KMS states.</b> A normal state \(\omega\) is KMS at inverse temperature \(\bet\) for a flow \(\alpha_t\) if for all \(x,y\) there is a bounded continuous function on the strip \(0\le\mathrm{Im}\,z\le\bet\), analytic inside, with boundary values</p>
+    \[ F_{x,y}(t)=\omega\bigl(y\,\alpha_t(x)\bigr),\qquad F_{x,y}(t+i\bet)=\omega\bigl(\alpha_t(x)\,y\bigr). \]
+    <p>For a finite system this is the Gibbs state \(e^{-\beta H}/Z\); the definition survives in infinite volume and for type III algebras, where density matrices do not.</p>
+  </div>
+  <figure class="fig" id="fig7" aria-labelledby="fig7-title">
+    <div class="fig-head"><span class="fno">Figure 6</span><span class="ftitle" id="fig7-title">The KMS strip</span></div>
+    <div class="strip-wrap">
+      <svg viewBox="0 0 640 230" role="img" aria-label="The KMS strip in the complex plane">
+        <rect class="s-fill" x="40" y="40" width="560" height="140"/>
+        <line class="s-ax" x1="20" y1="180" x2="620" y2="180"/>
+        <line class="s-ax" x1="320" y1="20" x2="320" y2="210"/>
+        <line class="s-edge" x1="40" y1="180" x2="600" y2="180"/>
+        <line class="s-edge" x1="40" y1="40" x2="600" y2="40"/>
+        <text x="330" y="34" class="m">Im z = β</text>
+        <text x="330" y="198" class="m">Im z = 0</text>
+        <text x="604" y="196" class="m">Re z</text>
+        <text x="70" y="62">F(t + iβ) = ω(α<tspan font-size="10" dy="4">t</tspan><tspan dy="-4">(x) y)</tspan></text>
+        <text x="70" y="168">F(t) = ω(y α<tspan font-size="10" dy="4">t</tspan><tspan dy="-4">(x))</tspan></text>
+        <text x="380" y="116" font-style="italic">F analytic in the interior</text>
+        <text x="50" y="222" class="m">Swapping the order of x and y costs a shift by iβ: the algebraic form of detailed balance.</text>
+      </svg>
+    </div>
+  </figure>
+  <div class="prose">
+    <p><b>Tomita–Takesaki.</b> Any faithful normal state \(\omega\) on a von Neumann algebra \(\mathcal M\) has a modular flow. With \(\Omega\) its GNS vector, the closure of \(Sx\Omega=x^*\Omega\) has polar decomposition \(S=J\Del^{1/2}\), and \(\Mod_t(x)=\Del^{it}x\Del^{-it}\) maps \(\mathcal M\) to itself. The state is KMS for \(\Mod\) at inverse temperature \(-1\) <span class="ref">Thm 5.2</span>.</p>
+    <p><b>Geometric modular flow.</b> If \(\omega\) is KMS at \(\bet\) for a flow \(\alpha_t\) coming from a spacetime symmetry, uniqueness gives \(\Mod_t=\alpha_{-\beta t}\). The abstract modular flow is then a time translation. On the de Sitter static patch, a state that is KMS for the static flow (the Bunch–Davies state, at the Gibbons–Hawking temperature, is the standard example) has exactly this property. The paper stresses that geometric modular action is rare and fragile, and that its results depend on it.</p>
+    <p><b>Takesaki's theorem.</b> The modular crossed product \(\mathcal M\cp_{\Mod}\mathbb R\) has a faithful normal semifinite trace <span class="ref">Thm 5.3</span>. Up to spatial isomorphism it does not depend on the state. Concretely, on spectral projections \(p_K\) of the generator of the \(\mathbb R\)-translations (the "frame energy"),</p>
+    \[ \tr(p_K)=\int_K e^{\xi}\,d\xi \qquad\text{(Prop. 5.4).} \]
+    <p>Energies are weighted exponentially. The whole algebra has \(\tr(\one)=\int_{\mathbb R}e^{\xi}d\xi=\infty\), so it is semifinite but not finite. For a type III<sub>1</sub> factor, \(\mathcal M\cp_{\Mod}\mathbb R\) is a type II<sub>∞</sub> factor <span class="ref">Prop D.9</span>. Rescaling the time variable from modular to physical time turns \(e^{\xi}\) into \(\beta e^{-\beta\xi}\): the weight is a Boltzmann factor.</p>
+  </div>
+</section>
+
+<!-- ================= 10 ================= -->
+<section class="sec" id="main">
+  <div class="prose">
+    <div class="eyebrow"><span class="num">10</span><span>Paper §5.1 · Thm 5.5 · Cor 5.7 · eqs. (5.41)–(5.43)</span></div>
+    <h2>The main theorem</h2>
+    <div class="thm"><span class="h">Theorem 5.5</span> <span class="st">Let \(G=\mathbb R\times H\) with \(H\) compact act on \(\MS\) by a strongly continuous unitary representation, and let \(\omega\) be a \(G\)-invariant faithful normal state that is KMS at inverse temperature \(\bet\in(0,\infty)\) for the \(\mathbb R\)-action. For every compactly stabilised frame \((\UR,\E,\HR)\), the invariant algebra \(\inv{\MS\otimes\Br(\HR)}\) is semifinite. If moreover</span>
+      \[ \int_{\mathbb R}e^{-\bet\xi}\,\mU(\xi)\,d\xi&lt;\infty, \]
+      <span class="st">then the invariant algebra is finite.</span>
+    </div>
+    <div class="thm"><span class="h">Corollary 5.7</span> <span class="st">If in addition \(\MS\) is a type III<sub>1</sub> factor and \(H\) is trivial, the invariant algebra is a type II<sub>1</sub> factor if and only if the integral above is finite.</span></div>
+    <p class="gloss"><span class="tag">Where the integral comes from</span>The trace built from Takesaki's trace and the type I trace on \(\Br(\Kc)\) gives \(\tr(\one\otimes p)=\bet\int e^{-\bet\xi}\mU(\xi)\,d\xi\) (eq. 5.43). Each energy shell of the frame contributes its number of degrees of freedom times a Boltzmann factor. A frame with too much weight at low or negative energy, or too many states at high energy, makes the trace of the identity infinite.</p>
+    <p>For general \(H\) the condition is sufficient but not necessary, because the invariant algebra need not be a factor and so its trace is not unique <span class="ref">Remark 5.6</span>. Figure 7 evaluates the condition for the frames discussed in the paper and two more for comparison.</p>
+  </div>
+  <figure class="fig" id="fig8" aria-labelledby="fig8-title">
+    <div class="fig-head"><span class="fno">Figure 7</span><span class="ftitle" id="fig8-title">When is the invariant algebra finite?</span></div>
+    <div class="ctl" style="margin-bottom:12px">
+      <div class="ctl-label">Quantum reference frame</div>
+      <div class="seg" id="f8-preset" role="group" aria-label="Choice of frame">
+        <button type="button" data-v="ideal" aria-pressed="false">Ideal clock, all energies</button>
+        <button type="button" data-v="pos" aria-pressed="true">Clock with energy ≥ E₀</button>
+        <button type="button" data-v="window" aria-pressed="false">Energy window</button>
+        <button type="button" data-v="rotor" aria-pressed="false">Rotor, E<sub>l</sub> = l(l+1)/2I</button>
+        <button type="button" data-v="flat" aria-pressed="false">Rotor, all E<sub>l</sub> equal</button>
+        <button type="button" data-v="expo" aria-pressed="false">Exponential growth</button>
+      </div>
+    </div>
+    <div class="charts2">
+      <div><div class="chart-title">Growth against suppression (log scale)</div><div id="f8-log" class="chart"></div>
+        <div class="legend-row"><span><i style="border-color:var(--frame)"></i>m(ξ)</span><span><i style="border-color:var(--therm);border-top-style:dashed"></i>e<sup>−βξ</sup></span><span><i style="border-color:var(--K)"></i>product</span></div></div>
+      <div><div class="chart-title">The integrand e<sup>−βξ</sup> m(ξ): its area is τ(𝟏)/β</div><div id="f8-lin" class="chart"></div></div>
+    </div>
+    <div class="fig-grid" style="margin-top:14px">
+      <div class="panel">
+        <label class="sl" for="f8-beta"><span>Inverse temp. β</span><input type="range" id="f8-beta" min="0.2" max="3" step="0.05" value="1"><output id="f8-beta-o"></output></label>
+        <label class="sl" for="f8-par" id="f8-par-row"><span id="f8-par-name">E₀</span><input type="range" id="f8-par" min="-2" max="5" step="0.05" value="0"><output id="f8-par-o"></output></label>
+        <p class="gloss" id="f8-desc" style="font-size:0.9rem;margin:0"></p>
+      </div>
+      <div class="readout" aria-live="polite">
+        <span class="pill" id="f8-pill"></span>
+        <div class="mono" id="f8-num"></div>
+        <div id="f8-verdict" style="font-size:0.92rem"></div>
+      </div>
+    </div>
+    <div class="fig-cap">The first two frames are Example 1 of §6 (the clock with E₀ = 0 is CLPW's observer). The rotors are Example 2. The exponentially growing density of states is not in the paper; it illustrates the growth condition of §5.2, which then fails above a Hagedorn-like temperature β &lt; κ.</div>
+  </figure>
+  <div class="prose">
+    <h3>How the proof goes</h3>
+    <ol class="road">
+      <li><div><span class="tool">Naimark, Mackey, Cattaneo · Thm 4.4</span><b>Put the frame inside the regular representation.</b>\(\HR\cong p(\Kc\otimes L^2(G))\), with \(\UR\) the left translations and \(\E\) the compressed canonical PVM.</div></li>
+      <li><div><span class="tool">Takesaki's commutation theorem · Thm 4.9</span><b>Turn invariants into a crossed product.</b>The invariants are \(p\bigl((\MS\cp G)\otimes\Br(\Kc)\bigr)p\).</div></li>
+      <li><div><span class="tool">KMS ⇒ modular · eq. (5.23)</span><b>Recognise the time translations as modular.</b>With \(\omega\) KMS at \(\bet\), the \(\mathbb R\)-action is the modular flow up to rescaling, so \(\MS\cp\mathbb R\) is a modular crossed product.</div></li>
+      <li><div><span class="tool">Takesaki · Thm 5.3, Prop 5.4</span><b>Use its semifinite trace.</b>Tensor with the trace on the type I factor \(\Br(L^2(H)\otimes\Kc)\), then average over the compact group \(H\), which preserves the trace.</div></li>
+      <li><div><span class="tool">Fourier transform · eqs. (5.41)–(5.43)</span><b>Evaluate the trace of the frame's projection.</b>\(\tr(\one\otimes p)=\bet\int e^{-\bet\xi}\mU(\xi)\,d\xi\). Finite trace on the identity of the corner means a finite algebra.</div></li>
+      <li><div><span class="tool">Takesaki duality · Prop D.9 · Cor 5.7</span><b>Read off the type.</b>For a III<sub>1</sub> factor and trivial \(H\), the crossed product is a II<sub>∞</sub> factor and its corner is II<sub>1</sub> exactly when the trace of \(p\) is finite.</div></li>
+    </ol>
+  </div>
+</section>
+
+<!-- ================= 11 ================= -->
+<section class="sec" id="thermal">
+  <div class="prose">
+    <div class="eyebrow"><span class="num">11</span><span>Paper §5.2 · eqs. (5.44)–(5.48) · Thm 5.11</span></div>
+    <h2>A thermal reading of the condition</h2>
+    <p>If the frame's energy is bounded below by \(\xi_0\), let \(N(\xi)=\int_{\xi_0}^{\xi}\mU(\eta)\,d\eta\) count its degrees of freedom below energy \(\xi\). Integrating by parts, the condition implies \(\int_{\xi_0}^\infty e^{-\bet\xi}N(\xi)\,d\xi&lt;\infty\): \(N\) must not grow too fast. This resembles the nuclearity conditions of QFT on Minkowski space, which bound how fast the number of localised states grows with energy, and which guarantee KMS states at positive temperature.</p>
+    <p>A frame cannot be in an ordinary equilibrium state. If \(\omega\) were invariant under time translations, then for the unit time bins \(X_n=[n,n+1)\) all the probabilities \(\omega(\E(X_n))\) would be equal. Since \(\sum_{n=-N}^{N}\E(X_n)\le\one\), each is at most \(1/(2N+1)\) for every \(N\), hence zero. No such state is normal.</p>
+    <p>What does exist is a normal weight \(\varphi_\beta\) on \(\Br(\HR)\), built from the same trace (eq. 5.60).</p>
+    <div class="thm"><span class="h">Theorem 5.11</span> <span class="st">The weight \(\varphi_\beta\) takes finite values on a dense *-subalgebra \(\mathcal D_1\subset\Br(\HR)\) if and only if \(\int e^{-\bet\xi}\mU(\xi)\,d\xi&lt;\infty\). In that case it satisfies the KMS condition on \(\mathcal D_1\) at inverse temperature \(\bet\) with respect to \(\mathrm{Ad}\,\UR\).</span></div>
+    <p class="gloss"><span class="tag">In words</span>Type reduction happens when the frame can be in thermal equilibrium, in the weak sense of a KMS weight, at the same temperature as the field.</p>
+  </div>
+</section>
+
+<!-- ================= 12 ================= -->
+<section class="sec" id="desitter">
+  <div class="prose">
+    <div class="eyebrow"><span class="num">12</span><span>Paper §6 · eqs. (6.6)–(6.25)</span></div>
+    <h2>The de Sitter static patch</h2>
+    <p>Take \(M\) to be the static patch, \(G=\mathbb R\times SO(n-1)\), and a QFT whose state is KMS for the static flow at some \(\bet\) and invariant under \(G\). Observables measured relative to a compactly stabilised frame lie in \(\inv{\MS\otimes\Br(\HR)}\), which is semifinite, and finite under condition (6.6).</p>
+    <dl class="defs">
+      <div><dt>Example 1<small>a clock that ignores rotations</small></dt><dd>\(\HR=p_V L^2(\mathbb R)\), energies restricted to \(V\), with \(SO(n-1)\) acting trivially. Then \(\mU=\chi_V\) and the condition is \(\int_V e^{-\bet\xi}d\xi&lt;\infty\), true whenever \(V\) is bounded below. CLPW's observer has \(V=[0,\infty)\), and they impose only time-translation invariance. If \(\MS\) is a type III<sub>1</sub> factor, which holds for various QFTs on de Sitter, Corollary 5.7 gives a type II<sub>1</sub> factor, in agreement with CLPW.</dd></div>
+      <div><dt>Example 2<small>a frame that also tracks orientation, n = 4</small></dt><dd>\(\Sig=G\) and \(\HR\subset L^2(\mathbb R)\otimes L^2(SO(3))\). Taking all of \(L^2(SO(3))\) at every allowed energy gives \(\mU=\infty\cdot\chi_V\), and the condition fails. A physical rotor instead gives the angular-momentum sector \(l\) (multiplicity \((2l+1)^2\) by Peter–Weyl) an energy \(E_l\). Then \(\mU=\sum_l(2l+1)^2\chi_{[E_l,\infty)}\), and the condition becomes</dd></div>
+    </dl>
+    \[ \sum_{l=0}^{\infty}(2l+1)^2e^{-\bet E_l}&lt;\infty, \]
+    <p>which says precisely that \(e^{-\beta\hat H_{SO(3)}}\) is trace class: the rotor has a Gibbs state at the field's temperature. For a rigid rotor, \(E_l\propto l(l+1)\), this holds at every temperature. Both examples can be explored in Figure 7.</p>
+  </div>
+</section>
+
+<!-- ================= 13 ================= -->
+<section class="sec" id="scope">
+  <div class="prose">
+    <div class="eyebrow"><span class="num">13</span><span>Paper §7</span></div>
+    <h2>What this does and does not show</h2>
+    <p>In this account type reduction comes from including a reference frame and restricting to invariant observables. CLPW attributed it to the need to "gravitationally dress" observables. Here it is an operational consequence of measuring relative to a physical frame, and gravity enters only through the background's symmetries.</p>
+    <p>The authors do not take this as evidence that local algebras in QFT should stop being type III. The result relies on special features: nontrivial isometries, a modular flow that coincides with time translations, and suitable properties of the frame. General regions of curved spacetime have no isometries, and geometric modular action is rare. Type reduction may still happen in particular models with larger symmetry groups. The results say nothing directly about local algebras in quantum gravity. Related semifinite algebras in perturbative quantum gravity also rest on modular crossed products, with the assumption that some diffeomorphisms act modularly; the authors know of no concrete argument for that assumption.</p>
+    <p>Two idealisations are flagged in §4.1. Reading a continuous frame observable with perfect precision is impossible, so the random-variable picture is a limit. And ideally the reading of the frame and the measurement of the field would be one extended measurement scheme, which would require generalising the framework beyond compact coupling regions.</p>
+  </div>
+</section>
+
+<!-- ================= 14 ================= -->
+<section class="sec summary" id="summary">
+  <div class="prose">
+    <div class="eyebrow"><span class="num">14</span><span>Paper §1, §7</span></div>
+    <h2>The paper in eight lines</h2>
+    <ol>
+      <li>An isometry maps a measurement scheme to another scheme measuring the transformed observable (Thm 2.1); the two are indistinguishable without a reference.</li>
+      <li>A quantum reference frame is a system with a covariant POVM on a homogeneous space \(\Sig\cong G/H\).</li>
+      <li>Physical observables are the \(G\)-invariant elements of \(\MS\otimes\Br(\HR)\); relativisation \(\Yen\) produces many of them.</li>
+      <li>To single out experiments with compact coupling regions, frames must be compactly stabilised (Prop 4.3).</li>
+      <li>Such frames sit inside the regular representation (Thm 4.4), so the invariants are a corner of \((\MS\cp G)\otimes\Br(\Kc)\) (Thm 4.9).</li>
+      <li>For \(G=\mathbb R\times H\) and a KMS state, Takesaki's trace makes the invariants semifinite, with \(\tr(\one)=\bet\int e^{-\bet\xi}\mU(\xi)\,d\xi\) (Thm 5.5).</li>
+      <li>Finiteness is a growth condition on the frame's density of states, equivalent to a KMS weight at the field's temperature (Thm 5.11).</li>
+      <li>On the de Sitter static patch this recovers CLPW's type II<sub>1</sub> algebra and extends it to frames that also track rotations (§6).</li>
+    </ol>
+    <footer class="colophon">Built from C. J. Fewster, D. W. Janssen, L. D. Loveridge, K. Rejzner and J. Waldron, <i>Quantum Reference Frames, Measurement Schemes and the Type of Local Algebras in Quantum Field Theory</i>, Commun. Math. Phys. 406:19 (2025), <a href="https://doi.org/10.1007/s00220-024-05180-7">doi:10.1007/s00220-024-05180-7</a>, published under CC BY 4.0. Equation, theorem and section numbers refer to the paper. The figures are new. Figures 3–5 and 7 are exact for the stated toy states and frames; the exponential-growth frame in Figure 7 is an illustration added here. Companion guide: <a href="fewster-verch-2020.html">Fewster–Verch (2020)</a>.</footer>
+  </div>
+</section>
+
+</main>
+</div>
+
+<button type="button" class="notation-btn" id="notation-btn" aria-expanded="false" aria-controls="drawer">Notation</button>
+<aside class="drawer" id="drawer" hidden aria-label="Notation">
+  <div class="drawer-head"><h2>Notation</h2><button type="button" class="btn" id="drawer-close">Close</button></div>
+  <div id="drawer-body"></div>
+</aside>
+<div class="tip" id="tip" hidden role="tooltip"></div>
+
+<script>
+(() => {
+'use strict';
+
+/* ================= glossary ================= */
+const GL = {
+  Sig:   { g: 'Frames', t: String.raw`\Sig\cong G/H`, n: 'Value space', d: 'Where the frame observable takes its values: a homogeneous G-space, isomorphic to G/H for the stabiliser H of any point.', r: 'Def 3.1' },
+  qrf:   { g: 'Frames', t: String.raw`(\UR,\E,\HR)`, n: 'Quantum reference frame', d: 'A unitary representation U_R of G on 𝓗_R together with a covariant POVM E on the value space Σ: E(g.X) = U_R(g) E(X) U_R(g)*.', r: 'Def 3.1' },
+  E:     { g: 'Frames', t: String.raw`\E`, n: 'Frame observable', d: 'Covariant POVM on Σ. Sharp if projection-valued. Its distribution in a frame state ω_R is the probability measure ω_R∘E on Σ.', r: 'Def 3.1' },
+  UR:    { g: 'Frames', t: String.raw`\UR`, n: 'Frame symmetry', d: 'Strongly continuous unitary representation of G on the frame Hilbert space 𝓗_R.', r: 'Def 3.1' },
+  HR:    { g: 'Frames', t: String.raw`\HR`, n: 'Frame Hilbert space', d: 'The frame is an ordinary quantum system; all of 𝓑(𝓗_R) is available before imposing invariance.', r: 'Def 3.1' },
+  cs:    { g: 'Frames', t: String.raw`G/H,\ H\ \text{compact}`, n: 'Compactly stabilised', d: 'The value space is G/H with H compact. Forced by the need to resolve measurement schemes with compact coupling regions.', r: 'Def 3.2 · Prop 4.3' },
+  yen:   { g: 'Frames', t: String.raw`\Yen(A)=\int \US(g)AU_S(g)^*\otimes d\E(g)`, n: 'Relativisation map', d: 'Turns a system observable into an invariant joint observable: A as seen from wherever the frame is. Completely positive, unital, normal; multiplicative iff E is sharp.', r: 'eq. (3.5) · Def 4.13' },
+  eta:   { g: 'Frames', t: String.raw`\etas(A\otimes B)=\sigma(B)A`, n: 'Restriction map', d: 'Fixes the frame in a state σ and returns a system observable. With a well-localised frame, η_σ∘¥ is close to the identity.', r: '§3.2' },
+  Kc:    { g: 'Frames', t: String.raw`\Kc`, n: 'Multiplicity space', d: 'Auxiliary Hilbert space in Theorem 4.4: every compactly stabilised frame sits inside 𝒦 ⊗ L²(G) with the left regular representation.', r: 'Thm 4.4' },
+  mU:    { g: 'Frames', t: String.raw`\mU(\xi)=\dim\Kc(\xi)`, n: 'Spectral multiplicity', d: 'Number of frame degrees of freedom at energy ξ, from the direct-integral decomposition of 𝓗_R over the energy conjugate to time.', r: 'Def 4.18' },
+  // algebras
+  MS:    { g: 'Algebras', t: String.raw`\MS`, n: 'System algebra', d: 'Von Neumann algebra of the field’s observables in a region (here: the static patch), in the GNS representation of a KMS state. Typically a type III₁ factor.', r: '§4.3 · §6' },
+  US:    { g: 'Algebras', t: String.raw`\aS=\mathrm{Ad}\,\US`, n: 'Symmetry on the system', d: 'Continuous action of G by automorphisms of 𝓜_S, implemented by a unitary representation U_S.', r: '§4.3' },
+  inv:   { g: 'Algebras', t: String.raw`\inv{\MS\otimes\Br(\HR)}`, n: 'Invariant algebra', d: 'Joint observables of system and frame fixed by α_S(g) ⊗ Ad U_R(g) for all g. The physical observables in the operational approach.', r: '§3 · §4.3' },
+  cp:    { g: 'Algebras', t: String.raw`\mathcal M\cp_\alpha G`, n: 'Crossed product', d: 'Von Neumann algebra on L²(G, 𝓗) generated by π(a), (π(a)φ)(g) = α(g,a)φ(g), and right translations. Equals the fixed points of 𝓜 ⊗ 𝓑(L²(G)) under α ⊗ Ad λ.', r: 'Def 4.7 · Prop 4.8' },
+  trace: { g: 'Algebras', t: String.raw`\tr`, n: 'Trace', d: 'A weight with τ(x*x) = τ(xx*). Finite algebra: faithful normal trace with τ(1) < ∞. Semifinite: every positive element dominates one of finite trace.', r: 'Defs D.4, D.5' },
+  types: { g: 'Algebras', t: String.raw`\mathrm{I}_n,\ \mathrm{I}_\infty,\ \mathrm{II}_1,\ \mathrm{II}_\infty,\ \mathrm{III}`, n: 'Types of factors', d: 'Classified by the values of the trace on projections: {0,1/n,…,1}, {0,1,…,∞}, [0,1], [0,∞], or no semifinite trace at all.', r: 'Def D.7' },
+  // thermal
+  beta:  { g: 'Modular theory', t: String.raw`\bet`, n: 'Inverse temperature', d: 'The state of the field is KMS at inverse temperature β for the time translations. On the static patch: KMS for the static flow.', r: 'Def 5.1' },
+  kms:   { g: 'Modular theory', t: String.raw`F(t)=\omega(y\alpha_t(x)),\ F(t+i\beta)=\omega(\alpha_t(x)y)`, n: 'KMS condition', d: 'Equilibrium at inverse temperature β, stated without density matrices: an analytic function on the strip 0 ≤ Im z ≤ β with these boundary values.', r: 'Def 5.1' },
+  mod:   { g: 'Modular theory', t: String.raw`\Mod_t=\Del^{it}\cdot\Del^{-it}`, n: 'Modular flow', d: 'Every faithful normal state has one (Tomita–Takesaki). If the state is KMS at β for a geometric flow α, then σ_t = α_{−βt}: the modular flow is geometric.', r: 'Thm 5.2' },
+  K:     { g: 'Measurement', t: String.raw`\K`, n: 'Coupling region', d: 'Compact region where system and probe interact in a measurement scheme. A symmetry g moves it to g.K.', r: '§2.2' },
+  scheme:{ g: 'Measurement', t: String.raw`m=(\mathcal B,\mathcal C,\K,\chi,\sigma,B)`, n: 'Measurement scheme', d: 'Probe theory, coupled theory, coupling region, identification maps, probe preparation and probe observable. Measures the induced observable ε_σ(B).', r: '§2.2 · eq. (4.1)' },
+  orbit: { g: 'Measurement', t: String.raw`[m]\in\mathcal M/G`, n: 'Orbit of schemes', d: 'All schemes related by symmetries. Its members cannot be told apart by the background alone.', r: '§4.1' },
+  resolve:{ g: 'Measurement', t: String.raw`f:\Sig\times\mathcal M/G\to\mathcal M`, n: 'Resolving map', d: 'Covariant choice of scheme for each frame value: f(g.s,[m]) = g.f(s,[m]). Exists iff Σ resolves 𝓜.', r: 'Def 4.1 · Prop 4.2' }
+};
+
+/* ================= notation drawer ================= */
+(function buildDrawer() {
+  const body = document.getElementById('drawer-body');
+  const groups = {};
+  for (const e of Object.values(GL)) (groups[e.g] = groups[e.g] || []).push(e);
+  let html = '';
+  for (const [g, list] of Object.entries(groups)) {
+    html += `<h3>${g}</h3>`;
+    for (const e of list) html += `<div class="ent"><div class="sym">\\(${e.t}\\)</div><div><b>${e.n}</b>${e.d}<br><span class="ref">${e.r}</span></div></div>`;
+  }
+  body.innerHTML = html;
+  const btn = document.getElementById('notation-btn'), drawer = document.getElementById('drawer');
+  const set = open => { drawer.hidden = !open; btn.setAttribute('aria-expanded', String(open)); if (open) document.getElementById('drawer-close').focus(); };
+  btn.addEventListener('click', () => set(drawer.hidden));
+  document.getElementById('drawer-close').addEventListener('click', () => { set(false); btn.focus(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !drawer.hidden) { set(false); btn.focus(); } });
+})();
+
+/* ================= tooltips ================= */
+const tipEl = document.getElementById('tip');
+let tipPinned = null;
+function glKey(el) {
+  if (el.dataset && el.dataset.g) return el.dataset.g;
+  const c = el.getAttribute && el.getAttribute('class');
+  const m = c && c.match(/gx-(\w+)/);
+  return m ? m[1] : null;
+}
+function findGl(t) { return t && t.closest ? t.closest('[data-g], [class*="gx-"]') : null; }
+function showTip(el) {
+  const e = GL[glKey(el)]; if (!e) return;
+  tipEl.innerHTML = `<b>${e.n}</b>${e.d}<span class="r">${e.r}</span>`;
+  tipEl.hidden = false;
+  const r = el.getBoundingClientRect(), tw = tipEl.offsetWidth, th = tipEl.offsetHeight;
+  let x = r.left + r.width / 2 - tw / 2; x = Math.max(12, Math.min(innerWidth - tw - 12, x));
+  let y = r.bottom + 8; if (y + th > innerHeight - 12) y = r.top - th - 8;
+  tipEl.style.left = x + 'px'; tipEl.style.top = Math.max(8, y) + 'px';
+}
+function hideTip() { tipEl.hidden = true; tipPinned = null; }
+document.addEventListener('pointerover', e => { if (e.pointerType !== 'mouse' || tipPinned) return; const el = findGl(e.target); if (el) showTip(el); });
+document.addEventListener('pointerout', e => { if (e.pointerType !== 'mouse' || tipPinned) return; const el = findGl(e.target); if (el && !el.contains(e.relatedTarget)) tipEl.hidden = true; });
+document.addEventListener('click', e => {
+  const el = findGl(e.target);
+  if (el && el.closest('.drawer')) return;
+  if (el) { if (tipPinned === el) hideTip(); else { tipPinned = el; showTip(el); } }
+  else if (tipPinned) hideTip();
+});
+addEventListener('scroll', () => { if (!tipEl.hidden) hideTip(); }, { passive: true });
+
+/* ================= utilities ================= */
+const NS = 'http://www.w3.org/2000/svg';
+function S(tag, attrs, parent) { const e = document.createElementNS(NS, tag); if (attrs) for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const f1 = v => (Math.round(v * 10) / 10).toString();
+const fmt = (v, d = 2) => (Math.abs(v) < 1e-12 ? 0 : v).toFixed(d);
+function segControl(id, onChange) {
+  const g = document.getElementById(id);
+  g.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    g.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    onChange(b.dataset.v);
+  });
+}
+function slider(id, onInput, digits = 2) {
+  const el = document.getElementById(id), out = document.getElementById(id + '-o');
+  const upd = () => { out.textContent = Number(el.value).toFixed(digits); onInput(Number(el.value)); };
+  el.addEventListener('input', upd);
+  out.textContent = Number(el.value).toFixed(digits);
+  return el;
+}
+const npdf = (x, m, s) => Math.exp(-0.5 * ((x - m) / s) ** 2) / (s * Math.sqrt(2 * Math.PI));
+
+/* ================= type ladder ================= */
+(function ladder() {
+  const pos = v => v === Infinity ? 95 : v <= 1 ? 45 * v : 45 + 50 * (1 - 1 / v);
+  const dot = (el, v) => { const d = document.createElement('span'); d.className = 'dot'; d.style.left = pos(v) + '%'; el.appendChild(d); };
+  const bar = (el, a, b) => { const d = document.createElement('span'); d.className = 'seg2'; d.style.left = pos(a) + '%'; d.style.width = (pos(b) - pos(a)) + '%'; el.appendChild(d); };
+  const In = document.getElementById('lad-In'); [0, 0.25, 0.5, 0.75, 1].forEach(v => dot(In, v));
+  const Ii = document.getElementById('lad-Iinf'); [0, 1, 2, 3, 4, 5, 6, 8, 12, 20, Infinity].forEach(v => dot(Ii, v));
+  bar(document.getElementById('lad-II1'), 0, 1);
+  bar(document.getElementById('lad-IIinf'), 0, Infinity);
+  const ax = document.getElementById('lad-axis');
+  [[0, '0'], [0.5, '½'], [1, '1'], [2, '2'], [3, '3'], [Infinity, '∞']].forEach(([v, s]) => { const t = document.createElement('span'); t.style.left = pos(v) + '%'; t.textContent = s; ax.appendChild(t); });
+})();
+
+/* ================= Diagram (Penrose) ================= */
+class Diagram {
+  constructor(host, view, opts = {}) {
+    this.host = host; this.view = view; this.opts = opts;
+    this.aspect = (view.t1 - view.t0) / (view.x1 - view.x0);
+    host.classList.add('diagram');
+    this.svg = S('svg', { class: 'dsvg', role: 'img', 'aria-label': opts.label || 'Diagram' }, host);
+    this.L = {};
+    for (const n of ['grid', 'fill', 'lines', 'marks', 'labels', 'handles']) this.L[n] = S('g', { class: 'ly-' + n }, this.svg);
+    this.handles = []; this.active = null; this.draw = null; this.W = 0;
+    this.svg.addEventListener('pointermove', e => { if (!this.active) return; const [x, t] = this.toWorld(e), h = this.active; h.move(x + h.off[0], t + h.off[1]); });
+    const end = () => { if (this.active) { this.active.g.classList.remove('dragging'); this.active = null; } };
+    this.svg.addEventListener('pointerup', end); this.svg.addEventListener('pointercancel', end);
+    host.style.height = Math.round((host.clientWidth || 500) * this.aspect) + 'px';
+    new ResizeObserver(() => this.resize()).observe(host);
+    this.resize();
+  }
+  resize() {
+    const w = Math.round(this.host.clientWidth);
+    if (!w || w === this.W) return;
+    this.W = w; this.H = Math.round(w * this.aspect); this.fs = clamp(w / 40, 11.5, 15);
+    this.svg.setAttribute('viewBox', `0 0 ${this.W} ${this.H}`); this.host.style.height = this.H + 'px';
+    this.redraw();
+  }
+  px(x) { return (x - this.view.x0) / (this.view.x1 - this.view.x0) * this.W; }
+  py(t) { return (this.view.t1 - t) / (this.view.t1 - this.view.t0) * this.H; }
+  toWorld(e) { const r = this.svg.getBoundingClientRect(), v = this.view; return [v.x0 + (e.clientX - r.left) / r.width * (v.x1 - v.x0), v.t1 - (e.clientY - r.top) / r.height * (v.t1 - v.t0)]; }
+  redraw() {
+    if (!this.W) return;
+    for (const n of ['grid', 'fill', 'lines', 'marks', 'labels']) this.L[n].replaceChildren();
+    const v = this.view, g = this.L.grid, st = Math.PI / 8;
+    for (let c = -2 * Math.PI; c <= 2 * Math.PI + 1e-9; c += st) {
+      S('line', { x1: f1(this.px(-1)), y1: f1(this.py(-1 - c)), x2: f1(this.px(5)), y2: f1(this.py(5 - c)) }, g);
+      S('line', { x1: f1(this.px(-1)), y1: f1(this.py(c + 1)), x2: f1(this.px(5)), y2: f1(this.py(c - 5)) }, g);
+    }
+    if (this.draw) this.draw(this);
+    for (const h of this.handles) { const [x, t] = h.pos(); h.g.setAttribute('transform', `translate(${f1(this.px(x))},${f1(this.py(t))})`); }
+  }
+  pPts(pts, close) { return 'M' + pts.map(p => `${f1(this.px(p[0]))},${f1(this.py(p[1]))}`).join('L') + (close ? 'Z' : ''); }
+  path(layer, d, cls, extra) { return S('path', Object.assign({ d, class: cls }, extra || {}), this.L[layer]); }
+  text(x, t, str, cls = 'lbl', anchor = 'middle', mul = 1, rot) {
+    const el = S('text', { x: f1(this.px(x)), y: f1(this.py(t)), class: cls, 'text-anchor': anchor, 'font-size': (this.fs * mul).toFixed(1), 'dominant-baseline': 'middle' }, this.L.labels);
+    if (rot) el.setAttribute('transform', `rotate(${rot} ${f1(this.px(x))} ${f1(this.py(t))})`);
+    el.textContent = str; return el;
+  }
+  addHandle(h) {
+    const g = S('g', { class: 'handle', tabindex: '0', role: 'button', 'aria-label': (h.label || 'Drag') + '. Use arrow keys to move.' }, this.L.handles);
+    S('circle', { class: 'hit', r: 22 }, g); S('circle', { class: 'ring', r: 7 }, g); S('circle', { class: 'dot', r: 2.2 }, g);
+    h.g = g;
+    g.addEventListener('pointerdown', e => { e.preventDefault(); e.stopPropagation(); const [x, t] = this.toWorld(e), [hx, ht] = h.pos(); h.off = [hx - x, ht - t]; this.active = h; g.classList.add('dragging'); this.svg.setPointerCapture(e.pointerId); });
+    g.addEventListener('keydown', e => { const s = e.shiftKey ? 0.15 : 0.04; const k = { ArrowLeft: [-s, 0], ArrowRight: [s, 0], ArrowUp: [0, s], ArrowDown: [0, -s] }[e.key]; if (!k) return; e.preventDefault(); const [x, t] = h.pos(); h.move(x + k[0], t + k[1]); });
+    this.handles.push(h); return h;
+  }
+}
+
+/* de Sitter: static coordinates (t in units of ρ, u = r/ρ) <-> Penrose coordinates (θ polar angle from the observer, T conformal time) */
+function st2pen(t, u) {
+  const h = Math.tanh(t);
+  const sT = h * Math.sqrt((1 - u * u) / (1 - h * h * u * u));
+  const cT = Math.sqrt(Math.max(0, 1 - sT * sT));
+  return [Math.asin(clamp(u * cT, -1, 1)), Math.asin(clamp(sT, -1, 1))];
+}
+function pen2st(th, T) {
+  const u = Math.sin(th) / Math.cos(T), h = Math.sin(T) / Math.cos(th);
+  return [Math.atanh(clamp(h, -0.9999999, 0.9999999)), u];
+}
+const PI = Math.PI, HP = Math.PI / 2;
+function drawDeSitter(d, opts = {}) {
+  d.path('fill', d.pPts([[0, -HP], [PI, -HP], [PI, HP], [0, HP]], true), 'pen-sq');
+  d.path('fill', d.pPts([[PI, -HP], [HP, 0], [PI, HP]], true), 'f-patch2');
+  d.path('fill', d.pPts([[0, -HP], [HP, 0], [0, HP]], true), 'f-patch');
+  d.path('lines', d.pPts([[0, -HP], [PI, HP]]), 'horizon');
+  d.path('lines', d.pPts([[0, HP], [PI, -HP]]), 'horizon');
+  for (const u of [0.3, 0.55, 0.75, 0.9]) {
+    const pts = []; for (let i = 0; i <= 120; i++) pts.push(st2pen(-6 + 12 * i / 120, u));
+    d.path('lines', d.pPts(pts), 'orbit');
+  }
+  d.path('lines', d.pPts([[0, -HP], [0, HP]]), 'worldline');
+  if (opts.labels !== false) {
+    d.text(0.36, -0.78, 'static patch', 'lbl patch', 'middle', 0.9);
+    d.text(PI - 0.42, 0.05, 'antipodal patch', 'lbl small', 'middle', 0.72);
+    d.text(-0.1, -0.3, "observer's geodesic", 'lbl frame', 'middle', 0.82, -90);
+    d.text(HP, HP + 0.14, 'future infinity', 'lbl small', 'middle', 0.75);
+    d.text(HP, -HP - 0.14, 'past infinity', 'lbl small', 'middle', 0.75);
+    d.text(1.12, 0.62, 'horizon', 'lbl small', 'middle', 0.72, -45);
+  }
+}
+function blobPen(t0, u0, a, b) {
+  const P = []; for (let i = 0; i < 60; i++) { const ph = 2 * PI * i / 60; P.push(st2pen(t0 + a * Math.cos(ph), clamp(u0 + b * Math.sin(ph), 0.005, 0.995))); }
+  return P;
+}
+function arrowHead(d, x, y, ang, size = 8) {
+  const a1 = ang + PI * 0.85, a2 = ang - PI * 0.85;
+  S('path', { class: 'arrowhead', d: `M${f1(x)},${f1(y)}L${f1(x + size * Math.cos(a1))},${f1(y + size * Math.sin(a1))}L${f1(x + size * Math.cos(a2))},${f1(y + size * Math.sin(a2))}Z` }, d.L.marks);
+}
+const penView = { x0: -0.32, x1: PI + 0.12, t0: -HP - 0.28, t1: HP + 0.28 };
+
+/* ================= HERO ================= */
+(function hero() {
+  const d = new Diagram(document.getElementById('hero-diagram'), penView, { label: 'Penrose diagram of de Sitter space with the static patch' });
+  d.draw = d => {
+    drawDeSitter(d);
+    for (const s of [-1.4, -0.7, 0.7, 1.4]) d.path('marks', d.pPts(blobPen(s, 0.55, 0.3, 0.1), true), 'f-Kghost');
+    d.path('marks', d.pPts(blobPen(0, 0.55, 0.3, 0.1), true), 'f-K');
+    const [x, y] = st2pen(0, 0.55); d.text(x + 0.2, y, 'K', 'lbl K', 'start');
+    const pts = []; for (let i = 0; i <= 30; i++) pts.push(st2pen(0.45 + 0.6 * i / 30, 0.75));
+    d.path('marks', d.pPts(pts), 'flow-arrow');
+    const a = pts[pts.length - 1], b = pts[pts.length - 2];
+    arrowHead(d, d.px(a[0]), d.py(a[1]), Math.atan2(d.py(a[1]) - d.py(b[1]), d.px(a[0]) - d.px(b[0])));
+    const [cx, cy] = st2pen(0.75, 0.75); d.text(cx + 0.12, cy, 'static flow', 'lbl patch', 'start', 0.82);
+  };
+  d.redraw();
+})();
+
+/* ================= FIGURE 2 ================= */
+(function fig2() {
+  const d = new Diagram(document.getElementById('f2-diagram'), penView, { label: 'A coupling region and its images under the static flow' });
+  const st = { t0: 0, u0: 0.5, s: 0, ghosts: true };
+  const A = 0.32, B = 0.1;
+  const pill = document.getElementById('f2-pill'), txt = document.getElementById('f2-text');
+  d.draw = d => {
+    drawDeSitter(d);
+    if (st.ghosts) for (const k of [-2, -1, 1, 2]) {
+      d.path('marks', d.pPts(blobPen(st.t0 + st.s + k, st.u0, A, B), true), 'f-Kghost');
+    }
+    d.path('marks', d.pPts(blobPen(st.t0 + st.s, st.u0, A, B), true), 'f-K');
+    const [x, y] = st2pen(st.t0 + st.s, st.u0);
+    d.text(x + 0.16, y + 0.12, st.s === 0 ? 'K' : 'g_s.K', 'lbl K', 'start');
+    pill.textContent = st.s === 0 ? 'scheme m, coupling region K' : `scheme g.m, coupling region g.K, s = ${fmt(st.s, 2)}`;
+    txt.innerHTML = st.s === 0
+      ? 'This scheme measures some induced observable <i>A</i> = ε<sub>σ</sub>(<i>B</i>).'
+      : `By Theorem 2.1 the moved scheme measures α(<i>g<sub>s</sub></i>)<i>A</i>, the observable <i>A</i> translated by static time ${fmt(st.s, 2)}. The geometry of the patch looks the same from both coupling regions, so nothing local tells you which of the two experiments you did.`;
+  };
+  d.addHandle({
+    label: 'Coupling region K', pos: () => st2pen(st.t0 + st.s, st.u0),
+    move: (th, T) => {
+      T = clamp(T, -HP + 0.08, HP - 0.08); th = clamp(th, 0.04, HP - Math.abs(T) - 0.04);
+      const [t, u] = pen2st(th, T);
+      st.t0 = clamp(t - st.s, -3, 3); st.u0 = clamp(u, B + 0.02, 0.97 - B); d.redraw();
+    }
+  });
+  slider('f2-s', v => { st.s = v; d.redraw(); });
+  document.getElementById('f2-ghosts').addEventListener('change', e => { st.ghosts = e.target.checked; d.redraw(); });
+  d.redraw();
+})();
+
+/* ================= charts ================= */
+let chartId = 0;
+class Chart {
+  constructor(host, opts) {
+    this.host = host; this.o = Object.assign({ h: 200, pad: { l: 40, r: 12, t: 12, b: 32 }, ylog: false }, opts);
+    this.svg = S('svg', { role: 'img', 'aria-label': opts.label || 'Chart' }, host);
+    this.id = 'clip' + (++chartId); this.W = 0;
+    new ResizeObserver(() => this.resize()).observe(host);
+    this.resize();
+  }
+  resize() { const w = Math.round(this.host.clientWidth); if (!w || w === this.W) return; this.W = w; this.render(); }
+  sx(x) { const { pad, xr } = this.o; return pad.l + (x - xr[0]) / (xr[1] - xr[0]) * (this.W - pad.l - pad.r); }
+  sy(y) {
+    const { pad, yr, h, ylog } = this.o;
+    const f = ylog ? (Math.log10(Math.max(y, 1e-30)) - Math.log10(yr[0])) / (Math.log10(yr[1]) - Math.log10(yr[0])) : (y - yr[0]) / (yr[1] - yr[0]);
+    return pad.t + (1 - clamp(f, -2, 3)) * (h - pad.t - pad.b);
+  }
+  render() {
+    if (!this.W) return;
+    const { h, pad, xt, yt, xlabel, ylabels } = this.o, svg = this.svg;
+    svg.setAttribute('viewBox', `0 0 ${this.W} ${h}`); svg.setAttribute('height', h);
+    svg.replaceChildren();
+    const defs = S('defs', null, svg), cp = S('clipPath', { id: this.id }, defs);
+    S('rect', { x: pad.l, y: pad.t, width: this.W - pad.l - pad.r, height: h - pad.t - pad.b }, cp);
+    const hp = S('pattern', { id: 'hatch', width: 6, height: 6, patternUnits: 'userSpaceOnUse', patternTransform: 'rotate(45)' }, defs);
+    S('line', { x1: 0, y1: 0, x2: 0, y2: 6, stroke: 'var(--frame)', 'stroke-width': 2 }, hp);
+    const g = S('g', null, svg);
+    for (const v of (xt || [])) { const tk = S('g', { class: 'tick' }, g); S('line', { x1: this.sx(v), x2: this.sx(v), y1: pad.t, y2: h - pad.b }, tk); const t = S('text', { x: this.sx(v), y: h - pad.b + 14, 'text-anchor': 'middle' }, tk); t.textContent = v; }
+    (yt || []).forEach((v, i) => { const tk = S('g', { class: 'tick' }, g); S('line', { x1: pad.l, x2: this.W - pad.r, y1: this.sy(v), y2: this.sy(v) }, tk); const t = S('text', { x: pad.l - 6, y: this.sy(v) + 3.5, 'text-anchor': 'end' }, tk); t.textContent = ylabels ? ylabels[i] : v; });
+    S('path', { class: 'ax', d: `M${pad.l},${pad.t}V${h - pad.b}H${this.W - pad.r}` }, g);
+    if (xlabel) { const t = S('text', { class: 'axl', x: this.W - pad.r, y: h - 4, 'text-anchor': 'end' }, g); t.textContent = xlabel; }
+    this.plot = S('g', { 'clip-path': `url(#${this.id})` }, svg);
+    if (this.o.draw) this.o.draw(this);
+  }
+  curve(fn, cls, n = 300, fillBase, xr) {
+    const [a, b] = xr || this.o.xr; let d = '';
+    for (let i = 0; i <= n; i++) { const x = a + (b - a) * i / n; d += (i ? 'L' : 'M') + f1(this.sx(x)) + ',' + f1(this.sy(fn(x))); }
+    if (fillBase !== undefined) d += `L${f1(this.sx(b))},${f1(this.sy(fillBase))}L${f1(this.sx(a))},${f1(this.sy(fillBase))}Z`;
+    return S('path', { d, class: cls }, this.plot);
+  }
+  rect(x0, x1, cls) { const { pad, h } = this.o; return S('rect', { x: this.sx(x0), y: pad.t, width: Math.max(0, this.sx(x1) - this.sx(x0)), height: h - pad.t - pad.b, class: cls }, this.plot); }
+  note(x, y, s, anchor = 'start') { const t = S('text', { x, y, class: 'c-note', 'text-anchor': anchor }, this.plot); t.textContent = s; return t; }
+}
+
+/* ================= FIGURE 3: clock ================= */
+(function fig3() {
+  const st = { mean: 1.5, w: 0.6, t0: 0 };
+  const NXI = 500, NT = 360, TMAX = 10;
+  let psi = [], xi = [], dxi = 0, pt = new Float64Array(NT + 1);
+  function compute() {
+    const xmax = Math.max(st.mean + 7 * st.w, 1); dxi = xmax / NXI; xi = []; psi = [];
+    let norm = 0;
+    for (let j = 0; j <= NXI; j++) { const x = j * dxi; const v = Math.exp(-((x - st.mean) ** 2) / (4 * st.w * st.w)); xi.push(x); psi.push(v); norm += v * v * dxi; }
+    const c = 1 / Math.sqrt(norm); for (let j = 0; j <= NXI; j++) psi[j] *= c;
+    for (let i = 0; i <= NT; i++) {
+      const t = -TMAX + 2 * TMAX * i / NT - st.t0; let re = 0, im = 0;
+      for (let j = 0; j <= NXI; j++) { const ph = xi[j] * t; re += psi[j] * Math.cos(ph); im -= psi[j] * Math.sin(ph); }
+      re *= dxi / Math.sqrt(2 * PI); im *= dxi / Math.sqrt(2 * PI); pt[i] = re * re + im * im;
+    }
+  }
+  const tAt = i => -TMAX + 2 * TMAX * i / NT;
+  compute();
+  const energy = new Chart(document.getElementById('f3-energy'), {
+    label: 'Energy distribution of the clock state', h: 190, xr: [-2, 9], yr: [0, 1], xt: [-2, 0, 2, 4, 6, 8], yt: [], xlabel: 'energy ξ',
+    draw: c => {
+      c.rect(-2, 0, 'c-forbid');
+      c.note(c.sx(-1.9), 26, 'no states');
+      let pk = 0; for (const v of psi) pk = Math.max(pk, v * v);
+      c.o.yr = [0, pk * 1.15];
+      let dd = `M${f1(c.sx(0))},${f1(c.sy(0))}`;
+      for (let j = 0; j < xi.length; j += 2) dd += `L${f1(c.sx(xi[j]))},${f1(c.sy(psi[j] * psi[j]))}`;
+      dd += `L${f1(c.sx(xi[xi.length - 1]))},${f1(c.sy(0))}Z`;
+      S('path', { d: dd, class: 'c-framefill' }, c.plot);
+    }
+  });
+  const time = new Chart(document.getElementById('f3-time'), {
+    label: 'Time distribution of the clock reading', h: 190, xr: [-TMAX, TMAX], yr: [0, 1], xt: [-10, -5, 0, 5, 10], yt: [], xlabel: 'clock reading t',
+    draw: c => {
+      let pk = 0; for (const v of pt) pk = Math.max(pk, v); c.o.yr = [0, pk * 1.15];
+      let dd = `M${f1(c.sx(-TMAX))},${f1(c.sy(0))}`;
+      for (let i = 0; i <= NT; i++) dd += `L${f1(c.sx(tAt(i)))},${f1(c.sy(pt[i]))}`;
+      dd += `L${f1(c.sx(TMAX))},${f1(c.sy(0))}Z`;
+      S('path', { d: dd, class: 'c-sysfill' }, c.plot);
+      S('line', { x1: c.sx(st.t0), x2: c.sx(st.t0), y1: c.sy(0), y2: c.sy(pk * 1.15), class: 'c-zero', stroke: 'var(--ink-3)', 'stroke-dasharray': '3 3' }, c.plot);
+    }
+  });
+  const out = document.getElementById('f3-read');
+  function upd() {
+    compute(); energy.render(); time.render();
+    let m0 = 0, m1 = 0, m2 = 0, inb = 0; const dt = 2 * TMAX / NT;
+    for (let i = 0; i <= NT; i++) { const t = tAt(i), p = pt[i] * dt; m0 += p; m1 += p * t; m2 += p * t * t; if (Math.abs(t - st.t0) <= 1) inb += p; }
+    const mu = m1 / m0, sd = Math.sqrt(Math.max(0, m2 / m0 - mu * mu));
+    out.innerHTML = `<div>Mean clock reading: ${fmt(mu, 2)} &nbsp; spread: ${fmt(sd, 2)}</div><div>Probability of reading within ±1 of t₀: ${fmt(inb, 3)}</div><div>Probability outside the plotted range: ${fmt(Math.max(0, 1 - m0), 4)}</div>`;
+  }
+  slider('f3-mean', v => { st.mean = v; upd(); });
+  slider('f3-width', v => { st.w = v; upd(); });
+  slider('f3-t0', v => { st.t0 = v; upd(); });
+  upd();
+})();
+
+/* ================= FIGURE 4: relative position ================= */
+(function fig4() {
+  const st = { a: 0, xs: 1.5, sr: 0.8 }, ss = 0.6;
+  const abs = new Chart(document.getElementById('f4-abs'), {
+    label: 'Absolute positions', h: 180, xr: [-8, 8], yr: [0, 0.75], xt: [-8, -4, 0, 4, 8], yt: [], xlabel: 'x',
+    draw: c => {
+      c.curve(x => npdf(x, st.a, Math.max(st.sr, 0.05)), 'c-framefill', 400, 0);
+      c.curve(x => npdf(x, st.a + st.xs, ss), 'c-sysfill', 400, 0);
+    }
+  });
+  const rel = new Chart(document.getElementById('f4-rel'), {
+    label: 'Relative position', h: 180, xr: [-8, 8], yr: [0, 0.75], xt: [-8, -4, 0, 4, 8], yt: [], xlabel: 'x_S − x_R',
+    draw: c => {
+      c.curve(x => npdf(x, st.xs, ss), 'c-sysline', 400);
+      c.curve(x => npdf(x, st.xs, Math.sqrt(ss * ss + st.sr * st.sr)), 'c-ink', 400);
+    }
+  });
+  const out = document.getElementById('f4-read');
+  function upd() {
+    abs.render(); rel.render();
+    out.innerHTML = `<div>⟨Q<sub>S</sub>⟩ = ${fmt(st.a + st.xs, 2)}, ⟨Q<sub>R</sub>⟩ = ${fmt(st.a, 2)} (depend on the translation)</div><div>⟨Q<sub>S</sub> − Q<sub>R</sub>⟩ = ${fmt(st.xs, 2)}, spread √(0.6² + ${fmt(st.sr, 2)}²) = ${fmt(Math.sqrt(ss * ss + st.sr * st.sr), 3)}</div>`;
+  }
+  slider('f4-shift', v => { st.a = v; upd(); });
+  slider('f4-xs', v => { st.xs = v; upd(); });
+  slider('f4-sr', v => { st.sr = v; upd(); });
+  upd();
+})();
+
+/* ================= FIGURE 5: clock selects the experiment ================= */
+(function fig5() {
+  const d = new Diagram(document.getElementById('f5-diagram'), penView, { label: 'Coupling regions selected by a quantum clock' });
+  const st = { mean: 0.4, sp: 0.5 }, t0 = 0, u0 = 0.5, A = 0.28, B = 0.09;
+  d.draw = d => {
+    drawDeSitter(d);
+    const n = 25;
+    for (let k = 0; k < n; k++) {
+      const z = -2.6 + 5.2 * k / (n - 1), w = Math.exp(-z * z / 2);
+      d.path('marks', d.pPts(blobPen(t0 + st.mean + st.sp * z, u0, A, B), true), 'f-Kcopy', { 'fill-opacity': (0.04 + 0.32 * w).toFixed(3) });
+    }
+    d.path('marks', d.pPts(blobPen(t0 + st.mean, u0, A, B), true), 'f-Kghost');
+    const [x, y] = st2pen(t0 + st.mean, u0);
+    d.text(x + 0.3, y + 0.14, 'f(s, [m])', 'lbl K', 'start', 0.9);
+    const [cx, cy] = st2pen(st.mean, 0);
+    S('circle', { cx: d.px(cx), cy: d.py(cy), r: 6, fill: 'var(--frame)' }, d.L.marks);
+    d.text(cx + 0.06, cy - 0.22, 'clock reads s', 'lbl frame', 'start', 0.8);
+  };
+  const mu = new Chart(document.getElementById('f5-mu'), {
+    label: 'Distribution of the clock reading', h: 120, pad: { l: 14, r: 10, t: 8, b: 26 }, xr: [-3.5, 3.5], yr: [0, 1], xt: [-3, -2, -1, 0, 1, 2, 3], yt: [], xlabel: 's',
+    draw: c => { c.o.yr = [0, npdf(0, 0, st.sp) * 1.1]; c.curve(x => npdf(x, st.mean, st.sp), 'c-framefill', 400, 0); }
+  });
+  const txt = document.getElementById('f5-text');
+  function upd() {
+    d.redraw(); mu.render();
+    txt.innerHTML = `<div>The experiment is a mixture over the orbit: the expected outcome is ∫ ω<sub>S</sub>(α(<i>s</i>, <i>A</i>)) dμ<sub>R</sub>(<i>s</i>), the expectation of one invariant operator <i>A</i><sub>[m]</sub> in the product state ω<sub>S</sub> ⊗ ω<sub>R</sub>.</div><div class="mono">clock mean ${fmt(st.mean, 2)}, spread ${fmt(st.sp, 2)} (units of static time)</div>`;
+  }
+  slider('f5-mean', v => { st.mean = v; upd(); });
+  slider('f5-spread', v => { st.sp = v; upd(); });
+  upd();
+})();
+
+/* ================= FIGURE 7: the finiteness condition ================= */
+(function fig8() {
+  const XR = [-3, 10];
+  const presets = {
+    ideal: { H: false, desc: 'An ideal clock: the regular representation of ℝ on L²(ℝ), all energies allowed. Its invariant algebra is the crossed product 𝓜<sub>S</sub> ⋊ ℝ itself.', par: null,
+      m: () => 1, Z: () => Infinity },
+    pos: { H: false, desc: 'A clock on p<sub>V</sub>L²(ℝ) with V = [E₀, ∞) (Example 1). E₀ = 0 is CLPW’s observer, whose Hamiltonian is positive.', par: { name: 'E₀', min: -2, max: 5, step: 0.05, val: 0 },
+      m: (x, p) => x >= p ? 1 : 0, Z: (b, p) => Math.exp(-b * p) / b },
+    window: { H: false, desc: 'A clock whose energies are confined to V = [−2, −2 + w]. Even negative energies are harmless if V is bounded below.', par: { name: 'width w', min: 0.5, max: 12, step: 0.1, val: 4 },
+      m: (x, p) => (x >= -2 && x <= -2 + p) ? 1 : 0, Z: (b, p) => (Math.exp(2 * b) - Math.exp(-b * (-2 + p))) / b },
+    rotor: { H: true, desc: 'A frame for ℝ × SO(3) in four dimensions (Example 2): spin-l sector with multiplicity (2l+1)² and energy E<sub>l</sub> = l(l+1)/2I.', par: { name: 'inertia I', min: 0.2, max: 5, step: 0.05, val: 1 },
+      m: (x, p) => { let s = 0; for (let l = 0; l < 400; l++) { if (l * (l + 1) / (2 * p) > x) break; s += (2 * l + 1) ** 2; } return s; },
+      Z: (b, p) => { let s = 0; for (let l = 0; l < 4000; l++) { const t = (2 * l + 1) ** 2 * Math.exp(-b * l * (l + 1) / (2 * p)); s += t; if (l > 5 && t < 1e-14 * s) break; } return s / b; } },
+    flat: { H: true, desc: 'All of L²(SO(3)) at every energy ≥ 0 (eq. 6.16): infinitely many states per energy shell.', par: null,
+      m: x => x >= 0 ? Infinity : 0, Z: () => Infinity },
+    expo: { H: false, desc: 'Not in the paper: a density of frame states growing like e<sup>κξ</sup> for ξ ≥ 0, to show the growth condition at work.', par: { name: 'growth κ', min: 0, max: 3, step: 0.05, val: 0.6 },
+      m: (x, p) => x >= 0 ? Math.exp(p * x) : 0, Z: (b, p) => b > p ? 1 / (b - p) : Infinity }
+  };
+  const st = { preset: 'pos', beta: 1, par: 0 };
+  const parEl = document.getElementById('f8-par'), parRow = document.getElementById('f8-par-row'), parName = document.getElementById('f8-par-name'), parOut = document.getElementById('f8-par-o');
+  const P = () => presets[st.preset];
+  const mOf = x => P().m(x, st.par);
+  const logc = new Chart(document.getElementById('f8-log'), {
+    label: 'Multiplicity and Boltzmann weight on a log scale', h: 210, xr: XR, yr: [1e-4, 1e4], ylog: true, xt: [-2, 0, 2, 4, 6, 8, 10], yt: [1e-4, 1e-2, 1, 1e2, 1e4], ylabels: ['10⁻⁴', '10⁻²', '1', '10²', '10⁴'], xlabel: 'frame energy ξ', pad: { l: 44, r: 12, t: 12, b: 32 },
+    draw: c => {
+      const b = st.beta;
+      if (st.preset === 'flat') { c.rect(0, XR[1], 'c-hatch'); c.note(c.sx(0.3), 26, 'm(ξ) = ∞'); }
+      c.curve(x => Math.exp(-b * x), 'c-therm', 300);
+      if (st.preset !== 'flat') {
+        c.curve(x => Math.max(mOf(x), 1e-30), 'c-frameline', 600);
+        c.curve(x => Math.max(mOf(x) * Math.exp(-b * x), 1e-30), 'c-intline', 600);
+      }
+    }
+  });
+  const linc = new Chart(document.getElementById('f8-lin'), {
+    label: 'Integrand e^(−βξ) m(ξ)', h: 210, xr: XR, yr: [0, 1], xt: [-2, 0, 2, 4, 6, 8, 10], yt: [], xlabel: 'frame energy ξ', pad: { l: 14, r: 12, t: 12, b: 32 },
+    draw: c => {
+      const b = st.beta;
+      if (st.preset === 'flat') { c.rect(0, XR[1], 'c-hatch'); c.note(c.sx(0.3), 26, 'integrand = ∞ for ξ ≥ 0'); return; }
+      let mx = 0; for (let i = 0; i <= 600; i++) { const x = XR[0] + (XR[1] - XR[0]) * i / 600; mx = Math.max(mx, mOf(x) * Math.exp(-b * x)); }
+      c.o.yr = [0, (mx || 1) * 1.12];
+      c.curve(x => mOf(x) * Math.exp(-b * x), 'c-int', 600, 0);
+      const z = P().Z(b, st.par);
+      if (!isFinite(z)) {
+        const leftDiv = st.preset === 'ideal';
+        c.note(leftDiv ? c.sx(XR[0]) + 6 : c.sx(XR[1]) - 6, 26, leftDiv ? '← grows without bound as ξ → −∞' : 'grows without bound as ξ → ∞ →', leftDiv ? 'start' : 'end');
+      }
+    }
+  });
+  const pill = document.getElementById('f8-pill'), num = document.getElementById('f8-num'), ver = document.getElementById('f8-verdict'), desc = document.getElementById('f8-desc');
+  function setPreset(v) {
+    st.preset = v; const p = P();
+    if (p.par) { parRow.hidden = false; parName.textContent = p.par.name; parEl.min = p.par.min; parEl.max = p.par.max; parEl.step = p.par.step; parEl.value = p.par.val; st.par = p.par.val; parOut.textContent = Number(p.par.val).toFixed(2); }
+    else parRow.hidden = true;
+    desc.innerHTML = p.desc;
+    upd();
+  }
+  function upd() {
+    logc.render(); linc.render();
+    const p = P(), z = p.Z(st.beta, st.par), fin = isFinite(z);
+    pill.className = 'pill ' + (fin ? 'good' : 'bad');
+    pill.textContent = fin ? 'condition (5.17) holds' : 'condition (5.17) fails';
+    num.innerHTML = fin
+      ? `∫ e<sup>−βξ</sup> m(ξ) dξ = ${z < 1e5 ? fmt(z, 4) : z.toExponential(3)}<br>τ(𝟏) = β × that = ${z * st.beta < 1e5 ? fmt(z * st.beta, 4) : (z * st.beta).toExponential(3)}`
+      : '∫ e<sup>−βξ</sup> m(ξ) dξ = ∞<br>τ(𝟏) = ∞ for the trace built in the proof';
+    if (!p.H) ver.innerHTML = fin
+      ? '<b>Finite.</b> Here <i>H</i> is trivial, so if 𝓜<sub>S</sub> is a type III<sub>1</sub> factor the invariant algebra is a <b>type II<sub>1</sub> factor</b> (Cor. 5.7).'
+      : '<b>Semifinite, not finite.</b> With <i>H</i> trivial and 𝓜<sub>S</sub> a type III<sub>1</sub> factor, Cor. 5.7 rules out type II<sub>1</sub>: the invariants form a corner of a II<sub>∞</sub> factor with infinite trace, a <b>type II<sub>∞</sub> factor</b>.';
+    else ver.innerHTML = fin
+      ? '<b>Finite</b> (Thm 5.5): a finite von Neumann algebra. With nontrivial <i>H</i> it need not be a factor, so no single type is assigned.'
+      : '<b>Semifinite</b> (Thm 5.5). Finiteness is not established: the condition is sufficient, not necessary, when <i>H</i> is nontrivial (Remark 5.6).';
+  }
+  segControl('f8-preset', setPreset);
+  slider('f8-beta', v => { st.beta = v; upd(); });
+  parEl.addEventListener('input', () => { st.par = Number(parEl.value); parOut.textContent = st.par.toFixed(2); upd(); });
+  setPreset('pos');
+})();
+
+})();
+</script>
+</body>
+</html>
