@@ -150,7 +150,7 @@ dl.defs dd { margin: 0; }
 .model > .tag { display: block; margin-bottom: 0.4rem; }
 
 table.cmp { width: 100%; border-collapse: collapse; font-size: 0.93rem; line-height: 1.45; }
-.tablewrap { overflow-x: auto; margin: 1.4rem 0; }
+.tablewrap { overflow-x: auto; margin: 1.4rem auto; }
 table.cmp th, table.cmp td { text-align: left; padding: 0.55rem 0.7rem; border-bottom: 1px solid var(--rule); vertical-align: top; }
 table.cmp thead th { font-family: var(--mono); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-3); font-weight: 500; border-bottom: 1px solid var(--ink); }
 table.cmp tbody th { font-weight: 600; white-space: nowrap; }
@@ -483,7 +483,7 @@ window.MathJax = {
   <div class="prose">
     <div class="eyebrow"><span class="num">02</span><span>Paper §2 · Fig. 1</span></div>
     <h2>Causal geometry</h2>
-    <p>Every construction in the paper is defined from the causal structure of a globally hyperbolic spacetime \(M\), never from a time coordinate. Five notions carry most of the weight. Figure 1 shows each of them for a coupling region \(\K\) of your choice.</p>
+    <p>Every construction in the paper is defined from the causal structure of a globally hyperbolic spacetime \(M\), never from a time coordinate. Five notions carry most of the weight. The first three apply to any subset \(S\subseteq M\); the out- and in-regions are defined relative to the coupling region \(\K\), where system and probe interact. Figure 1 shows each of them with \(S=\K\), for a coupling region of your choice.</p>
     <dl class="defs">
       <div><dt>Causal future and past<small>\(\Jp(S)\), \(\Jm(S)\)</small></dt><dd>Everything reachable from \(S\) along future-directed (past-directed) timelike or null curves, \(S\) included.</dd></div>
       <div><dt>Causal hull<small>\(\Jp(S)\cap\Jm(S)\)</small></dt><dd>Every point on some causal curve that starts and ends in \(S\). A set equal to its causal hull is <em>causally convex</em>. Local algebras are attached to open causally convex regions.</dd></div>
