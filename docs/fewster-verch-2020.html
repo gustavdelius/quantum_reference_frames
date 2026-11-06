@@ -1,0 +1,1929 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fewster–Verch Measurement Scheme</title>
+<meta name="description" content="An interactive reading guide to Fewster and Verch, Quantum Fields and Local Measurements (Commun. Math. Phys. 2020).">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..700;1,6..96,400..700&family=JetBrains+Mono:wght@400;500&family=Source+Serif+4:ital,opsz,wght@0,8..60,300..700;1,8..60,300..700&display=swap">
+<style>
+:root {
+  /* Layout: a lab notebook on light-cone graph paper. One ~40rem reading column; figure plates break out to 74rem; every claim carries a chip pointing back to the paper. */
+  --paper: #f3f5f8;
+  --plate: #ffffff;
+  --ink: #131b2a;
+  --ink-2: #4a5568;
+  --ink-3: #848ea0;
+  --rule: #d5dbe5;
+  --grid: #e4e9f0;
+  --sys: #2146c0;      /* system field, Φ, 𝒜 */
+  --probe: #cf5317;    /* probe field, Ψ, ℬ */
+  --probe2: #7a3dc2;   /* second readout */
+  --K: #a81d74;        /* coupling region */
+  --hull: #6b40c4;     /* causal hull */
+  --future: #b07f08;   /* J⁺, out-region */
+  --past: #11808a;     /* J⁻, in-region */
+  --perp: #447a2e;     /* causal complement */
+  --heat-pos: #cf5317;
+  --heat-neg: #2a64ad;
+  --display: "Bodoni Moda", "Bodoni 72", Didot, "Times New Roman", serif;
+  --body: "Source Serif 4", "Source Serif Pro", Georgia, "Times New Roman", serif;
+  --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --measure: 40rem;
+  --wide: 74rem;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0d131e; --plate: #131b29; --ink: #e3e8f1; --ink-2: #a5afc0; --ink-3: #6e798c;
+    --rule: #263145; --grid: #1b2433;
+    --sys: #7da1ff; --probe: #ff8a4a; --probe2: #b593ff; --K: #f067b5; --hull: #a98bff;
+    --future: #e2b544; --past: #44c1bc; --perp: #8bc271; --heat-pos: #ff8a4a; --heat-neg: #5d9cf0;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0d131e; --plate: #131b29; --ink: #e3e8f1; --ink-2: #a5afc0; --ink-3: #6e798c;
+  --rule: #263145; --grid: #1b2433;
+  --sys: #7da1ff; --probe: #ff8a4a; --probe2: #b593ff; --K: #f067b5; --hull: #a98bff;
+  --future: #e2b544; --past: #44c1bc; --perp: #8bc271; --heat-pos: #ff8a4a; --heat-neg: #5d9cf0;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+:root { color-scheme: light; padding-top: env(safe-area-inset-top, 0px); padding-bottom: env(safe-area-inset-bottom, 0px); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { color-scheme: dark; } }
+:root[data-theme="dark"] { color-scheme: dark; }
+[hidden] { display: none !important; }
+img { max-width: 100%; }
+body {
+  margin: 0;
+  background: var(--paper); color: var(--ink);
+  font-family: var(--body); font-size: 18px; line-height: 1.62;
+  font-optical-sizing: auto;
+  -webkit-font-smoothing: antialiased;
+}
+.page {
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0 4rem;
+}
+.prose { max-width: var(--measure); margin-inline: auto; }
+.wide { max-width: var(--wide); margin-inline: auto; }
+a { color: var(--sys); text-underline-offset: 2px; }
+a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid var(--K); outline-offset: 2px; }
+h1, h2, h3 { font-family: var(--display); font-weight: 500; text-wrap: balance; color: var(--ink); }
+h1 { font-size: clamp(2.3rem, 5.2vw, 3.9rem); line-height: 1.04; letter-spacing: -0.012em; margin: 0.35em 0 0.4em; font-weight: 600; }
+h1 em { font-style: italic; font-weight: 500; }
+h2 { font-size: clamp(1.7rem, 3.2vw, 2.35rem); line-height: 1.12; margin: 0.2em 0 0.55em; }
+h3 { font-size: 1.32rem; line-height: 1.25; margin: 1.8em 0 0.4em; font-weight: 600; }
+p { margin: 0 0 1em; }
+.eyebrow {
+  font-family: var(--mono); font-size: 0.74rem; letter-spacing: 0.09em; text-transform: uppercase;
+  color: var(--ink-3); display: flex; flex-wrap: wrap; gap: 0.4rem 0.9rem; align-items: baseline;
+}
+.eyebrow .num { color: var(--K); font-weight: 500; }
+.ref {
+  font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.02em; white-space: nowrap;
+  color: var(--ink-2); border: 1px solid var(--rule); border-radius: 3px; padding: 0 0.32rem; vertical-align: 0.12em;
+  background: var(--plate);
+}
+.term { border-bottom: 1px dotted var(--ink-3); cursor: help; }
+.sys { color: var(--sys); } .probe { color: var(--probe); } .kcol { color: var(--K); }
+.c-sys { color: var(--sys); } .c-probe { color: var(--probe); } .c-K { color: var(--K); }
+[class*="gx-"] { cursor: help; }
+mjx-container[display="true"] { overflow-x: auto; overflow-y: hidden; max-width: 100%; padding-block: 2px; }
+mjx-container { outline: none; }
+
+/* ---------- hero ---------- */
+.hero { padding-block: clamp(2rem, 6vw, 4.5rem) 1.5rem; }
+.hero-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: clamp(1.5rem, 4vw, 3.5rem); align-items: center; }
+.lede { font-size: 1.13rem; color: var(--ink); }
+.hero-note { font-size: 0.93rem; color: var(--ink-2); }
+.hero-fig { background: var(--plate); border: 1px solid var(--rule); border-radius: 6px; padding: 10px; }
+.hero-fig figcaption { font-size: 0.82rem; color: var(--ink-2); padding: 8px 6px 2px; line-height: 1.45; }
+.answers { list-style: none; padding: 0; margin: 2.5rem 0 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--ink); }
+.answers li { padding: 0.9rem 1.1rem 0.6rem 0; border-right: 1px solid var(--rule); margin-right: 1.1rem; font-size: 0.93rem; line-height: 1.5; color: var(--ink-2); }
+.answers li:last-child { border-right: 0; margin-right: 0; }
+.answers b { display: block; color: var(--ink); font-size: 1rem; margin-bottom: 0.3rem; line-height: 1.3; }
+.answers .ref { margin-top: 0.4rem; display: inline-block; }
+@media (max-width: 960px) {
+  .hero-grid { grid-template-columns: minmax(0, 1fr); }
+  .answers { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .answers li:nth-child(2) { border-right: 0; margin-right: 0; }
+}
+@media (max-width: 560px) {
+  .answers { grid-template-columns: minmax(0, 1fr); }
+  .answers li { border-right: 0; margin-right: 0; border-bottom: 1px solid var(--rule); }
+}
+
+/* ---------- route ---------- */
+.route { margin-block: 3rem 1rem; }
+.route ol { list-style: none; padding: 0; margin: 0.6rem 0 0; columns: 2 18rem; column-gap: 2.5rem; counter-reset: r; }
+.route li { counter-increment: r; break-inside: avoid; display: grid; grid-template-columns: 2rem minmax(0, 1fr) auto; gap: 0.4rem; padding: 0.38rem 0; border-bottom: 1px solid var(--rule); font-size: 0.96rem; align-items: baseline; }
+.route li::before { content: counter(r, decimal-leading-zero); font-family: var(--mono); font-size: 0.74rem; color: var(--ink-3); }
+.route a { color: var(--ink); text-decoration: none; }
+.route a:hover { color: var(--K); }
+
+/* ---------- sections ---------- */
+section.sec { padding-top: 3.2rem; scroll-margin-top: 1rem; }
+section.sec + section.sec { border-top: 1px solid var(--rule); margin-top: 2.6rem; }
+dl.defs { margin: 1.2rem 0; display: grid; gap: 0.8rem; }
+dl.defs > div { display: grid; grid-template-columns: 11.5rem minmax(0, 1fr); gap: 1rem; }
+dl.defs dt { font-weight: 600; line-height: 1.4; }
+dl.defs dt small { display: block; font-weight: 400; color: var(--ink-2); }
+dl.defs dd { margin: 0; }
+@media (max-width: 620px) { dl.defs > div { grid-template-columns: minmax(0, 1fr); gap: 0.15rem; } }
+
+.thm { margin: 1.6rem 0; padding: 0.9rem 1.1rem; background: var(--plate); border-top: 1px solid var(--ink); border-bottom: 1px solid var(--rule); }
+.thm .h { font-weight: 700; font-variant: small-caps; letter-spacing: 0.03em; }
+.thm .nm { color: var(--ink-2); }
+.thm .st { font-style: italic; }
+.thm ol { margin: 0.5em 0 0; padding-left: 1.5em; }
+.gloss { color: var(--ink-2); }
+.gloss .tag, .tag { font-family: var(--mono); font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--K); margin-right: 0.4rem; }
+.aside { font-size: 0.95rem; color: var(--ink-2); border-left: 0; padding: 0.2rem 0 0.2rem 1.1rem; position: relative; }
+.aside::before { content: ""; position: absolute; left: 0; top: 0.5rem; bottom: 0.5rem; width: 1px; background: var(--ink-3); }
+
+.model { margin: 1.8rem 0; padding: 1.1rem 1.25rem 0.4rem; border: 1px dashed var(--ink-3); border-radius: 4px; }
+.model > .tag { display: block; margin-bottom: 0.4rem; }
+
+table.cmp { width: 100%; border-collapse: collapse; font-size: 0.93rem; line-height: 1.45; }
+.tablewrap { overflow-x: auto; margin: 1.4rem 0; }
+table.cmp th, table.cmp td { text-align: left; padding: 0.55rem 0.7rem; border-bottom: 1px solid var(--rule); vertical-align: top; }
+table.cmp thead th { font-family: var(--mono); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ink-3); font-weight: 500; border-bottom: 1px solid var(--ink); }
+table.cmp tbody th { font-weight: 600; white-space: nowrap; }
+table.cmp td:last-child { background: color-mix(in srgb, var(--K) 5%, transparent); }
+
+.chain { display: flex; flex-wrap: wrap; align-items: stretch; gap: 0; margin: 1.6rem 0; font-size: 0.9rem; }
+.chain .box { padding: 0.6rem 0.8rem; border: 1px solid var(--rule); background: var(--plate); border-radius: 4px; min-width: 0; flex: 1 1 8rem; }
+.chain .box b { display: block; }
+.chain .arrow { align-self: center; padding: 0 0.35rem; color: var(--ink-3); font-family: var(--mono); font-size: 0.75rem; text-align: center; flex: 0 0 auto; }
+.chain .cut { align-self: stretch; border-left: 2px dashed var(--K); margin: 0 0.6rem; position: relative; flex: 0 0 auto; }
+.chain .box.out { border-style: dashed; color: var(--ink-2); background: transparent; }
+.chain-cap { font-size: 0.85rem; color: var(--ink-2); margin-top: -0.8rem; }
+
+/* ---------- figures ---------- */
+.fig { max-width: var(--wide); margin: 2.4rem auto; background: var(--plate); border: 1px solid var(--rule); border-radius: 6px; padding: clamp(12px, 2vw, 22px); }
+.fig-head { display: flex; flex-wrap: wrap; gap: 0.3rem 0.8rem; align-items: baseline; margin-bottom: 0.9rem; }
+.fig-head .fno { font-family: var(--mono); font-size: 0.74rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--K); }
+.fig-head .ftitle { font-family: var(--display); font-size: 1.3rem; font-weight: 500; }
+.fig-grid { display: grid; grid-template-columns: minmax(0, 1.62fr) minmax(0, 1fr); gap: clamp(14px, 2.4vw, 28px); align-items: start; }
+.fig-grid.narrowdiag { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+@media (max-width: 880px) { .fig-grid, .fig-grid.narrowdiag { grid-template-columns: minmax(0, 1fr); } }
+.fig-cap { font-size: 0.9rem; color: var(--ink-2); margin-top: 1rem; line-height: 1.5; }
+.fig-cap ul { margin: 0.3rem 0 0; padding-left: 1.2rem; }
+.fig-cap li { margin: 0.2rem 0; }
+.panel { display: grid; gap: 14px; font-size: 0.92rem; min-width: 0; }
+.ctl { display: grid; gap: 6px; }
+.ctl-label { font-family: var(--mono); font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-3); }
+.seg { display: flex; flex-wrap: wrap; gap: 4px; }
+.seg button, .btn {
+  font: inherit; font-size: 0.84rem; line-height: 1.2; padding: 0.38rem 0.62rem; border: 1px solid var(--rule); background: var(--paper);
+  color: var(--ink); border-radius: 4px; cursor: pointer;
+}
+.seg button:hover, .btn:hover { border-color: var(--ink-3); }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--plate); border-color: var(--ink); }
+.sl { display: grid; grid-template-columns: 7.2rem minmax(0, 1fr) 3.3rem; align-items: center; gap: 8px; }
+.sl span { font-size: 0.86rem; }
+.sl output { font-family: var(--mono); font-size: 0.8rem; text-align: right; font-variant-numeric: tabular-nums; }
+input[type="range"] { width: 100%; accent-color: var(--K); margin: 0; }
+.chk { display: flex; gap: 0.5rem; align-items: center; font-size: 0.88rem; cursor: pointer; }
+.chk input { accent-color: var(--K); width: 1rem; height: 1rem; margin: 0; }
+.readout { border-top: 1px solid var(--rule); padding-top: 12px; display: grid; gap: 8px; line-height: 1.5; }
+.readout .mono, .mono { font-family: var(--mono); font-size: 0.8rem; font-variant-numeric: tabular-nums; }
+.pill { display: inline-block; font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.03em; padding: 2px 8px; border-radius: 999px; justify-self: start; }
+.pill.perp { background: color-mix(in srgb, var(--perp) 16%, transparent); color: color-mix(in srgb, var(--perp) 80%, var(--ink)); }
+.pill.future { background: color-mix(in srgb, var(--future) 18%, transparent); color: color-mix(in srgb, var(--future) 70%, var(--ink)); }
+.pill.past { background: color-mix(in srgb, var(--past) 16%, transparent); color: color-mix(in srgb, var(--past) 75%, var(--ink)); }
+.pill.hull { background: color-mix(in srgb, var(--hull) 16%, transparent); color: color-mix(in srgb, var(--hull) 80%, var(--ink)); }
+.pill.mute { background: color-mix(in srgb, var(--ink) 8%, transparent); color: var(--ink-2); }
+.bar { height: 6px; background: color-mix(in srgb, var(--ink) 9%, transparent); border-radius: 3px; overflow: hidden; }
+.bar i { display: block; height: 100%; background: var(--K); width: 0; }
+
+/* diagrams */
+.diagram { position: relative; width: 100%; min-height: 120px; user-select: none; -webkit-user-select: none; }
+.dsvg, .dcanvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.dcanvas { image-rendering: auto; border-radius: 2px; }
+.dsvg { overflow: hidden; }
+.ly-grid line { stroke: var(--grid); stroke-width: 1; }
+.legend line, .legend path { stroke: var(--ink-3); stroke-width: 1.2; fill: none; }
+.legend text { fill: var(--ink-3); font-family: var(--mono); font-size: 10px; }
+.f-future { fill: color-mix(in srgb, var(--future) 19%, transparent); }
+.f-past { fill: color-mix(in srgb, var(--past) 17%, transparent); }
+.f-hull { fill: color-mix(in srgb, var(--hull) 30%, transparent); stroke: var(--hull); stroke-width: 1.2; stroke-linejoin: round; }
+.f-perp { fill: color-mix(in srgb, var(--perp) 20%, transparent); }
+.f-out { fill: color-mix(in srgb, var(--future) 15%, transparent); }
+.f-in { fill: color-mix(in srgb, var(--past) 15%, transparent); }
+.f-wait { fill: color-mix(in srgb, var(--future) 26%, transparent); }
+.f-K { fill: color-mix(in srgb, var(--K) 50%, transparent); stroke: var(--K); stroke-width: 1.5; stroke-linejoin: round; }
+.f-Kline { fill: none; stroke: var(--K); stroke-width: 1.5; stroke-dasharray: 4 3; }
+.s-K { fill: none; stroke: var(--K); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+.f-fm { fill: color-mix(in srgb, var(--sys) 55%, transparent); stroke: var(--sys); stroke-width: 1.2; }
+.b-future { fill: none; stroke: var(--future); stroke-width: 1.4; stroke-dasharray: 6 4; }
+.b-past { fill: none; stroke: var(--past); stroke-width: 1.4; stroke-dasharray: 6 4; }
+.b-ink { fill: none; stroke: var(--ink-3); stroke-width: 1.2; stroke-dasharray: 4 4; }
+.b-probe { fill: none; stroke: var(--probe); stroke-width: 1.4; stroke-dasharray: 5 4; }
+.b-probe2 { fill: none; stroke: var(--probe2); stroke-width: 1.4; stroke-dasharray: 5 4; }
+.cauchy { fill: none; stroke: var(--ink); stroke-width: 1.6; }
+.cauchy.alt { stroke: var(--ink-2); stroke-dasharray: 9 4; }
+.f-L { fill: color-mix(in srgb, var(--ink) 8%, transparent); stroke: var(--ink); stroke-width: 1.3; stroke-dasharray: 3 3; }
+.f-O { fill: color-mix(in srgb, var(--sys) 16%, transparent); stroke: var(--sys); stroke-width: 1.5; }
+.f-h { fill: color-mix(in srgb, var(--probe) 40%, transparent); stroke: var(--probe); stroke-width: 1.5; }
+.f-h2 { fill: color-mix(in srgb, var(--probe2) 40%, transparent); stroke: var(--probe2); stroke-width: 1.5; }
+.wline-ghost { fill: none; stroke: var(--K); stroke-width: 1; stroke-dasharray: 2 4; opacity: 0.7; }
+.theta-arrow { fill: none; stroke: var(--ink-2); stroke-width: 1.4; stroke-dasharray: 5 4; }
+.arrowhead { fill: var(--ink-2); }
+.lbl { font-family: var(--body); font-style: italic; fill: var(--ink); paint-order: stroke; stroke: var(--plate); stroke-width: 3.5px; stroke-linejoin: round; }
+.lbl.up { font-style: normal; }
+.lbl.small { font-style: normal; font-family: var(--mono); fill: var(--ink-2); }
+.lbl.future { fill: color-mix(in srgb, var(--future) 72%, var(--ink)); }
+.lbl.past { fill: color-mix(in srgb, var(--past) 78%, var(--ink)); }
+.lbl.hull { fill: color-mix(in srgb, var(--hull) 80%, var(--ink)); }
+.lbl.perp { fill: color-mix(in srgb, var(--perp) 78%, var(--ink)); }
+.lbl.K { fill: color-mix(in srgb, var(--K) 80%, var(--ink)); }
+.lbl.probe { fill: color-mix(in srgb, var(--probe) 80%, var(--ink)); }
+.lbl.probe2 { fill: color-mix(in srgb, var(--probe2) 80%, var(--ink)); }
+.lbl.sys { fill: color-mix(in srgb, var(--sys) 80%, var(--ink)); }
+.handle { cursor: grab; touch-action: none; outline: none; }
+.handle.dragging { cursor: grabbing; }
+.handle .hit { fill: transparent; }
+.handle .ring { fill: var(--plate); stroke: var(--ink); stroke-width: 1.5; }
+.handle .dot { fill: var(--ink); }
+.handle:hover .ring { stroke-width: 2.4; }
+.handle:focus-visible .ring { stroke: var(--K); stroke-width: 3; }
+.chart { position: relative; width: 100%; }
+.chart svg { display: block; width: 100%; overflow: hidden; }
+.chart .ax { stroke: var(--ink-3); stroke-width: 1; fill: none; }
+.chart .tick text, .chart .axl { fill: var(--ink-2); font-family: var(--mono); font-size: 10.5px; }
+.chart .tick line { stroke: var(--grid); stroke-width: 1; }
+.c-sysfill { fill: color-mix(in srgb, var(--sys) 22%, transparent); stroke: var(--sys); stroke-width: 1.6; }
+.c-noise { fill: none; stroke: var(--probe); stroke-width: 1.6; }
+.c-actual { fill: none; stroke: var(--ink); stroke-width: 2.2; }
+.c-vac { fill: none; stroke: var(--ink-3); stroke-width: 1.5; stroke-dasharray: 5 4; }
+.c-F { fill: none; stroke: var(--K); stroke-width: 2.2; }
+.c-F2 { fill: none; stroke: var(--K); stroke-width: 1.4; stroke-dasharray: 5 4; }
+.c-step { fill: none; stroke: var(--ink-3); stroke-width: 1.2; }
+.c-pX { fill: color-mix(in srgb, var(--sys) 12%, transparent); stroke: none; }
+.c-curve { fill: none; stroke: var(--K); stroke-width: 2; }
+.c-zero { stroke: var(--ink-3); stroke-width: 1; stroke-dasharray: 3 3; }
+.c-mark { fill: var(--K); }
+.c-mark-o { fill: var(--plate); stroke: var(--perp); stroke-width: 2; }
+.c-mark-i { fill: var(--ink); }
+.legend-row { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 0.8rem; color: var(--ink-2); margin-top: 6px; }
+.legend-row i { display: inline-block; width: 18px; height: 0; border-top: 2px solid; vertical-align: middle; margin-right: 5px; }
+.charts2 { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; }
+@media (max-width: 760px) { .charts2 { grid-template-columns: minmax(0, 1fr); } }
+.chart-title { font-size: 0.86rem; font-weight: 600; margin-bottom: 4px; }
+
+/* commutative diagram */
+.f2-grid { display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.6fr); gap: clamp(14px, 2.4vw, 28px); align-items: start; }
+@media (max-width: 880px) { .f2-grid { grid-template-columns: minmax(0, 1fr); } }
+.cd-wrap { overflow-x: auto; padding-bottom: 4px; }
+.cd {
+  display: grid; min-width: 640px; align-items: center; justify-items: center;
+  grid-template-columns: auto auto minmax(64px, 1fr) auto minmax(44px, 1fr) auto minmax(44px, 1fr) auto;
+  grid-template-rows: auto 56px auto 64px auto 56px auto; font-size: 0.95rem; row-gap: 2px;
+}
+.cd > * { color: var(--ink-3); transition: color 0.2s, background-color 0.2s; }
+.cd > .on { color: var(--ink); }
+.cd-n { padding: 4px 8px; border-radius: 4px; white-space: nowrap; }
+.cd-n.on { background: color-mix(in srgb, var(--K) 9%, transparent); }
+.cd-h { width: 100%; display: flex; flex-direction: column; justify-content: center; padding: 0 4px; cursor: help; }
+.cd-h .cd-l { text-align: center; font-size: 0.86em; line-height: 1.1; margin-bottom: 3px; }
+.ah { display: block; height: 1.5px; background: currentColor; position: relative; margin-right: 6px; }
+.ah::after { content: ""; position: absolute; right: -7px; top: -4.25px; border-left: 9px solid currentColor; border-top: 5px solid transparent; border-bottom: 5px solid transparent; }
+.cd-v { display: flex; align-items: center; gap: 10px; height: 100%; cursor: help; }
+.av { display: block; width: 1.5px; height: calc(100% - 10px); min-height: 30px; background: currentColor; position: relative; }
+.av::after { content: ""; position: absolute; bottom: -7px; left: -4.25px; border-top: 9px solid currentColor; border-left: 5px solid transparent; border-right: 5px solid transparent; }
+.av.dash { background: repeating-linear-gradient(to bottom, currentColor 0 5px, transparent 5px 9px); }
+.cd-v .cd-l { font-size: 0.86em; white-space: nowrap; }
+.cd-cap { font-family: var(--mono); font-size: 0.72rem; color: var(--ink-3); justify-self: stretch; text-align: center; border-left: 1px solid currentColor; border-right: 1px solid currentColor; border-bottom: 1px solid currentColor; height: 12px; align-self: end; position: relative; margin-bottom: 4px; }
+.cd-cap.top { border-bottom: 0; border-top: 1px solid currentColor; align-self: start; margin-top: 4px; }
+.cd-cap span { position: absolute; left: 50%; transform: translateX(-50%); background: var(--plate); padding: 0 6px; white-space: nowrap; font-family: var(--body); font-size: 0.9rem; }
+.cd-cap.bot span { top: 0; }
+.cd-cap.top span { top: -0.75rem; }
+.cd-eq { font-size: 1.3rem; line-height: 1; }
+.cd-eps { align-self: stretch; justify-self: stretch; display: flex; align-items: center; gap: 6px; padding-right: 6px; cursor: help; }
+.cd-eps::before { content: ""; align-self: stretch; width: 7px; border: 1px solid currentColor; border-right: 0; margin: 10px 0; }
+.cd-mid { font-size: 0.82rem; color: var(--ink-3); text-align: center; justify-self: stretch; font-style: italic; }
+.steps { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 12px 0 10px; }
+.steps .stepbtn { min-width: 2.2rem; }
+.stepbody { min-height: 7.5rem; }
+.stepbody h4 { margin: 0 0 0.3rem; font-size: 1.02rem; }
+.stepbody p { margin: 0 0 0.5rem; font-size: 0.95rem; }
+.cases { display: grid; gap: 8px; }
+.case { padding: 8px 10px; border: 1px solid var(--rule); border-radius: 4px; color: var(--ink-3); font-size: 0.9rem; transition: color 0.2s, border-color 0.2s, background-color 0.2s; }
+.case.on { color: var(--ink); border-color: var(--ink); background: color-mix(in srgb, var(--K) 6%, transparent); }
+.case b { display: block; font-size: 0.86rem; }
+.case { overflow-x: auto; overflow-y: hidden; }
+.meter-legend { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 0.8rem; color: var(--ink-2); }
+.meter-legend span::before { content: ""; display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 5px; vertical-align: -1px; }
+.meter-legend .m-i::before { background: var(--ink); }
+.meter-legend .m-o::before { background: var(--plate); box-shadow: inset 0 0 0 2px var(--perp); }
+.meter-legend .m-k::before { background: var(--K); }
+
+/* summary */
+.summary ol { padding-left: 1.4rem; }
+.summary li { margin: 0.35rem 0; }
+footer.colophon { margin-top: 4rem; padding-top: 1.2rem; border-top: 1px solid var(--ink); font-size: 0.86rem; color: var(--ink-2); }
+
+/* notation */
+.notation-btn {
+  position: fixed; z-index: 40;
+  right: calc(16px + env(safe-area-inset-right, 0px)); bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  font-family: var(--mono); font-size: 0.78rem; letter-spacing: 0.06em; text-transform: uppercase;
+  background: var(--ink); color: var(--plate); border: 0; border-radius: 999px; padding: 0.6rem 1rem; cursor: pointer;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.18);
+}
+.drawer {
+  position: fixed; z-index: 45; top: 0; right: 0; bottom: 0; width: min(27rem, 100vw);
+  background: var(--plate); border-left: 1px solid var(--rule); overflow-y: auto;
+  padding: calc(18px + env(safe-area-inset-top, 0px)) calc(18px + env(safe-area-inset-right, 0px)) calc(24px + env(safe-area-inset-bottom, 0px)) 20px;
+  box-shadow: -10px 0 30px rgba(0,0,0,0.12);
+}
+.drawer-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem; }
+.drawer-head h2 { font-size: 1.5rem; margin: 0; }
+.drawer h3 { font-family: var(--mono); font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ink-3); font-weight: 500; margin: 1.4rem 0 0.4rem; }
+.drawer .ent { display: grid; grid-template-columns: 5.6rem minmax(0, 1fr); gap: 0.7rem; padding: 0.55rem 0; border-bottom: 1px solid var(--rule); font-size: 0.86rem; line-height: 1.45; }
+.drawer .ent .sym { overflow-x: auto; }
+.drawer .ent b { display: block; }
+.drawer .ent .ref { margin-top: 0.2rem; display: inline-block; }
+.tip {
+  position: fixed; z-index: 60; max-width: min(22rem, calc(100vw - 24px)); pointer-events: none;
+  background: var(--ink); color: var(--plate); border-radius: 5px; padding: 0.6rem 0.75rem; font-size: 0.84rem; line-height: 1.45;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.22);
+}
+.tip b { display: block; font-size: 0.9rem; margin-bottom: 0.15rem; }
+.tip .r { display: block; margin-top: 0.35rem; font-family: var(--mono); font-size: 0.7rem; opacity: 0.75; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<script>
+window.MathJax = {
+  loader: { load: ['[tex]/html'] },
+  tex: {
+    packages: { '[+]': ['html'] },
+    inlineMath: [['\\(', '\\)']],
+    displayMath: [['\\[', '\\]']],
+    macros: {
+      Th: '\\class{gx-Theta}{\\Theta}',
+      es: '\\class{gx-eps}{\\varepsilon_\\sigma}',
+      ets: '\\class{gx-eta}{\\eta_\\sigma}',
+      tp: '\\class{gx-tau}{\\tau^{+}}',
+      tm: '\\class{gx-tau}{\\tau^{-}}',
+      Is: '\\class{gx-I}{\\mathcal{I}_\\sigma}',
+      cA: '\\class{gx-A c-sys}{\\mathcal{A}}',
+      cB: '\\class{gx-B c-probe}{\\mathcal{B}}',
+      cC: '\\class{gx-C}{\\mathcal{C}}',
+      cU: '\\class{gx-U}{\\mathcal{U}}',
+      Mp: '\\class{gx-Mpm}{M^{+}}',
+      Mm: '\\class{gx-Mpm}{M^{-}}',
+      Jp: '\\class{gx-J}{J^{+}}',
+      Jm: '\\class{gx-J}{J^{-}}',
+      Kp: '\\class{gx-perp}{K^{\\perp}}',
+      K: '\\class{gx-K c-K}{K}',
+      om: '\\class{gx-omega c-sys}{\\omega}',
+      sg: '\\class{gx-sigma c-probe}{\\sigma}',
+      omt: '\\class{gx-omt}{\\tilde\\omega_\\sigma}',
+      Bt: '\\class{gx-Bt}{\\widetilde{B}}',
+      Ph: '\\class{gx-Phi c-sys}{\\Phi}',
+      Ps: '\\class{gx-Psi c-probe}{\\Psi}',
+      fm: '\\class{gx-fm c-sys}{f^{-}}',
+      fpm: '\\class{gx-fm c-sys}{f^{\\prime -}}',
+      hm: '\\class{gx-hm c-probe}{h^{-}}',
+      ETm: '\\class{gx-ET}{E_T^{-}}',
+      EP: '\\class{gx-EP}{E_P}',
+      Rt: '\\class{gx-Rt}{\\widetilde{R}}',
+      rh: '\\class{gx-rho c-K}{\\rho}',
+      one: '\\mathbf{1}'
+    }
+  },
+  svg: { fontCache: 'global' },
+  options: { enableMenu: false }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js" async></script>
+</head>
+<body>
+
+<div class="page">
+
+<!-- ================= HERO ================= -->
+<header class="hero wide">
+  <div class="hero-grid">
+    <div>
+      <div class="eyebrow"><span>Reading guide</span><span>Fewster &amp; Verch · Commun. Math. Phys. 378, 851–889 (2020)</span></div>
+      <h1>Measuring a quantum field <em>with</em> a quantum field</h1>
+      <p class="lede">Algebraic QFT assigns observables to regions of spacetime but says nothing about how anyone would measure them. Fewster and Verch close that gap. Couple the field you care about, the <span class="sys">system</span>, to a second field, the <span class="probe">probe</span>, inside a bounded region <span class="kcol"><i>K</i></span>. Read the probe afterwards. Then ask what you have learned about the system and what has happened to its state.</p>
+      <p class="hero-note">This page rebuilds their answer with diagrams you can drag. It assumes you know what a state on a *-algebra is and have met the measurement problem. Hover over any coloured symbol or dotted term for its definition; the <b>Notation</b> button lists them all. Section, equation and theorem numbers refer to the paper.</p>
+    </div>
+    <figure class="hero-fig" style="margin:0">
+      <div id="hero-diagram"></div>
+      <figcaption>The setting of the paper's Fig. 1, redrawn. Light rays run at 45°, time runs up. The in-region <i>M</i><sup>−</sup>, the out-region <i>M</i><sup>+</sup> and the interaction zone are all fixed by <i>K</i> alone, with no time coordinate.</figcaption>
+    </figure>
+  </div>
+  <ol class="answers" aria-label="The four main results">
+    <li><b>Probe readings measure induced system observables.</b>Each probe observable <i>B</i>, with the probe prepared in <i>σ</i>, corresponds to a unique system observable <i>ε<sub>σ</sub></i>(<i>B</i>) through a completely positive map. <span class="ref">Thm 3.2</span></li>
+    <li><b>They live at the coupling, not at the readout.</b>The induced observable is localised near <i>K</i>, however far away the probe is read. <span class="ref">Thm 3.3 · §5.2</span></li>
+    <li><b>State update is conditioning.</b>Post-selected states come from instruments. No collapse on any hypersurface is needed. <span class="ref">§3.3</span></li>
+    <li><b>Successive measurements are consistent.</b>Instruments compose in causal order, and in either order when the coupling regions are causally disjoint. <span class="ref">Thm 3.5</span></li>
+  </ol>
+</header>
+
+<nav class="route wide" aria-label="Sections">
+  <div class="eyebrow"><span>Route through the paper</span></div>
+  <ol>
+    <li><a href="#gap">The gap being closed</a><span class="ref">§1</span></li>
+    <li><a href="#geometry">Causal geometry</a><span class="ref">§2</span></li>
+    <li><a href="#aqft">What AQFT provides</a><span class="ref">§2</span></li>
+    <li><a href="#blueprint">The blueprint from quantum mechanics</a><span class="ref">[20]</span></li>
+    <li><a href="#coupling">System, probe and their coupling</a><span class="ref">§3.1 · §4</span></li>
+    <li><a href="#scattering">The scattering morphism</a><span class="ref">§3.1</span></li>
+    <li><a href="#induced">Induced system observables</a><span class="ref">§3.2 · §5.1</span></li>
+    <li><a href="#noise">Why the readout is noisier</a><span class="ref">(3.14) · (5.7)</span></li>
+    <li><a href="#where">Where an induced observable lives</a><span class="ref">Thm 3.3 · §5.2</span></li>
+    <li><a href="#update">Updating the state</a><span class="ref">§3.3</span></li>
+    <li><a href="#successive">Successive measurements</a><span class="ref">Thm 3.5</span></li>
+    <li><a href="#symmetry">Symmetries</a><span class="ref">§3.4</span></li>
+    <li><a href="#unruh">Detectors and the Unruh effect</a><span class="ref">§5.3</span></li>
+    <li><a href="#summary">The paper in eight lines</a><span class="ref">§6</span></li>
+  </ol>
+</nav>
+
+<main>
+
+<!-- ================= 1 ================= -->
+<section class="sec" id="gap">
+  <div class="prose">
+    <div class="eyebrow"><span class="num">01</span><span>Paper §1</span></div>
+    <h2>The gap being closed</h2>
+    <p>In algebraic QFT a theory is a net of *-algebras. Each open, <span class="term" data-g="convex">causally convex</span> region \(N\) of a spacetime \(M\) gets an algebra \(\cA(M;N)\), and its self-adjoint elements are read as the observables that can be measured in \(N\). The axioms constrain how these algebras fit together. They do not say which experiment measures a given element, or what a measurement does to the state. Haag and Kastler themselves preferred to read local elements as <em>operations</em> performed in \(N\) rather than as observables.</p>
+    <p>Quantum measurement theory has the opposite profile. It explains in detail how to measure an observable of a system: couple it to a probe, measure the probe, and infer. But it works with Hilbert spaces and has no spacetime in it. Fewster and Verch build the spacetime version, for QFT on any globally hyperbolic spacetime, with no particular interaction assumed.</p>
+
+    <h3>What the paper does not try to do</h3>
+    <p>It does not solve the measurement problem. It takes for granted that the experimenter can prepare, control and read the probe. The probe is itself a quantum field, and whatever happens when it is read lies outside the analysis. The paper studies one link in von Neumann's measurement chain, the link from the system field to the probe field.</p>
+  </div>
+  <div class="prose">
+    <div class="chain" role="img" aria-label="Measurement chain: system field, coupled in K to probe field, which is read by an apparatus. The paper analyses the first link.">
+      <div class="box"><b class="sys">System field</b>\(\Ph\), algebra \(\cA\). The thing you want to know about.</div>
+      <div class="arrow">coupled<br>in <i class="kcol">K</i> →</div>
+      <div class="box"><b class="probe">Probe field</b>\(\Ps\), algebra \(\cB\). Prepared in \(\sg\), read later.</div>
+      <div class="cut" aria-hidden="true"></div>
+      <div class="box out"><b>Apparatus, experimenter, …</b>Taken for granted. The usual measurement problem lives here.</div>
+    </div>
+    <p class="chain-cap">The dashed line marks where the analysis stops. Everything to its left is treated as quantum field theory.</p>
+    <p>The question is then concrete: what does a probe reading tell you about the system, and what does it do to the system's state? The framing still bears on the measurement problem. Hellwig and Kraus (1970) asked where in spacetime a relativistic state reduction should take place, and proposed the backward light cone of the measurement. <a href="#update">Section 10</a> shows why that question loses its force here.</p>
+  </div>
+</section>
+
+<!-- ================= 2 ================= -->
+<section class="sec" id="geometry">
+  <div class="prose">
+    <div class="eyebrow"><span class="num">02</span><span>Paper §2 · Fig. 1</span></div>
+    <h2>Causal geometry</h2>
+    <p>Every construction in the paper is defined from the causal structure of a globally hyperbolic spacetime \(M\), never from a time coordinate. Five notions carry most of the weight. Figure 1 shows each of them for a coupling region \(\K\) of your choice.</p>
+    <dl class="defs">
+      <div><dt>Causal future and past<small>\(\Jp(S)\), \(\Jm(S)\)</small></dt><dd>Everything reachable from \(S\) along future-directed (past-directed) timelike or null curves, \(S\) included.</dd></div>
+      <div><dt>Causal hull<small>\(\Jp(S)\cap\Jm(S)\)</small></dt><dd>Every point on some causal curve that starts and ends in \(S\). A set equal to its causal hull is <em>causally convex</em>. Local algebras are attached to open causally convex regions.</dd></div>
+      <div><dt>Causal complement<small>\(S^\perp = M\setminus(\Jp(S)\cup\Jm(S))\)</small></dt><dd>Everything that no causal curve connects to \(S\). Sets in each other's causal complement are <em>causally disjoint</em>.</dd></div>
+      <div><dt>Cauchy surface<small>\(\Sigma\)</small></dt><dd>A set met exactly once by every inextendible timelike curve. Data on one Cauchy surface determine everything; this is what the time-slice axiom will encode.</dd></div>
+      <div><dt>Out- and in-regions<small>\(M^{\pm} = M\setminus J^{\mp}(\K)\)</small></dt><dd>\(\Mp\) is everything not in the causal past of \(\K\), so nothing in it can influence \(\K\). \(\Mm\) is everything not in the causal future of \(\K\). Each contains Cauchy surfaces, and \(\Mp\cap\Mm = \Kp\).</dd></div>
+    </dl>
+  </div>
+
+  <figure class="fig" id="fig1" aria-labelledby="fig1-title">
+    <div class="fig-head"><span class="fno">Figure 1</span><span class="ftitle" id="fig1-title">Causal geometry of a coupling region</span></div>
+    <div class="fig-grid">
+      <div id="f1-diagram"></div>
+      <div class="panel">
+        <div class="ctl">
+          <div class="ctl-label">Show</div>
+          <div class="seg" id="f1-mode" role="group" aria-label="Region to display">
+            <button type="button" data-v="cones" aria-pressed="true">J<sup>±</sup>(K) and hull</button>
+            <button type="button" data-v="perp" aria-pressed="false">K<sup>⊥</sup></button>
+            <button type="button" data-v="out" aria-pressed="false">M<sup>+</sup> (out)</button>
+            <button type="button" data-v="in" aria-pressed="false">M<sup>−</sup> (in)</button>
+          </div>
+          <div id="f1-mode-text" class="gloss" style="font-size:0.88rem"></div>
+        </div>
+        <div class="ctl">
+          <div class="ctl-label">Shape of K</div>
+          <div class="seg" id="f1-shape" role="group" aria-label="Shape of the coupling region">
+            <button type="button" data-v="lump" aria-pressed="true">Irregular lump</button>
+            <button type="button" data-v="sliver" aria-pressed="false">Spacelike sliver</button>
+            <button type="button" data-v="wline" aria-pressed="false">Worldline segment</button>
+            <button type="button" data-v="pairS" aria-pressed="false">Two lumps, spacelike</button>
+            <button type="button" data-v="pairT" aria-pressed="false">Two lumps, timelike</button>
+          </div>
+        </div>
+        <div class="readout" aria-live="polite">
+          <div class="ctl-label">Test region L (dashed diamond)</div>
+          <span id="f1-pill" class="pill mute"></span>
+          <div id="f1-text"></div>
+        </div>
+      </div>
+    </div>
+    <div class="fig-cap">Drag <i>K</i> by its handle, and drag the test region <i>L</i>. Things to try:
+      <ul>
+        <li><b>Spacelike sliver.</b> Its causal hull is the sliver itself. Its causal double complement <i>K</i><sup>⊥⊥</sup> would be the whole double cone; footnote 2 of the paper warns that the two differ.</li>
+        <li><b>Worldline segment.</b> The hull is the diamond between the endpoints, far larger than the curve.</li>
+        <li><b>Show M<sup>+</sup>.</b> The out-region contains whole Cauchy surfaces, so by the time-slice property the entire theory can be described inside it.</li>
+      </ul>
+    </div>
+  </figure>
+</section>
+
+<!-- ================= 3 ================= -->
+<section class="sec" id="aqft">
+  <div class="prose">
+    <div class="eyebrow"><span class="num">03</span><span>Paper §2</span></div>
+    <h2>What AQFT provides</h2>
+    <p>Fewster and Verch assume five properties of every theory in play: system, probe, and the coupled theory. Each one is used at a specific point in the argument.</p>
+    <dl class="defs">
+      <div><dt>Isotony</dt><dd>\(N_1\subset N_2 \Rightarrow \cA(M;N_1)\subset\cA(M;N_2)\). An observable has many localisation regions.</dd></div>
+      <div><dt>Compatibility</dt><dd>A region \(N\), viewed as a spacetime in its own right, has its own algebra \(\cA(N)\), embedded by an injective morphism \(\alpha_{M;N}:\cA(N)\to\cA(M)\) with image \(\cA(M;N)\), consistently for nested regions. <span class="gloss"><span class="tag">Used for</span>the \(\alpha,\beta,\gamma\) arrows in Figure 2.</span></dd></div>
+      <div><dt>Time-slice</dt><dd>If \(N\) contains a Cauchy surface of \(M\), then \(\cA(M;N)=\cA(M)\). This is dynamics, stated algebraically. <span class="gloss"><span class="tag">Used for</span>the in- and out-regions each carry the whole theory.</span></dd></div>
+      <div><dt>Einstein causality</dt><dd>Elements of algebras of causally disjoint regions commute. <span class="gloss"><span class="tag">Used for</span>probe readings at spacelike separation are compatible.</span></dd></div>
+      <div><dt>Haag property</dt><dd>If \(A\) commutes with \(\cA(M;N)\) for every region \(N\subset\Kp\), then \(A\in\cA(M;L)\) for every connected open causally convex \(L\supset\K\). A weak form of Haag duality. <span class="gloss"><span class="tag">Used for</span>localising induced observables, Theorem 3.3.</span></dd></div>
+    </dl>
+    <h3>States, effects and effect-valued measures</h3>
+    <p>A <em>state</em> is a linear functional \(\om\) with \(\om(A^*A)\ge 0\) and \(\om(\one)=1\); \(\om(A)\) is the expected outcome of measuring \(A\). Measurement theory needs more than self-adjoint elements. An <span class="term" data-g="effect">effect</span> is an element \(E\) with \(0\le E\le\one\), and \(\om(E)\) is a probability. An <span class="term" data-g="EVM">effect-valued measure</span> (EVM; a POVM in Hilbert-space language) assigns an effect \(E(X)\) to each set \(X\) of outcomes, additively, with \(E(\Omega)=\one\). Projection-valued EVMs are <em>sharp</em>, the rest <em>unsharp</em>. Unsharp observables are what real probes deliver, and the paper explains why.</p>
+  </div>
+</section>
+
+<!-- ================= 4 ================= -->
+<section class="sec" id="blueprint">
+  <div class="prose">
+    <div class="eyebrow"><span class="num">04</span><span>Busch, Lahti, Pellonpää, Ylinen [20]</span></div>
+    <h2>The blueprint from quantum mechanics</h2>
+    <p>In the standard model of a quantum measurement, a system in state \(\varrho\) meets a probe prepared in \(\sg\). They evolve together by a unitary \(U\), and a probe observable \(B\) is read. The expected reading is \(\mathrm{tr}\bigl[(\varrho\otimes\sg)\,U^*(\one\otimes B)U\bigr]\). Read in the Heisenberg picture, this identifies a system observable</p>
+    \[ \varepsilon_\sigma(B) = (\mathrm{id}\otimes\sg)\bigl(U^*(\one\otimes B)\,U\bigr) \]
+    <p>whose expectation in \(\varrho\) reproduces the probe statistics. Fewster and Verch keep this skeleton and replace each part with a local, covariant counterpart.</p>
+  </div>
+  <div class="prose tablewrap">
+    <table class="cmp">
+      <thead><tr><th scope="col">Ingredient</th><th scope="col">Quantum mechanics</th><th scope="col">Fewster–Verch</th></tr></thead>
+      <tbody>
+        <tr><th scope="row">System</th><td>Hilbert space \(\mathcal H_S\)</td><td>AQFT \(\cA\) on spacetime \(M\)</td></tr>
+        <tr><th scope="row">Probe</th><td>Hilbert space \(\mathcal H_P\)</td><td>AQFT \(\cB\) on the same \(M\)</td></tr>
+        <tr><th scope="row">Interaction</th><td>unitary \(U\)</td><td>coupled theory \(\cC\), equal to \(\cA\otimes\cB\) outside the causal hull of \(\K\)</td></tr>
+        <tr><th scope="row">Before / after</th><td>times \(t_0 &lt; t_1\)</td><td>regions \(\Mm\), \(\Mp\), fixed by \(\K\)</td></tr>
+        <tr><th scope="row">Heisenberg pullback</th><td>\(B\mapsto U^*(\one\otimes B)U\)</td><td>\(\one\otimes B\mapsto\Th(\one\otimes B)\)</td></tr>
+        <tr><th scope="row">Average over probe</th><td>partial trace against \(\sg\)</td><td>\(\ets\)</td></tr>
+        <tr><th scope="row">Induced observable</th><td>\((\mathrm{id}\otimes\sg)(U^*(\one\otimes B)U)\)</td><td>\(\es(B)=\ets(\Th(\one\otimes B))\)</td></tr>
+        <tr><th scope="row">State update</th><td>instrument</td><td>pre-instrument \(\Is(B)\)</td></tr>
+        <tr><th scope="row">New questions</th><td>none</td><td>Where is \(\es(B)\) localised? Do instruments respect causality?</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ================= 5 ================= -->
+<section class="sec" id="coupling">
+  <div class="prose">
+    <div class="eyebrow"><span class="num">05</span><span>Paper §3.1 · §4</span></div>
+    <h2>System, probe and their coupling</h2>
+    <p>Four theories appear. \(\cA\) is the system and \(\cB\) the probe. \(\cU=\cA\otimes\cB\) is both of them with no interaction: the control experiment. \(\cC\) is the actual experiment, in which they interact.</p>
+    <p>The paper never specifies the interaction. It assumes only that \(\cC\) looks exactly like \(\cU\) away from the coupling. For each open causally convex \(L\) outside the causal hull of \(\K\) there is an isomorphism</p>
+    \[ \chi_L:\cA(L)\otimes\cB(L)\to\cC(L), \]
+    <p>compatible with the embeddings of smaller regions into larger ones (diagram (3.2)). Inside the causal hull, \(\cC\) may be anything at all.</p>
+    <p>The authors phrase this as a controlled experiment. You compare what happened with what would have happened without the interaction. That comparison, between the coupled and the uncoupled dynamics, is the source of everything that follows.</p>
+
+    <div class="model">
+      <span class="tag">Running example · §4</span>
+      <p>Two real scalar fields on \(M\): the system \(\Ph\) and the probe \(\Ps\). The action is</p>
+      \[ S=\tfrac12\int_M\!\bigl[(\nabla\Ph)^2-m_\Phi^2\Ph^2+(\nabla\Ps)^2-m_\Psi^2\Ps^2\bigr]d\mathrm{vol}\;-\;\int_M\!\rh\,\Ph\Ps\;d\mathrm{vol}, \]
+      <p>with \(\rh\) smooth, real and supported in \(\K\). The field equations are</p>
+      \[ T\begin{pmatrix}\Ph\\ \Ps\end{pmatrix}=0,\qquad T=\begin{pmatrix}P&amp;R\\ R&amp;Q\end{pmatrix},\quad P=\Box+m_\Phi^2,\quad Q=\Box+m_\Psi^2,\quad R=\rh\,\cdot\,. \]
+      <p>For weak enough coupling \(T\) is Green-hyperbolic: it has an advanced Green operator \(\ETm\), whose solutions are supported in the causal past \(\Jm\) of the source, and a retarded one \(E_T^+\) with support in \(\Jp\). Each theory is quantised in the standard way, with smeared fields obeying \([\Ph(f),\Ph(g)]=i\EP(f,g)\one\) and \(\EP=E_P^- - E_P^+\). The point of the example is that every abstract object below can be computed. Figures 3 and 5 compute them on a 1+1-dimensional lattice.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 6 ================= -->
+<section class="sec" id="scattering">
+  <div class="prose">
+    <div class="eyebrow"><span class="num">06</span><span>Paper §3.1 · eqs. (3.3)–(3.5)</span></div>
+    <h2>The scattering morphism</h2>
+    <p>In the out-region the coupled and uncoupled theories coincide, through \(\chi^+\). Since \(\Mp\) contains a Cauchy surface, the time-slice property extends this to an isomorphism \(\tp:\cU(M)\to\cC(M)\). It identifies an uncoupled observable with the coupled observable that agrees with it at late times. The in-region gives \(\tm\) in the same way, agreeing at early times. Comparing the two gives the <span class="term" data-g="Theta">scattering morphism</span></p>
+    \[ \Th=(\tm)^{-1}\circ\tp\;:\;\cA(M)\otimes\cB(M)\to\cA(M)\otimes\cB(M). \]
+    <p>\(\Th\) takes the late-time description of a coupled observable and returns its early-time description. It plays the part of \(B\mapsto U^*BU\). Figure 2 follows a single probe reading through every map involved.</p>
+  </div>
+
+  <figure class="fig" id="fig2" aria-labelledby="fig2-title">
+    <div class="fig-head"><span class="fno">Figure 2</span><span class="ftitle" id="fig2-title">Following a probe reading through §3.1</span></div>
+    <div class="f2-grid">
+      <div id="f2-diagram"></div>
+      <div style="min-width:0">
+        <div class="cd-wrap">
+          <div class="cd" id="cd">
+            <div class="cd-eps" style="grid-column:1;grid-row:1/8" data-steps="4" data-g="eps">\(\es\)</div>
+            <div class="cd-n" style="grid-column:2;grid-row:1" data-steps="1 4" data-g="B">\(\cB(M)\)</div>
+            <div class="cd-v" style="grid-column:2;grid-row:2" data-steps="1 4" data-g="embed"><i class="av"></i><span class="cd-l">\(B\mapsto\one\otimes B\)</span></div>
+            <div class="cd-cap top" style="grid-column:3/8;grid-row:2" data-steps="1 2" data-g="tau"><span>\(\tp=\gamma^+\circ\chi^+\circ(\alpha^+\otimes\beta^+)^{-1}\)</span></div>
+            <div class="cd-n" style="grid-column:2;grid-row:3" data-steps="1 2 4" data-g="U">\(\cA(M)\otimes\cB(M)\)</div>
+            <div class="cd-h" style="grid-column:3;grid-row:3" data-steps="1 2" data-g="alpha" data-hl="plus"><span class="cd-l">\((\alpha^+\!\otimes\beta^+)^{-1}\)</span><i class="ah"></i></div>
+            <div class="cd-n" style="grid-column:4;grid-row:3" data-steps="1 2" data-hl="plus" data-g="Mpm">\(\cA(\Mp)\otimes\cB(\Mp)\)</div>
+            <div class="cd-h" style="grid-column:5;grid-row:3" data-steps="1 2" data-g="chi" data-hl="plus"><span class="cd-l">\(\chi^+\)</span><i class="ah"></i></div>
+            <div class="cd-n" style="grid-column:6;grid-row:3" data-steps="1 2" data-hl="plus" data-g="C">\(\cC(\Mp)\)</div>
+            <div class="cd-h" style="grid-column:7;grid-row:3" data-steps="1 2" data-g="alpha" data-hl="plus"><span class="cd-l">\(\gamma^+\)</span><i class="ah"></i></div>
+            <div class="cd-n" style="grid-column:8;grid-row:3" data-steps="1 2" data-g="C">\(\cC(M)\)</div>
+            <div class="cd-v" style="grid-column:2;grid-row:4" data-steps="2 4" data-g="Theta"><i class="av dash"></i><span class="cd-l">\(\Th\)</span></div>
+            <div class="cd-mid" style="grid-column:3/8;grid-row:4" data-steps="2">\(\Th=(\tm)^{-1}\circ\tp\): out along the top row, back along the bottom row</div>
+            <div class="cd-eq" style="grid-column:8;grid-row:4" data-steps="2">‖</div>
+            <div class="cd-n" style="grid-column:2;grid-row:5" data-steps="2 3 4" data-g="U">\(\cA(M)\otimes\cB(M)\)</div>
+            <div class="cd-h" style="grid-column:3;grid-row:5" data-steps="2" data-g="alpha" data-hl="minus"><span class="cd-l">\((\alpha^-\!\otimes\beta^-)^{-1}\)</span><i class="ah"></i></div>
+            <div class="cd-n" style="grid-column:4;grid-row:5" data-steps="2" data-hl="minus" data-g="Mpm">\(\cA(\Mm)\otimes\cB(\Mm)\)</div>
+            <div class="cd-h" style="grid-column:5;grid-row:5" data-steps="2" data-g="chi" data-hl="minus"><span class="cd-l">\(\chi^-\)</span><i class="ah"></i></div>
+            <div class="cd-n" style="grid-column:6;grid-row:5" data-steps="2" data-hl="minus" data-g="C">\(\cC(\Mm)\)</div>
+            <div class="cd-h" style="grid-column:7;grid-row:5" data-steps="2" data-g="alpha" data-hl="minus"><span class="cd-l">\(\gamma^-\)</span><i class="ah"></i></div>
+            <div class="cd-n" style="grid-column:8;grid-row:5" data-steps="2" data-g="C">\(\cC(M)\)</div>
+            <div class="cd-v" style="grid-column:2;grid-row:6" data-steps="3 4" data-g="eta"><i class="av"></i><span class="cd-l">\(\ets\)</span></div>
+            <div class="cd-cap bot" style="grid-column:3/8;grid-row:6" data-steps="2" data-g="tau"><span>\(\tm=\gamma^-\circ\chi^-\circ(\alpha^-\otimes\beta^-)^{-1}\)</span></div>
+            <div class="cd-n" style="grid-column:2;grid-row:7" data-steps="3 4" data-g="A">\(\cA(M)\)</div>
+          </div>
+        </div>
+        <div class="steps" role="group" aria-label="Steps">
+          <button type="button" class="btn" id="f2-prev" aria-label="Previous step">←</button>
+          <button type="button" class="btn stepbtn" data-step="1" aria-pressed="true">1</button>
+          <button type="button" class="btn stepbtn" data-step="2" aria-pressed="false">2</button>
+          <button type="button" class="btn stepbtn" data-step="3" aria-pressed="false">3</button>
+          <button type="button" class="btn stepbtn" data-step="4" aria-pressed="false">4</button>
+          <button type="button" class="btn" id="f2-next" aria-label="Next step">→</button>
+        </div>
+        <div class="stepbody" aria-live="polite">
+          <div data-stepbody="1"><h4>1 · Read the probe late</h4><p>The experimenter measures a probe observable \(B\) in the out-region. In the coupled theory this is \(\Bt=\tp(\one\otimes B)\), the coupled observable that agrees with \(\one\otimes B\) at late times.</p></div>
+          <div data-stepbody="2" hidden><h4>2 · Rewrite it at early times</h4><p>Apply \((\tm)^{-1}\). The result \(\Th(\one\otimes B)\) is generally not of the form \(\one\otimes B'\): the coupling has mixed system degrees of freedom into it. In the model, \(\Th(\one\otimes\Ps(h))=\Ph(\fm)\otimes\one+\one\otimes\Ps(\hm)\), with \(\fm\) supported where \(\K\) meets the causal past of the readout (blue).</p></div>
+          <div data-stepbody="3" hidden><h4>3 · Average over the probe preparation</h4><p>At early times the state is the product \(\om\otimes\sg\). Pairing every probe factor with \(\sg\), by \(\ets(A\otimes B)=\sg(B)A\), leaves a system observable \(\es(B)=\ets(\Th(\one\otimes B))\).</p></div>
+          <div data-stepbody="4" hidden><h4>4 · Read the dictionary</h4><p>For every system state \(\om\): \(\omt(\Bt)=(\om\otimes\sg)(\Th(\one\otimes B))=\om(\es(B))\). The expected probe reading equals the expectation of \(\es(B)\). The left column of the diagram is the map \(\es\).</p></div>
+        </div>
+      </div>
+    </div>
+    <div class="fig-cap">Hover over an arrow to see what it does and which region it refers to. The commutative-diagram condition (3.2) on the maps \(\chi_L\) is what makes \(\tau^\pm\) independent of the choices made along the way.</div>
+  </figure>
+
+  <div class="prose">
+    <div class="thm"><span class="h">Proposition 3.1</span> <span class="nm">(properties of \(\Th\))</span>
+      <ol class="st">
+        <li>Enlarging \(\K\) to any compact \(\hat K\supseteq\K\) gives the same \(\Th\).</li>
+        <li>\(\Th\) acts trivially on \(\cU(M;L)\) for every open causally convex \(L\subset\Kp\).</li>
+        <li>If \(L^\pm\subset M^\pm\) are open and causally convex with \(L^+\subset D(L^-)\), then \(\Th\,\cU(M;L^+)\subset\cU(M;L^-)\).</li>
+      </ol>
+    </div>
+    <p class="gloss"><span class="tag">In words</span>\(\Th\) belongs to the experiment, not to how you drew \(\K\). The coupling is invisible from regions causally disjoint from it. And \(\Th\) carries observables of a late region back to any early region whose Cauchy development contains it.</p>
+    <div class="model">
+      <span class="tag">In the model · eq. (4.11), App. D</span>
+      <p>For \(F\in C_0^\infty(\Mp;\mathbb C^2)\), with \(\Xi_0(f\oplus h)=\Ph(f)\otimes\one+\one\otimes\Ps(h)\):</p>
+      \[ \Th\,\Xi_0(F)=\Xi_0\bigl(F-\Rt\,\ETm F\bigr),\qquad \Rt=T-P\oplus Q=\begin{pmatrix}0&amp;R\\ R&amp;0\end{pmatrix}. \]
+      <p>Solve the coupled equation backwards in time from the test function, then subtract the part the coupling touched.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= 7 ================= -->
+<section class="sec" id="induced">
+  <div class="prose">
+    <div class="eyebrow"><span class="num">07</span><span>Paper §3.2 · §5.1 · eqs. (3.11), (5.2), (5.4)</span></div>
+    <h2>Induced system observables</h2>
+    <p>The construction of Figure 2 defines, for each probe preparation \(\sg\), a map from probe observables to system observables:</p>
+    \[ \es(B)=\ets\bigl(\Th(\one\otimes B)\bigr),\qquad \ets(A\otimes B)=\sg(B)\,A. \]
+    <div class="thm"><span class="h">Theorem 3.2</span> <span class="st">For each probe preparation \(\sg\), \(A=\es(B)\) is the unique solution of \(\omt(\Bt)=\om(A)\) for all states \(\om\) (given that states separate \(\cA(M)\)). The map \(\es\) is linear and completely positive, with</span>
+      \[ \es(\one)=\one,\qquad \es(B^*)=\es(B)^*,\qquad \es(B)^*\es(B)\le\es(B^*B). \]
+    </div>
+    <p class="gloss"><span class="tag">In words</span>\(\es\) is a unital quantum channel in the Heisenberg picture, from probe to system. It is neither injective nor a homomorphism: different probe observables can induce the same system observable, and products are not preserved. Probe and coupling together form a <em>measurement scheme</em> for the induced observable.</p>
+
+    <div class="model">
+      <span class="tag">In the model · eqs. (5.2), (5.4), (5.5)</span>
+      <p>For a probe test function \(h\) supported in \(\Mp\),</p>
+      \[ \es(\Ps(h))=\Ph(\fm)+\sg(\Ps(\hm))\,\one,\qquad \begin{pmatrix}\fm\\ \hm\end{pmatrix}=\begin{pmatrix}0\\ h\end{pmatrix}-\Rt\,\ETm\begin{pmatrix}0\\ h\end{pmatrix}. \]
+      <p>So \(\fm=-\rh\,\bigl(\ETm(0\oplus h)\bigr)_2\). Propagate the readout \(h\) backwards with the coupled advanced Green operator, keep the probe component, and multiply by \(\rh\). The result is supported in \(\operatorname{supp}\rh\cap\Jm(\operatorname{supp}h)\). As formal power series, \(\es(e^{i\Ps(h)})=\sg(e^{i\Ps(\hm)})\,e^{i\Ph(\fm)}\).</p>
+    </div>
+  </div>
+
+  <figure class="fig" id="fig3" aria-labelledby="fig3-title">
+    <div class="fig-head"><span class="fno">Figure 3</span><span class="ftitle" id="fig3-title">Computing <i>f</i><sup>−</sup> on a lattice</span></div>
+    <div class="fig-grid">
+      <div id="f3-diagram"></div>
+      <div class="panel">
+        <div class="ctl">
+          <div class="ctl-label">Colour shows</div>
+          <div class="seg" id="f3-mode" role="group" aria-label="Field to display">
+            <button type="button" data-v="f" aria-pressed="true">f<sup>−</sup> on K</button>
+            <button type="button" data-v="psi" aria-pressed="false">probe component</button>
+            <button type="button" data-v="phi" aria-pressed="false">system component</button>
+          </div>
+        </div>
+        <div class="ctl">
+          <div class="ctl-label">Shape of K</div>
+          <div class="seg" id="f3-shape" role="group" aria-label="Shape of K">
+            <button type="button" data-v="lump" aria-pressed="true">Lump</button>
+            <button type="button" data-v="wline" aria-pressed="false">Worldline</button>
+            <button type="button" data-v="slab" aria-pressed="false">Thin slab</button>
+          </div>
+        </div>
+        <div class="ctl">
+          <label class="sl" for="f3-lam"><span>Coupling λ</span><input type="range" id="f3-lam" min="0.05" max="6" step="0.05" value="1"><output id="f3-lam-o"></output></label>
+          <label class="sl" for="f3-mphi"><span>Mass m<sub>Φ</sub></span><input type="range" id="f3-mphi" min="0" max="3" step="0.05" value="0.5"><output id="f3-mphi-o"></output></label>
+          <label class="sl" for="f3-mpsi"><span>Mass m<sub>Ψ</sub></span><input type="range" id="f3-mpsi" min="0" max="3" step="0.05" value="1.2"><output id="f3-mpsi-o"></output></label>
+        </div>
+        <div class="readout" aria-live="polite">
+          <span id="f3-pill" class="pill mute"></span>
+          <div id="f3-text"></div>
+          <div class="mono" id="f3-num"></div>
+        </div>
+      </div>
+    </div>
+    <div class="fig-cap">The lattice solves \(T\,\Xi=(0,h)\) backwards in time from the readout \(h\) (orange disc), with \(\Xi=0\) in the far future. Orange is positive, blue negative. Dashed lines: the past cone of the readout, and the boundary of \(\Jp(\K)\). The lattice has \(dt=dx=0.03\), so discrete signals travel exactly along 45° lines and supports come out exact. Units are arbitrary. Things to try:
+      <ul>
+        <li>Drag \(h\) out of \(\Jp(\K)\). Then \(\fm=0\) and the induced observable is the constant \(\sg(\Ps(h))\one\), as the second half of Theorem 3.3 says.</li>
+        <li>Drag \(h\) far into the future. \(\fm\) stays inside \(\K\). The readout can be far away; the induced observable cannot.</li>
+        <li>Set both masses to 0 and raise λ. The first-order Born approximation \(\fm\approx-\lambda\rho E_Q^-h\) of eq. (5.28) drifts from the exact result. The relative error grows like λ², from about 0.5% at λ = 1 to about 17% at λ = 6.</li>
+      </ul>
+    </div>
+  </figure>
+</section>
+
+<!-- ================= 8 ================= -->
+<section class="sec" id="noise">
+  <div class="prose">
+    <div class="eyebrow"><span class="num">08</span><span>Paper eqs. (3.13), (3.14), (5.7), (5.8)</span></div>
+    <h2>Why the readout is noisier</h2>
+    <p>Because \(\es\) is completely positive but not a homomorphism, the Kadison–Schwarz inequality \(\es(B)^2\le\es(B^2)\) holds for self-adjoint \(B\). The map \(\tp\) is a homomorphism, so \(\Bt^{\,2}=\widetilde{B^2}\). Taking expectations gives</p>
+    \[ \operatorname{Var}(\Bt;\omt)=\om(\es(B^2))-\om(\es(B))^2\;\ge\;\operatorname{Var}(\es(B);\om). \]
+    <p>The actual readings scatter at least as much as the induced observable would if you could measure it directly. The excess comes from the probe's own quantum fluctuations.</p>
+    <p>Sharpness degrades in the same way. If \(E\) is a sharp probe EVM, the induced system EVM \(\es\circ E\) satisfies only \(\es(E(X))^2\le\es(E(X))\), so in general it is unsharp. The induced observable is less sharp than the probe observable, but sharper than the measurement actually made on the coupled system.</p>
+    <p>The model makes this exact. The variances add,</p>
+    \[ \operatorname{Var}(\widetilde{\Ps(h)};\omt)=\operatorname{Var}(\Ph(\fm);\om)+\operatorname{Var}(\Ps(\hm);\sg), \]
+    <p>and the distribution of readings is the convolution of the distribution of \(\Ph(\fm)\) in \(\om\) with that of \(\Ps(\hm)\) in \(\sg\). Figure 4 shows this for Gaussian (quasi-free) states.</p>
+  </div>
+
+  <figure class="fig" id="fig4" aria-labelledby="fig4-title">
+    <div class="fig-head"><span class="fno">Figure 4</span><span class="ftitle" id="fig4-title">Readout statistics in the model</span></div>
+    <div class="charts2">
+      <div>
+        <div class="chart-title">Distribution of readings, divided by λ</div>
+        <div id="f4-dist" class="chart"></div>
+        <div class="legend-row">
+          <span><i style="border-color:var(--sys)"></i>induced Φ(f<sup>−</sup>)/λ in ω</span>
+          <span><i style="border-color:var(--probe)"></i>probe noise Ψ(h<sup>−</sup>)/λ in σ</span>
+          <span><i style="border-color:var(--ink)"></i>actual readings</span>
+          <span><i style="border-color:var(--ink-3);border-top-style:dashed"></i>actual, system in vacuum</span>
+        </div>
+      </div>
+      <div>
+        <div class="chart-title">Induced effect of the sharp question “reading ≥ λc”</div>
+        <div id="f4-eff" class="chart"></div>
+        <div class="legend-row">
+          <span><i style="border-color:var(--K)"></i>F(x) = ε<sub>σ</sub>(E) as a function of Φ(f<sub>1</sub>)</span>
+          <span><i style="border-color:var(--K);border-top-style:dashed"></i>F(x)²</span>
+          <span><i style="border-color:var(--ink-3)"></i>sharp step</span>
+        </div>
+      </div>
+    </div>
+    <div class="fig-grid" style="margin-top:16px">
+      <div class="panel">
+        <label class="sl" for="f4-lam"><span>Coupling λ</span><input type="range" id="f4-lam" min="0.1" max="3" step="0.05" value="1"><output id="f4-lam-o"></output></label>
+        <label class="sl" for="f4-a"><span>System state a</span><input type="range" id="f4-a" min="-2.5" max="2.5" step="0.05" value="1.2"><output id="f4-a-o"></output></label>
+        <label class="sl" for="f4-s"><span>Probe noise s</span><input type="range" id="f4-s" min="0.1" max="3" step="0.05" value="1"><output id="f4-s-o"></output></label>
+        <label class="sl" for="f4-c"><span>Threshold c</span><input type="range" id="f4-c" min="-4" max="4" step="0.05" value="0.5"><output id="f4-c-o"></output></label>
+      </div>
+      <div class="readout mono" id="f4-read" aria-live="polite" style="font-size:0.82rem"></div>
+    </div>
+    <div class="fig-cap">Setup: to first order \(\fm=\lambda f_1\), and \(\Ph(f_1)\) has vacuum spread 1, which sets the unit. The system state \(\om\) is a coherent state with \(\om(\Ph(f_1))=a\). The probe noise \(\Ps(\hm)\) has spread \(s\) in \(\sg\). Dividing readings by λ keeps the induced observable at a fixed width, so you see how the probe noise \(s/\lambda\) blurs it. Right panel: formally, (5.5) gives \(\es(g(\Ps(h)))=\mathbb E\,g(\Ph(\fm)+N)\) with \(N\) distributed as \(\Ps(\hm)\) in \(\sg\). For the indicator of \([\lambda c,\infty)\) this is a smooth step \(F\) applied to \(\Ph(f_1)\), a fuzzy version of the projection “\(\Ph(f_1)\ge c\)”. Since \(F^2&lt;F\) wherever \(0&lt;F&lt;1\), the induced effect is not a projection.</div>
+  </figure>
+</section>
+
+<!-- ================= 9 ================= -->
+<section class="sec" id="where">
+  <div class="prose">
+    <div class="eyebrow"><span class="num">09</span><span>Paper Thm 3.3 · §5.2 · eqs. (5.20)–(5.23)</span></div>
+    <h2>Where an induced observable lives</h2>
+    <div class="thm"><span class="h">Theorem 3.3</span> <span class="st">For each probe observable \(B\in\cB(M)\), the induced system observable \(\es(B)\) may be localised in any connected open causally convex set containing \(\K\). If \(B\) may be localised in \(\Kp\), then \(\es(B)=\sg(B)\one\).</span></div>
+    <p class="gloss"><span class="tag">Proof idea</span>For \(A\) localised in \(L\subset\Kp\), Proposition 3.1(b) says \(\Th\) fixes \(A\otimes\one\). So \([\es(B),A]=\ets\bigl(\Th[\one\otimes B,A\otimes\one]\bigr)=0\). Thus \(\es(B)\) commutes with everything in \(\Kp\), and the Haag property places it in every connected causally convex neighbourhood of \(\K\). If \(B\) itself is localised in \(\Kp\), then \(\Th\) fixes \(\one\otimes B\) and \(\ets\) returns \(\sg(B)\one\).</p>
+    <p>Notice what the theorem does not depend on: where the probe is read. The readout region can be far away in space and in time. The information about the system was imprinted on the probe in \(\K\), and that is where the induced observable lives.</p>
+
+    <h3>Why not something smaller?</h3>
+    <p>In the model, \(\es(\Ps(h))=\Ph(\fm)+\text{const}\) with \(\fm\) supported in \(\operatorname{supp}\rh\). It is tempting to localise it in \(\operatorname{supp}\fm\). The paper argues against this. Whether two induced observables are compatible is decided by</p>
+    \[ [\es(\Ps(h)),\es(\Ps(h'))]=[\Ph(\fm),\Ph(\fpm)]=i\EP(\fm,\fpm)\one, \]
+    <p>and this number is sensitive to the spacetime geometry throughout the region (5.23) spanned by causal curves between the two supports. That region can contain points outside \(\operatorname{supp}\fm\), and even outside \(\operatorname{supp}\rh\). A localisation region that ignores geometry the observable responds to would mislead, and it would clash with local covariance. The causal hull of the coupling region is the smallest useful common localisation region. For a coupling along a timelike curve \(\gamma:[0,\tau]\to M\) it is \(\Jp(\gamma(0))\cap\Jm(\gamma(\tau))\); for an eternally accelerated detector it is a whole Rindler wedge (<a href="#fig8">Figure 8</a>).</p>
+
+    <h3>Two experimenters, one probe</h3>
+    <p>Suppose two experimenters read the probe in causally disjoint regions. Einstein causality makes their probe observables commute, so they can be measured jointly. Their induced system observables both live near \(\K\), and nothing forces those to commute. The commutator above is generally nonzero.</p>
+    <p>The paper's resolution: the joint probe EVM induces a joint EVM for the two system observables, and that joint EVM is unsharp. The experimenters keep the freedom to measure the probe however they like. Incompatible system observables still cannot be measured jointly and sharply; complementarity survives as unsharpness. In the model this shows up as a deformed product \(\star\) on \(\cB(M)\) for which \(\es\) becomes a homomorphism, with \([\Ps(h),\Ps(h')]_\star=i\EP(\fm,\fpm)\one\) (5.20). The interaction correlates degrees of freedom of the probe, and the correlations are then observed at spacelike separation.</p>
+  </div>
+
+  <figure class="fig" id="fig5" aria-labelledby="fig5-title">
+    <div class="fig-head"><span class="fno">Figure 5</span><span class="ftitle" id="fig5-title">Two readouts at spacelike separation</span></div>
+    <div class="fig-grid">
+      <div id="f5-diagram"></div>
+      <div class="panel">
+        <div class="ctl">
+          <div class="ctl-label">Shape of K</div>
+          <div class="seg" id="f5-shape" role="group" aria-label="Shape of K">
+            <button type="button" data-v="lump" aria-pressed="false">Lump</button>
+            <button type="button" data-v="wline" aria-pressed="true">Worldline</button>
+            <button type="button" data-v="slab" aria-pressed="false">Thin slab</button>
+          </div>
+        </div>
+        <div class="ctl">
+          <label class="sl" for="f5-lam"><span>Coupling λ</span><input type="range" id="f5-lam" min="0.05" max="2.5" step="0.05" value="1"><output id="f5-lam-o"></output></label>
+          <label class="sl" for="f5-mphi"><span>Mass m<sub>Φ</sub></span><input type="range" id="f5-mphi" min="0" max="3" step="0.05" value="0.5"><output id="f5-mphi-o"></output></label>
+          <label class="sl" for="f5-mpsi"><span>Mass m<sub>Ψ</sub></span><input type="range" id="f5-mpsi" min="0" max="3" step="0.05" value="1.2"><output id="f5-mpsi-o"></output></label>
+        </div>
+        <div class="readout" aria-live="polite">
+          <span id="f5-pill" class="pill mute"></span>
+          <div id="f5-text"></div>
+          <div class="mono" id="f5-num"></div>
+          <div class="bar" aria-hidden="true"><i id="f5-bar"></i></div>
+        </div>
+      </div>
+    </div>
+    <div class="fig-cap">Each readout sees \(\K\) through its own past cone; the coloured patches on \(\K\) are \(|\fm|\) (orange, from \(h\)) and \(|\fpm|\) (violet, from \(h'\)). The commutator \(\EP(\fm,\fpm)\) is computed on the lattice. The bar shows it as a fraction of its largest possible value \(\tfrac12\|\fm\|_1\|\fpm\|_1\). Things to try:
+      <ul>
+        <li>Keep \(h\) and \(h'\) spacelike but let their past cones cut the worldline at different heights. Footprints that are timelike to each other give a large commutator.</li>
+        <li>Switch to the thin slab. Almost every pair of points in \(\K\) is now spacelike, and the commutator shrinks.</li>
+      </ul>
+    </div>
+  </figure>
+</section>
+
+<!-- ================= 10 ================= -->
+<section class="sec" id="update">
+  <div class="prose">
+    <div class="eyebrow"><span class="num">10</span><span>Paper §3.3 · eqs. (3.17)–(3.27), (3.36)</span></div>
+    <h2>Updating the state</h2>
+    <p>Suppose the probe effect \(B\) is observed. A system effect \(A\), measured jointly with it at late times, has \(\mathrm{Prob}_\sigma(A\,\&\,B;\om)=\om\bigl(\ets\Th(A\otimes B)\bigr)\). Conditioning gives</p>
+    \[ \mathrm{Prob}_\sigma(A\,|\,B;\om)=\frac{\Is(B)(\om)(A)}{\Is(B)(\om)(\one)},\qquad \Is(B)(\om)(A):=(\om\otimes\sg)\bigl(\Th(A\otimes B)\bigr). \]
+    <p>\(\Is(B)\) is the <span class="term" data-g="I">pre-instrument</span>, and the normalised state \(\om'=\Is(B)(\om)/\Is(B)(\om)(\one)\) is the <span class="term" data-g="omprime">post-selected state</span>. Composing with a probe EVM \(E\) gives a Davies–Lewis instrument \(X\mapsto\Is(E(X))\).</p>
+    <dl class="defs">
+      <div><dt>Non-selective<small>no outcome recorded</small></dt><dd>\(\om_{\rm ns}=\Is(\one)(\om)\): the partial trace of \(\Th^*(\om\otimes\sg)\) over the probe. It does not depend on what was measured. For \(A\) localised in \(\Kp\), \(\Th(A\otimes\one)=A\otimes\one\), so \(\om_{\rm ns}(A)=\om(A)\). Nobody in \(\Kp\) can tell, without being told the outcome, that a measurement took place. No signalling.</dd></div>
+      <div><dt>Selective<small>outcome recorded</small></dt><dd>For \(A\) localised in \(\Kp\): \(\displaystyle\om'(A)=\frac{\om(A\,\es(B))}{\om(\es(B))}\).</dd></div>
+    </dl>
+    <div class="thm"><span class="h">Theorem 3.4</span> <span class="st">If the probe effect \(B\) is observed, then for each \(A\in\cA(M;\Kp)\) the expectation value of \(A\) is unchanged in the post-selected state if and only if \(A\) is uncorrelated with \(\es(B)\) in \(\om\).</span></div>
+    <p>In states with the <span class="term" data-g="RS">Reeh–Schlieder property</span>, such as the vacuum, correlations reach every region. If \(\om'\) agreed with \(\om\) on all of \(\cA(M;O)\) for some region \(O\subset\Kp\), then \(\es(B)\) would be a multiple of \(\one\). So any informative probe measurement changes expectation values in every region causally disjoint from \(\K\). This is the field-theoretic version of an EPR experiment. Learning one spin of a singlet changes your predictions for the distant other spin, with nothing physical travelling there. If the system obeys Huygens' principle, the same argument reaches regions in the causal past of \(\K\).</p>
+  </div>
+
+  <figure class="fig" id="fig6" aria-labelledby="fig6-title">
+    <div class="fig-head"><span class="fno">Figure 6</span><span class="ftitle" id="fig6-title">Post-selection seen from the causal complement</span></div>
+    <div class="fig-grid">
+      <div id="f6-diagram"></div>
+      <div class="panel">
+        <label class="sl" for="f6-z"><span>Probe reading</span><input type="range" id="f6-z" min="-3" max="3" step="0.05" value="1.5"><output id="f6-z-o"></output></label>
+        <label class="sl" for="f6-m"><span>Field mass m</span><input type="range" id="f6-m" min="0.2" max="3" step="0.05" value="0.8"><output id="f6-m-o"></output></label>
+        <div class="readout" aria-live="polite">
+          <span id="f6-pill" class="pill mute"></span>
+          <div class="chart-title" style="margin:0">Expectation of Φ(g) in O</div>
+          <div id="f6-meter" class="chart"></div>
+          <div class="meter-legend"><span class="m-i">before, ω</span><span class="m-o">non-selective, ω<sub>ns</sub></span><span class="m-k">post-selected, ω′</span></div>
+          <div id="f6-text" style="font-size:0.88rem"></div>
+          <div class="chart-title" style="margin:6px 0 0">Shift against spacelike distance d</div>
+          <div id="f6-decay" class="chart"></div>
+        </div>
+      </div>
+    </div>
+    <div class="fig-cap">Drag the region \(O\). The probe reading is given in standard deviations of its distribution. This figure is a Gaussian toy, not a lattice computation: the correlation between \(\Ph(\fm)\) and an observable \(\Ph(g)\) localised in \(O\) is taken to fall off like \(K_0(m\,d)\), the shape of the massive vacuum two-point function in 1+1 dimensions, with \(d\) the spacelike distance from \(\K\). Move \(O\) far away: the post-selected shift shrinks exponentially but never reaches zero. The non-selective marker never moves.</div>
+  </figure>
+
+  <div class="prose">
+    <h3>No collapse surface</h3>
+    <p>The post-selected state \(\om'\) differs from \(\om\) in no geometrically distinguished region. So there is nothing to be gained by picturing a transition from \(\om\) to \(\om'\) along some surface: not a constant-time surface, not the backward light cone proposed by Hellwig and Kraus, and not Schlieder's earlier proposal. As Hellwig and Kraus themselves recognised, whether the state changes in the past of \(\K\) is a convention without operational content, since that region is no longer open to experiment. It also does not matter when the probe is read. The updated state records the observer's conditioning on an outcome. It does not describe a physical process located in spacetime.</p>
+    <p class="aside">The circle back to Haag and Kastler closes here. In a C*-setting, for \(A\) localised in \(\Kp\) one can write \(\om'(A)=\om\bigl(\es(B)^{1/2}A\,\es(B)^{1/2}\bigr)/\om(\es(B))\). Seen from \(\Kp\), the post-selected state looks as if an operation in their sense had been performed, by an element \(\es(B)^{1/2}\) localisable near the causal hull of \(\K\). <span class="ref">eq. (3.36)</span></p>
+  </div>
+</section>
+
+<!-- ================= 11 ================= -->
+<section class="sec" id="successive">
+  <div class="prose">
+    <div class="eyebrow"><span class="num">11</span><span>Paper §3.3 · Thm 3.5 · Cor 3.6 · App. D</span></div>
+    <h2>Successive measurements</h2>
+    <p>Now couple two probes, in regions \(K_1\) and \(K_2\), with \(K_2\cap\Jm(K_1)=\emptyset\). Then some Cauchy surface has \(K_1\) to its past and \(K_2\) to its future. Treat the two probes together as a single probe with algebra \(\cB_1(M)\otimes\cB_2(M)\) and coupling region \(K_1\cup K_2\). The key assumption is <em>causal factorisation</em>:</p>
+    \[ \hat\Th=\hat\Th_1\circ\hat\Th_2. \]
+    <p>Since \(\Th\) maps late descriptions to early ones, the later coupling is undone first. The formula is a special case of Bogoliubov's factorisation in perturbative AQFT, and Appendix D proves it for the scalar model.</p>
+    <div class="thm"><span class="h">Theorem 3.5</span> <span class="st">For all probe preparations \(\sigma_i\) and all probe observables \(B_i\),</span>
+      \[ \mathcal I_{\sigma_2}(B_2)\circ\mathcal I_{\sigma_1}(B_1)=\mathcal I_{\sigma_1\otimes\sigma_2}(B_1\otimes B_2). \]
+      <span class="st">If \(K_1\) and \(K_2\) are causally disjoint, this also equals \(\mathcal I_{\sigma_1}(B_1)\circ\mathcal I_{\sigma_2}(B_2)\).</span>
+    </div>
+    <p class="gloss"><span class="tag">Corollary 3.6</span>Post-selecting on \(B_1\) and then on \(B_2\) gives the same state as post-selecting on \(B_1\otimes B_2\) at once.</p>
+  </div>
+
+  <figure class="fig" id="fig7" aria-labelledby="fig7-title">
+    <div class="fig-head"><span class="fno">Figure 7</span><span class="ftitle" id="fig7-title">Which orderings does Theorem 3.5 allow?</span></div>
+    <div class="fig-grid">
+      <div id="f7-diagram"></div>
+      <div class="panel">
+        <div class="cases" aria-live="polite">
+          <div class="case" data-case="21"><b>K₂ later than K₁</b>\(\mathcal I_{\sigma_2}(B_2)\circ\mathcal I_{\sigma_1}(B_1)=\mathcal I_{\sigma_1\otimes\sigma_2}(B_1\otimes B_2)\)</div>
+          <div class="case" data-case="12"><b>K₁ later than K₂</b>\(\mathcal I_{\sigma_1}(B_1)\circ\mathcal I_{\sigma_2}(B_2)=\mathcal I_{\sigma_1\otimes\sigma_2}(B_1\otimes B_2)\)</div>
+          <div class="case" data-case="dis"><b>Causally disjoint: either order</b>\(\mathcal I_{\sigma_2}(B_2)\circ\mathcal I_{\sigma_1}(B_1)=\mathcal I_{\sigma_1\otimes\sigma_2}(B_1\otimes B_2)\)<br>\(\phantom{\mathcal I_{\sigma_2}(B_2)\circ\mathcal I_{\sigma_1}(B_1)}=\mathcal I_{\sigma_1}(B_1)\circ\mathcal I_{\sigma_2}(B_2)\)</div>
+          <div class="case" data-case="no"><b>Not causally orderable</b>Each region reaches into the causal past of the other. Theorem 3.5 does not apply; treat \(K_1\cup K_2\) as one coupling region.</div>
+        </div>
+        <div id="f7-text" class="gloss" style="font-size:0.88rem"></div>
+      </div>
+    </div>
+    <div class="fig-cap">Drag \(K_1\) and \(K_2\). Shading shows \(\Jp(K_1)\) and \(\Jm(K_1)\); the dashed lines bound the cones of \(K_2\). The curves \(\Sigma\) are Cauchy surfaces separating the two regions, one for each admissible order. When both appear, no observer-independent fact decides which measurement came first, and none is needed.</div>
+  </figure>
+
+  <div class="prose">
+    <p>An experiment can be analysed as a sequence of measurements in any order compatible with causality, or as one combined measurement, with the same predictions. Experimenters in causally disjoint regions can work in ignorance of each other, or pool their results afterwards. No step reduces the state across a hypersurface. The authors call this the central consistency property of the framework, and the core result of the paper.</p>
+    <p>Mathematically, pre-instruments carry a monoidal structure that is symmetric for causally disjoint regions. For strictly causally ordered regions the symmetry breaks, which a Euclidean formulation could not see. Bostelmann, Fewster and Ruep build on this theorem in their analysis of Sorkin's “impossible measurements” <span class="ref">[8]</span>.</p>
+  </div>
+</section>
+
+<!-- ================= 12 ================= -->
+<section class="sec" id="symmetry">
+  <div class="prose">
+    <div class="eyebrow"><span class="num">12</span><span>Paper §3.4 · Thm 3.7 · eq. (3.45)</span></div>
+    <h2>Symmetries</h2>
+    <dl class="defs">
+      <div><dt>Gauge symmetry<small>Thm 3.7</small></dt><dd>Let a global gauge group \(G\) act on \(\cA\), \(\cB\) and \(\cC\), with a gauge-invariant coupling. Then \(\Th\) commutes with the gauge action, and \(\varphi(g)(\es(B))=\varepsilon_{\psi(g^{-1})^*\sigma}(\psi(g)B)\). If \(\sg\) is gauge invariant, gauge-invariant probe observables induce gauge-invariant system observables. To see a gauge-variant quantity you need a probe or coupling that breaks the symmetry, as when an external field reveals the magnetisation of a spin chain. This is the natural entry point for quantum reference frames, developed for spacetime symmetries by Fewster, Janssen, Loveridge, Rejzner and Waldron (2024).</dd></div>
+      <div><dt>Time translations<small>eq. (3.45)</small></dt><dd>If \(\om\) is strongly mixing under time translations \(\nu_s\), then \(\om'(\nu_sA)-\om(\nu_sA)\to0\) as \(|s|\to\infty\). The effect of post-selection fades with time, so an experiment can be repeated without re-preparing the system. Ground states of typical Minkowski QFTs are strongly mixing.</dd></div>
+    </dl>
+  </div>
+</section>
+
+<!-- ================= 13 ================= -->
+<section class="sec" id="unruh">
+  <div class="prose">
+    <div class="eyebrow"><span class="num">13</span><span>Paper §5.3 · eqs. (5.27)–(5.36)</span></div>
+    <h2>Detectors and the Unruh effect</h2>
+    <p>Replace \(\rh\) by \(\lambda\rh\) with \(|\lambda|\) small. A Born expansion of \(\ETm\) gives</p>
+    \[ \fm=-\lambda\rh E_Q^-h+O(\lambda^3),\qquad \hm=h+\lambda^2\rh E_P^-\rh E_Q^-h+O(\lambda^4). \]
+    <p>Suppose \(\sg\) has vanishing one-point function and \(\Ps(h)\) is an annihilation operator for one mode of the probe's Fock representation. Then the induced number operator has expectation \(\om(\es(N_h))=\lambda^2W(h_1,h_1)+O(\lambda^4)\), with \(h_1=\rh E_Q^-h\) and \(W\) the two-point function of \(\om\). Concentrate \(\rh\) on a worldline \(\gamma(\tau)\) with switching function \(\tilde\rho(\tau)\), and let the mode oscillate as \(e^{iE\tau}\) along it:</p>
+    \[ \om(\es(N_h))=\lambda^2\!\int\!d\tau\,d\tau'\;e^{-iE(\tau-\tau')}\,\tilde\rho(\tau)\tilde\rho(\tau')\,W\bigl(\gamma(\tau),\gamma(\tau')\bigr)+O(\lambda^4). \]
+    <p>The coefficient of \(\lambda^2\) is the first-order response function of a switched Unruh–DeWitt detector with energy gap \(E\). The familiar detector calculation is recovered, now with a statement of which field observable the detector measures and where that observable is localised.</p>
+    <p>An earlier paper by Fewster, Juárez-Aubry and Louko was titled “Waiting for Unruh”. The framework says where to wait: in \(\Mp\cap\Jp(\K)\).</p>
+  </div>
+
+  <figure class="fig" id="fig8" aria-labelledby="fig8-title">
+    <div class="fig-head"><span class="fno">Figure 8</span><span class="ftitle" id="fig8-title">A uniformly accelerated detector</span></div>
+    <div class="fig-grid narrowdiag">
+      <div id="f8-diagram" style="max-width:460px;width:100%;justify-self:center"></div>
+      <div class="panel">
+        <label class="sl" for="f8-T"><span>Half-duration T</span><input type="range" id="f8-T" min="0.2" max="2.1" step="0.02" value="1"><output id="f8-T-o"></output></label>
+        <div class="readout" aria-live="polite"><div id="f8-text"></div></div>
+        <p class="gloss" style="font-size:0.9rem;margin:0">The worldline \(\gamma(\tau)=(\sinh\tau,\cosh\tau)\) has unit acceleration and is coupled for proper time \(-T&lt;\tau&lt;T\). Its induced observables live in the causal hull \(\Jp(\gamma(-T))\cap\Jm(\gamma(T))\), the violet diamond. As \(T\) grows the diamond fills the right Rindler wedge \(x&gt;|t|\). Readings should be taken in the gold region \(\Mp\cap\Jp(\K)\).</p>
+      </div>
+    </div>
+  </figure>
+</section>
+
+<!-- ================= 14 ================= -->
+<section class="sec summary" id="summary">
+  <div class="prose">
+    <div class="eyebrow"><span class="num">14</span><span>Paper §6</span></div>
+    <h2>The paper in eight lines</h2>
+    <ol>
+      <li>Couple system \(\cA\) and probe \(\cB\) in a compact region \(\K\). Assume only that the coupled theory \(\cC\) matches \(\cA\otimes\cB\) outside the causal hull of \(\K\).</li>
+      <li>\(\K\) fixes the in- and out-regions \(M^\mp\) covariantly. The time-slice property gives \(\tau^\pm\), and \(\Th=(\tm)^{-1}\circ\tp\).</li>
+      <li>\(\es(B)=\ets(\Th(\one\otimes B))\) is the system observable the probe measures: unique, completely positive, unital.</li>
+      <li>Readings are noisier than \(\es(B)\), and sharp probe questions become unsharp system questions.</li>
+      <li>\(\es(B)\) is localised near \(\K\) wherever the probe is read, and trivial if \(B\) is localised in \(\Kp\).</li>
+      <li>The state update is the instrument \(\Is(B)\). Non-selective updates leave \(\Kp\) untouched; selective ones change it through correlations.</li>
+      <li>Given causal factorisation, instruments compose in every causally admissible order with the same result.</li>
+      <li>The scalar model makes all of this explicit and reproduces the Unruh–DeWitt response function.</li>
+    </ol>
+    <p>Left open by the authors: the converse problem (which system observables some probe can measure), measurements that act back on the spacetime, and a C*-algebraic version of the model in which the effects of Section 8 exist as genuine algebra elements.</p>
+    <footer class="colophon">Built from C. J. Fewster and R. Verch, <i>Quantum Fields and Local Measurements</i>, Commun. Math. Phys. 378, 851–889 (2020), <a href="https://doi.org/10.1007/s00220-020-03800-6">doi:10.1007/s00220-020-03800-6</a>, published under CC BY 4.0. Equation, theorem and section numbers refer to the paper. The figures are new. Figures 3 and 5 solve the paper's model numerically in 1+1 dimensions; Figures 4 and 6 use Gaussian toy distributions to illustrate exact statements of the paper.</footer>
+  </div>
+</section>
+
+</main>
+</div>
+
+<button type="button" class="notation-btn" id="notation-btn" aria-expanded="false" aria-controls="drawer">Notation</button>
+<aside class="drawer" id="drawer" hidden aria-label="Notation">
+  <div class="drawer-head"><h2>Notation</h2><button type="button" class="btn" id="drawer-close">Close</button></div>
+  <div id="drawer-body"></div>
+</aside>
+<div class="tip" id="tip" hidden role="tooltip"></div>
+
+<script>
+(() => {
+'use strict';
+
+/* ================= glossary ================= */
+const GL = {
+  // geometry
+  J:      { g: 'Geometry', t: String.raw`J^\pm(S)`, n: 'Causal future / past', d: 'J⁺(S): all points reachable from S along future-directed timelike or null curves, S included. J⁻(S) likewise towards the past.', r: '§2' },
+  hull:   { g: 'Geometry', t: String.raw`J^+(S)\cap J^-(S)`, n: 'Causal hull', d: 'Every point on some causal curve that starts and ends in S. Induced observables are localised near the causal hull of the coupling region.', r: '§2' },
+  convex: { g: 'Geometry', t: String.raw`N`, n: 'Causally convex region', d: 'A region that contains every causal curve beginning and ending in it, i.e. equals its own causal hull. Local algebras are attached to open causally convex regions.', r: '§2' },
+  perp:   { g: 'Geometry', t: String.raw`S^\perp`, n: 'Causal complement', d: 'S⊥ = M ∖ (J⁺(S) ∪ J⁻(S)): points no causal curve connects to S. For the coupling region, K⊥ = M⁺ ∩ M⁻.', r: '§2' },
+  cauchy: { g: 'Geometry', t: String.raw`\Sigma`, n: 'Cauchy surface', d: 'A set met exactly once by every inextendible timelike curve. A spacetime with one is globally hyperbolic.', r: '§2' },
+  K:      { g: 'Geometry', t: String.raw`\K`, n: 'Coupling region', d: 'Compact region outside of which system and probe do not interact. In the model, supp ρ ⊂ K.', r: '§3.1' },
+  Mpm:    { g: 'Geometry', t: String.raw`M^\pm=M\setminus J^\mp(K)`, n: 'Out- and in-regions', d: 'M⁺ (out): everything not in the causal past of K. M⁻ (in): everything not in its causal future. Both contain Cauchy surfaces and both are fixed by K alone.', r: '§3.1 · Fig. 1' },
+  // algebras and maps
+  A:      { g: 'Algebras and maps', t: String.raw`\cA,\ \cA(M;N)`, n: 'System theory', d: 'The QFT being measured. 𝒜(M;N) is the algebra of observables localisable in the region N.', r: '§2' },
+  B:      { g: 'Algebras and maps', t: String.raw`\cB`, n: 'Probe theory', d: 'The QFT used as the measuring device.', r: '§3.1' },
+  U:      { g: 'Algebras and maps', t: String.raw`\cU=\cA\otimes\cB`, n: 'Uncoupled combination', d: 'System and probe side by side with no interaction: the control experiment.', r: '§3.1' },
+  C:      { g: 'Algebras and maps', t: String.raw`\cC`, n: 'Coupled theory', d: 'System and probe interacting in K. Identified with 𝒰 outside the causal hull of K by the maps χ_L.', r: '§3.1' },
+  alpha:  { g: 'Algebras and maps', t: String.raw`\alpha,\ \beta,\ \gamma`, n: 'Embedding morphisms', d: 'α_{M;N}: 𝒜(N) → 𝒜(M) embeds the theory of a region into that of M; β and γ do the same for ℬ and 𝒞. They are isomorphisms when N contains a Cauchy surface, which holds for M±.', r: '§2 · §3.1' },
+  chi:    { g: 'Algebras and maps', t: String.raw`\chi_L`, n: 'Identification maps', d: 'χ_L: 𝒜(L) ⊗ ℬ(L) → 𝒞(L) for regions L outside the causal hull of K, compatible with embeddings (diagram 3.2). This is all that is assumed about the coupling.', r: 'eq. (3.1)' },
+  tau:    { g: 'Algebras and maps', t: String.raw`\tau^\pm=\kappa^\pm\circ(\alpha^\pm\otimes\beta^\pm)^{-1}`, n: 'Response maps', d: 'Isomorphisms 𝒰(M) → 𝒞(M) that identify the uncoupled theory with the coupled one at late times (τ⁺, retarded) or early times (τ⁻, advanced). κ± = γ±∘χ±.', r: 'eqs. (3.3), (3.4)' },
+  Theta:  { g: 'Algebras and maps', t: String.raw`\Th=(\tm)^{-1}\circ\tp`, n: 'Scattering morphism', d: 'Automorphism of 𝒜(M) ⊗ ℬ(M). Takes the late-time description of a coupled observable and returns its early-time description. Analogue of B ↦ U*BU.', r: 'eq. (3.5) · Prop. 3.1' },
+  embed:  { g: 'Algebras and maps', t: String.raw`B\mapsto\one\otimes B`, n: 'Probe observable in the combined system', d: 'A probe observable B, viewed as an observable of system and probe together.', r: '§3.2' },
+  // states and measurement
+  omega:  { g: 'States and measurement', t: String.raw`\om`, n: 'System state', d: 'State of the system field, prepared at early times.', r: '§3.2' },
+  sigma:  { g: 'States and measurement', t: String.raw`\sg`, n: 'Probe preparation', d: 'State in which the probe is prepared at early times.', r: '§3.2' },
+  omt:    { g: 'States and measurement', t: String.raw`\omt=((\tm)^{-1})^*(\om\otimes\sg)`, n: 'State of the experiment', d: 'The state of the coupled theory that looks like the uncorrelated product ω ⊗ σ at early times.', r: 'eq. (3.6)' },
+  Bt:     { g: 'States and measurement', t: String.raw`\Bt=\tp(\one\otimes B)`, n: 'Probe readout', d: 'The probe observable B, read at late times, as an observable of the coupled theory.', r: 'eq. (3.7)' },
+  eta:    { g: 'States and measurement', t: String.raw`\ets(A\otimes B)=\sg(B)A`, n: 'Partial expectation', d: 'Pairs the probe factor with the preparation σ, leaving a system observable. Completely positive; a conditional expectation onto 𝒜(M) ⊗ 1.', r: 'eq. (3.10)' },
+  eps:    { g: 'States and measurement', t: String.raw`\es(B)=\ets(\Th(\one\otimes B))`, n: 'Induced system observable', d: 'The system observable a probe measurement actually measures: ω(ε_σ(B)) = ω̃_σ(B̃) for every system state ω. Completely positive and unital, not a homomorphism.', r: 'eq. (3.11) · Thm 3.2' },
+  effect: { g: 'States and measurement', t: String.raw`0\le E\le\one`, n: 'Effect', d: 'An element E with E and 1 − E positive. ω(E) is the probability of a yes-answer. Projections are the sharp effects.', r: '§3.2' },
+  EVM:    { g: 'States and measurement', t: String.raw`X\mapsto E(X)`, n: 'Effect-valued measure', d: 'An additive map from sets of outcomes to effects with E(Ω) = 1, also called a POVM. Sharp if every E(X) is a projection.', r: '§3.2' },
+  I:      { g: 'States and measurement', t: String.raw`\Is(B)(\om)(A)=(\om\otimes\sg)(\Th(A\otimes B))`, n: 'Pre-instrument', d: 'The unnormalised system state conditioned on the probe effect B being observed. Composed with an EVM it gives a Davies–Lewis instrument.', r: 'eq. (3.19)' },
+  omprime:{ g: 'States and measurement', t: String.raw`\om'=\Is(B)(\om)/\Is(B)(\om)(\one)`, n: 'Post-selected state', d: 'The system state after a selective measurement in which B was observed. Predicts conditional probabilities given B.', r: 'eq. (3.20)' },
+  omns:   { g: 'States and measurement', t: String.raw`\om_{\rm ns}=\Is(\one)(\om)`, n: 'Non-selective update', d: 'State after measuring without recording the outcome: the partial trace of Θ*(ω ⊗ σ) over the probe. Agrees with ω in K⊥.', r: 'eq. (3.23)' },
+  RS:     { g: 'States and measurement', t: String.raw`\om`, n: 'Reeh–Schlieder property', d: 'In the GNS representation the state vector is cyclic for every local algebra. It implies entanglement between every pair of causally disjoint regions.', r: '§3.3' },
+  // model
+  Phi:    { g: 'The model', t: String.raw`\Ph`, n: 'System field', d: 'Real scalar field of mass m_Φ, with Klein–Gordon operator P = □ + m_Φ².', r: '§4' },
+  Psi:    { g: 'The model', t: String.raw`\Ps`, n: 'Probe field', d: 'Real scalar field of mass m_Ψ, with Klein–Gordon operator Q = □ + m_Ψ².', r: '§4' },
+  rho:    { g: 'The model', t: String.raw`\rh`, n: 'Coupling function', d: 'Smooth, real, supported in K. Interaction term S_int = −∫ ρΦΨ dvol.', r: 'eq. (4.4)' },
+  Rt:     { g: 'The model', t: String.raw`\Rt=\begin{pmatrix}0&R\\R&0\end{pmatrix}`, n: 'Coupling part of T', d: 'R̃ = T − P ⊕ Q, where R multiplies by ρ.', r: 'eq. (4.12)' },
+  ET:     { g: 'The model', t: String.raw`\ETm`, n: 'Advanced Green operator', d: 'Solves TΞ = F with support in the causal past J⁻(supp F). The retarded E⁺ has support in J⁺.', r: 'eq. (4.3)' },
+  EP:     { g: 'The model', t: String.raw`\EP=E_P^- - E_P^+`, n: 'Causal propagator', d: '[Φ(f), Φ(g)] = i E_P(f, g) 1. Vanishes when the supports of f and g are causally disjoint.', r: 'relation Q4' },
+  fm:     { g: 'The model', t: String.raw`\fm`, n: 'Induced system test function', d: 'In ε_σ(Ψ(h)) = Φ(f⁻) + σ(Ψ(h⁻))1. f⁻ = −ρ (E_T⁻(0 ⊕ h))₂, supported in supp ρ ∩ J⁻(supp h).', r: 'eqs. (5.2), (5.21)' },
+  hm:     { g: 'The model', t: String.raw`\hm`, n: 'Residual probe test function', d: 'Ψ(h⁻) carries the probe’s own fluctuations, which add to the variance of the readings.', r: 'eqs. (5.2), (5.7)' }
+};
+
+/* ================= notation drawer ================= */
+(function buildDrawer() {
+  const body = document.getElementById('drawer-body');
+  const groups = {};
+  for (const [k, e] of Object.entries(GL)) { (groups[e.g] = groups[e.g] || []).push(e); }
+  let html = '';
+  for (const [g, list] of Object.entries(groups)) {
+    html += `<h3>${g}</h3>`;
+    for (const e of list) html += `<div class="ent"><div class="sym">\\(${e.t}\\)</div><div><b>${e.n}</b>${e.d}<br><span class="ref">${e.r}</span></div></div>`;
+  }
+  body.innerHTML = html;
+  const btn = document.getElementById('notation-btn'), drawer = document.getElementById('drawer');
+  const set = open => { drawer.hidden = !open; btn.setAttribute('aria-expanded', String(open)); if (open) document.getElementById('drawer-close').focus(); };
+  btn.addEventListener('click', () => set(drawer.hidden));
+  document.getElementById('drawer-close').addEventListener('click', () => { set(false); btn.focus(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !drawer.hidden) { set(false); btn.focus(); } });
+})();
+
+/* ================= tooltips ================= */
+const tipEl = document.getElementById('tip');
+let tipPinned = null;
+function glKey(el) {
+  if (el.dataset && el.dataset.g) return el.dataset.g;
+  const c = el.getAttribute && el.getAttribute('class');
+  const m = c && c.match(/gx-(\w+)/);
+  return m ? m[1] : null;
+}
+function findGl(t) { return t && t.closest ? t.closest('[data-g], [class*="gx-"]') : null; }
+function showTip(el) {
+  const e = GL[glKey(el)]; if (!e) return;
+  tipEl.innerHTML = `<b>${e.n}</b>${e.d}<span class="r">${e.r}</span>`;
+  tipEl.hidden = false;
+  const r = el.getBoundingClientRect(), tw = tipEl.offsetWidth, th = tipEl.offsetHeight;
+  let x = r.left + r.width / 2 - tw / 2; x = Math.max(12, Math.min(innerWidth - tw - 12, x));
+  let y = r.bottom + 8; if (y + th > innerHeight - 12) y = r.top - th - 8;
+  tipEl.style.left = x + 'px'; tipEl.style.top = Math.max(8, y) + 'px';
+}
+function hideTip() { tipEl.hidden = true; tipPinned = null; }
+document.addEventListener('pointerover', e => {
+  if (e.pointerType !== 'mouse' || tipPinned) return;
+  const el = findGl(e.target); if (el) showTip(el);
+});
+document.addEventListener('pointerout', e => {
+  if (e.pointerType !== 'mouse' || tipPinned) return;
+  const el = findGl(e.target); if (el && !el.contains(e.relatedTarget)) tipEl.hidden = true;
+});
+document.addEventListener('click', e => {
+  const el = findGl(e.target);
+  if (el && el.closest('.drawer')) return;
+  if (el) { if (tipPinned === el) { hideTip(); } else { tipPinned = el; showTip(el); } }
+  else if (tipPinned) hideTip();
+});
+addEventListener('scroll', () => { if (!tipEl.hidden) hideTip(); }, { passive: true });
+
+/* ================= utilities ================= */
+const NS = 'http://www.w3.org/2000/svg';
+function S(tag, attrs, parent) { const e = document.createElementNS(NS, tag); if (attrs) for (const k in attrs) e.setAttribute(k, attrs[k]); if (parent) parent.appendChild(e); return e; }
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const f1 = v => (Math.round(v * 10) / 10).toString();
+const fmt = (v, d = 2) => (Math.abs(v) < 1e-12 ? 0 : v).toFixed(d);
+function cssVar(n) { return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+function hexRgb(h) { h = h.replace('#', ''); if (h.length === 3) h = h.split('').map(c => c + c).join(''); const n = parseInt(h, 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
+const themeFns = [];
+const fireTheme = () => themeFns.forEach(f => f());
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', fireTheme);
+new MutationObserver(fireTheme).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+function rafThrottle(fn) { let q = false; return () => { if (q) return; q = true; requestAnimationFrame(() => { q = false; fn(); }); }; }
+function segControl(id, onChange) {
+  const g = document.getElementById(id);
+  g.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    g.querySelectorAll('button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+    onChange(b.dataset.v);
+  });
+}
+function slider(id, onInput, digits = 2) {
+  const el = document.getElementById(id), out = document.getElementById(id + '-o');
+  const upd = () => { out.textContent = Number(el.value).toFixed(digits); onInput(Number(el.value)); };
+  el.addEventListener('input', upd);
+  out.textContent = Number(el.value).toFixed(digits);
+  return () => Number(el.value);
+}
+
+/* ================= causal geometry ================= */
+function envelopes(pts, xs) {
+  const n = xs.length, gp = new Float64Array(n), gm = new Float64Array(n);
+  for (let i = 0; i < n; i++) {
+    const x = xs[i]; let a = Infinity, b = -Infinity;
+    for (let k = 0; k < pts.length; k++) {
+      const p = pts[k], dd = Math.abs(x - p[0]);
+      const u = p[1] + dd; if (u < a) a = u;
+      const w = p[1] - dd; if (w > b) b = w;
+    }
+    gp[i] = a; gm[i] = b;
+  }
+  return { gp, gm };
+}
+function envAt(pts, x) {
+  let a = Infinity, b = -Infinity;
+  for (const p of pts) { const dd = Math.abs(x - p[0]); if (p[1] + dd < a) a = p[1] + dd; if (p[1] - dd > b) b = p[1] - dd; }
+  return [a, b];
+}
+function ellipsePts(cx, ct, rx, rt, n = 96) { const P = []; for (let i = 0; i < n; i++) { const a = 2 * Math.PI * i / n; P.push([cx + rx * Math.cos(a), ct + rt * Math.sin(a)]); } return P; }
+function blobPts(cx, ct, s, n = 140) { const P = []; for (let i = 0; i < n; i++) { const a = 2 * Math.PI * i / n; const r = s * (1 + 0.2 * Math.cos(2 * a + 0.9) + 0.12 * Math.sin(3 * a)); P.push([cx + 0.82 * r * Math.cos(a), ct + 1.08 * r * Math.sin(a)]); } return P; }
+function curvePts(fn, a, b, n = 120) { const P = []; for (let i = 0; i <= n; i++) P.push(fn(a + (b - a) * i / n)); return P; }
+function ellipseFill(cx, ct, rx, rt) { const P = ellipsePts(cx, ct, rx, rt, 40); for (let i = 1; i < 5; i++) for (let j = 1; j < 5; j++) { const u = -1 + i / 2.5, v = -1 + j / 2.5; if (u * u + v * v < 1) P.push([cx + rx * u, ct + rt * v]); } P.push([cx, ct]); return P; }
+function diamondPts(cx, ct, r, m = 8) { const C = [[cx + r, ct], [cx, ct + r], [cx - r, ct], [cx, ct - r]]; const P = []; for (let k = 0; k < 4; k++) { const A = C[k], B = C[(k + 1) % 4]; for (let i = 0; i < m; i++) P.push([A[0] + (B[0] - A[0]) * i / m, A[1] + (B[1] - A[1]) * i / m]); } P.push([cx, ct]); return P; }
+
+/* ================= Diagram ================= */
+class Diagram {
+  constructor(host, view, opts = {}) {
+    this.host = host; this.view = view; this.opts = opts;
+    this.aspect = (view.t1 - view.t0) / (view.x1 - view.x0);
+    host.classList.add('diagram');
+    if (opts.canvas) { this.canvas = document.createElement('canvas'); this.canvas.className = 'dcanvas'; host.appendChild(this.canvas); }
+    this.svg = S('svg', { class: 'dsvg', role: 'img', 'aria-label': opts.label || 'Spacetime diagram' }, host);
+    this.L = {};
+    for (const n of ['grid', 'fill', 'lines', 'marks', 'labels', 'handles']) this.L[n] = S('g', { class: 'ly-' + n }, this.svg);
+    this.handles = []; this.active = null; this.draw = null; this.W = 0; this.H = 0;
+    this.svg.addEventListener('pointermove', e => {
+      if (!this.active) return;
+      const [x, t] = this.toWorld(e), h = this.active;
+      h.move(x + h.off[0], t + h.off[1]);
+    });
+    const end = () => { if (this.active) { this.active.g.classList.remove('dragging'); this.active = null; } };
+    this.svg.addEventListener('pointerup', end);
+    this.svg.addEventListener('pointercancel', end);
+    host.style.height = Math.round((host.clientWidth || 600) * this.aspect) + 'px';
+    new ResizeObserver(() => this.resize()).observe(host);
+    this.resize();
+  }
+  resize() {
+    const w = Math.round(this.host.clientWidth);
+    if (!w || w === this.W) return;
+    this.W = w; this.H = Math.round(w * this.aspect);
+    this.fs = clamp(w / 46, 11.5, 15.5);
+    this.svg.setAttribute('viewBox', `0 0 ${this.W} ${this.H}`);
+    this.host.style.height = this.H + 'px';
+    this._xs = null;
+    this.redraw();
+  }
+  get xs() {
+    if (!this._xs) { const v = this.view, n = Math.max(80, Math.round(this.W / 2)); this._xs = Float64Array.from({ length: n + 1 }, (_, i) => v.x0 + (v.x1 - v.x0) * i / n); }
+    return this._xs;
+  }
+  px(x) { return (x - this.view.x0) / (this.view.x1 - this.view.x0) * this.W; }
+  py(t) { return (this.view.t1 - t) / (this.view.t1 - this.view.t0) * this.H; }
+  sc(len) { return len / (this.view.x1 - this.view.x0) * this.W; }
+  toWorld(e) {
+    const r = this.svg.getBoundingClientRect(), v = this.view;
+    return [v.x0 + (e.clientX - r.left) / r.width * (v.x1 - v.x0), v.t1 - (e.clientY - r.top) / r.height * (v.t1 - v.t0)];
+  }
+  ct(t) { return clamp(t, this.view.t0 - 1, this.view.t1 + 1); }
+  redraw() {
+    if (!this.W) return;
+    for (const n of ['grid', 'fill', 'lines', 'marks', 'labels']) this.L[n].replaceChildren();
+    this.grid();
+    if (this.draw) this.draw(this);
+    this.syncHandles();
+  }
+  grid() {
+    const v = this.view, g = this.L.grid, st = this.opts.gridStep || 0.5;
+    const xa = v.x0 - 1, xb = v.x1 + 1;
+    for (let c = Math.ceil((v.x0 - v.t1) / st) * st; c <= v.x1 - v.t0; c += st)
+      S('line', { x1: f1(this.px(xa)), y1: f1(this.py(xa - c)), x2: f1(this.px(xb)), y2: f1(this.py(xb - c)) }, g);
+    for (let c = Math.ceil((v.x0 + v.t0) / st) * st; c <= v.x1 + v.t1; c += st)
+      S('line', { x1: f1(this.px(xa)), y1: f1(this.py(c - xa)), x2: f1(this.px(xb)), y2: f1(this.py(c - xb)) }, g);
+    if (this.opts.legend !== false) {
+      const lg = S('g', { class: 'legend' }, g), X = 14, Y = this.H - 12, L = 16;
+      S('path', { d: `M${X},${Y - L} L${X},${Y} M${X - 4},${Y - L + 5} L${X},${Y - L} L${X + 4},${Y - L + 5}` }, lg);
+      S('path', { d: `M${X + 10},${Y - 4} L${X + 10 + L * 0.6},${Y - 4 - L * 0.6} M${X + 10},${Y - 4} L${X + 10 - L * 0.0},${Y - 4}` }, lg);
+      const t1 = S('text', { x: X + 6, y: Y - L + 2 }, lg); t1.textContent = 'time';
+      const t2 = S('text', { x: X + 22, y: Y - 1 }, lg); t2.textContent = 'light ray 45°';
+    }
+  }
+  path(layer, d, cls, extra) { const p = S('path', Object.assign({ d, class: cls }, extra || {}), this.L[layer]); return p; }
+  pAbove(g) {
+    const xs = this.xs, top = this.py(this.view.t1 + 1);
+    let d = `M${f1(this.px(xs[0]))},${f1(top)}`;
+    for (let i = 0; i < xs.length; i++) d += `L${f1(this.px(xs[i]))},${f1(this.py(this.ct(g[i])))}`;
+    return d + `L${f1(this.px(xs[xs.length - 1]))},${f1(top)}Z`;
+  }
+  pBelow(g) {
+    const xs = this.xs, bot = this.py(this.view.t0 - 1);
+    let d = `M${f1(this.px(xs[0]))},${f1(bot)}`;
+    for (let i = 0; i < xs.length; i++) d += `L${f1(this.px(xs[i]))},${f1(this.py(this.ct(g[i])))}`;
+    return d + `L${f1(this.px(xs[xs.length - 1]))},${f1(bot)}Z`;
+  }
+  pBetween(lo, hi, strict) {
+    const xs = this.xs; let d = '', run = [];
+    const flush = () => {
+      if (run.length > 1) {
+        d += 'M' + run.map(i => `${f1(this.px(xs[i]))},${f1(this.py(this.ct(hi[i])))}`).join('L');
+        for (let k = run.length - 1; k >= 0; k--) { const i = run[k]; d += `L${f1(this.px(xs[i]))},${f1(this.py(this.ct(lo[i])))}`; }
+        d += 'Z';
+      }
+      run = [];
+    };
+    for (let i = 0; i < xs.length; i++) { const ok = strict ? lo[i] < hi[i] - 1e-9 : lo[i] <= hi[i] + 1e-9; if (ok) run.push(i); else flush(); }
+    flush();
+    return d;
+  }
+  pCurve(g) { const xs = this.xs; let d = ''; for (let i = 0; i < xs.length; i++) d += (i ? 'L' : 'M') + `${f1(this.px(xs[i]))},${f1(this.py(this.ct(g[i])))}`; return d; }
+  pPts(pts, close) { return 'M' + pts.map(p => `${f1(this.px(p[0]))},${f1(this.py(p[1]))}`).join('L') + (close ? 'Z' : ''); }
+  text(layer, x, t, str, cls = 'lbl', anchor = 'middle', fsMul = 1) {
+    const fs = this.fs * fsMul;
+    const el = S('text', { x: f1(this.px(x)), y: f1(this.py(t)), class: cls, 'text-anchor': anchor, 'font-size': fs.toFixed(1), 'dominant-baseline': 'middle' }, this.L[layer]);
+    let shift = 0, buf = '', i = 0;
+    const add = (s, kind) => {
+      const ts = S('tspan', null, el); ts.textContent = s;
+      const target = kind === 'sup' ? -0.42 * fs : kind === 'sub' ? 0.28 * fs : 0;
+      const dy = target - shift; if (dy) ts.setAttribute('dy', dy.toFixed(1));
+      if (kind) ts.setAttribute('font-size', (0.72 * fs).toFixed(1));
+      shift = target;
+    };
+    while (i < str.length) {
+      const c = str[i];
+      if (c === '^' || c === '_') {
+        if (buf) { add(buf, null); buf = ''; }
+        let tok; if (str[i + 1] === '{') { const j = str.indexOf('}', i + 2); tok = str.slice(i + 2, j); i = j + 1; } else { tok = str[i + 1]; i += 2; }
+        add(tok, c === '^' ? 'sup' : 'sub');
+      } else { buf += c; i++; }
+    }
+    if (buf) add(buf, null);
+    return el;
+  }
+  addHandle(h) {
+    const g = S('g', { class: 'handle', tabindex: '0', role: 'button', 'aria-label': (h.label || 'Drag') + '. Use arrow keys to move.' }, this.L.handles);
+    h.hit = S('circle', { class: 'hit', r: h.r || 22 }, g);
+    S('circle', { class: 'ring', r: 7 }, g);
+    S('circle', { class: 'dot', r: 2.2 }, g);
+    h.g = g;
+    g.addEventListener('pointerdown', e => {
+      e.preventDefault(); e.stopPropagation();
+      const [x, t] = this.toWorld(e), [hx, ht] = h.pos();
+      h.off = [hx - x, ht - t]; this.active = h; g.classList.add('dragging');
+      this.svg.setPointerCapture(e.pointerId);
+    });
+    g.addEventListener('keydown', e => {
+      const s = e.shiftKey ? 0.4 : 0.08;
+      const k = { ArrowLeft: [-s, 0], ArrowRight: [s, 0], ArrowUp: [0, s], ArrowDown: [0, -s] }[e.key];
+      if (!k) return; e.preventDefault();
+      const [x, t] = h.pos(); h.move(x + k[0], t + k[1]);
+    });
+    this.handles.push(h);
+    return h;
+  }
+  clearHandles() { this.handles.forEach(h => h.g.remove()); this.handles = []; this.active = null; }
+  syncHandles() {
+    for (const h of this.handles) {
+      const [x, t] = h.pos();
+      h.g.setAttribute('transform', `translate(${f1(this.px(x))},${f1(this.py(t))})`);
+      if (h.rw) h.hit.setAttribute('r', clamp(this.sc(h.rw()), 14, 60).toFixed(0));
+    }
+  }
+}
+
+/* Cauchy surfaces strictly inside M⁺ (above gm) or M⁻ (below gp): averaging a 1-Lipschitz envelope with a constant gives slope ≤ 1/2. */
+function cauchyAbove(gm, gap) { let C = -Infinity; for (const v of gm) C = Math.max(C, v + gap); return Float64Array.from(gm, v => 0.5 * (v + gap) + 0.5 * C); }
+function cauchyBelow(gp, gap) { let C = Infinity; for (const v of gp) C = Math.min(C, v - gap); return Float64Array.from(gp, v => 0.5 * (v - gap) + 0.5 * C); }
+function arrowHead(d, layer, x, y, ang, size = 8) {
+  const a1 = ang + Math.PI * 0.85, a2 = ang - Math.PI * 0.85;
+  S('path', { class: 'arrowhead', d: `M${f1(x)},${f1(y)}L${f1(x + size * Math.cos(a1))},${f1(y + size * Math.sin(a1))}L${f1(x + size * Math.cos(a2))},${f1(y + size * Math.sin(a2))}Z` }, d.L[layer]);
+}
+
+/* ================= HERO ================= */
+(function hero() {
+  const d = new Diagram(document.getElementById('hero-diagram'), { x0: -4.2, x1: 4.2, t0: -2.5, t1: 2.5 }, { label: 'Spacetime diagram of the measurement setting', legend: true });
+  const K = blobPts(0.2, -0.1, 0.62);
+  const B = [-1.25, 1.75];
+  d.draw = d => {
+    const { gp, gm } = envelopes(K, d.xs);
+    d.path('fill', d.pAbove(gp), 'f-future');
+    d.path('fill', d.pBelow(gm), 'f-past');
+    d.path('fill', d.pBetween(gp, gm, false), 'f-hull');
+    d.path('lines', d.pCurve(gp), 'b-future');
+    d.path('lines', d.pCurve(gm), 'b-past');
+    const s1 = cauchyAbove(gm, 0.35), s0 = cauchyBelow(gp, 0.35);
+    d.path('lines', d.pCurve(s1), 'cauchy alt'); d.path('lines', d.pCurve(s0), 'cauchy alt');
+    d.path('marks', d.pPts(K, true), 'f-K');
+    S('circle', { cx: d.px(B[0]), cy: d.py(B[1]), r: d.sc(0.2), class: 'f-h' }, d.L.marks);
+    const x0 = d.px(B[0] + 0.15), y0 = d.py(B[1] - 0.25), x1 = d.px(-0.15), y1 = d.py(0.55);
+    const cx = d.px(-1.35), cy = d.py(0.7);
+    d.path('marks', `M${f1(x0)},${f1(y0)} Q${f1(cx)},${f1(cy)} ${f1(x1)},${f1(y1)}`, 'theta-arrow');
+    arrowHead(d, 'marks', x1, y1, Math.atan2(y1 - cy, x1 - cx));
+    d.text('labels', -1.2, 0.85, 'Θ', 'lbl', 'end');
+    d.text('labels', 0.2, -0.1, 'K', 'lbl K');
+    d.text('labels', B[0] - 0.3, B[1], 'read B', 'lbl probe', 'end');
+    d.text('labels', 1.25, 0.1, 'couple', 'lbl up K', 'start', 0.9);
+    d.text('labels', 0.2, -1.9, 'prepare ω ⊗ σ', 'lbl past');
+    d.text('labels', 3.9, 2.15, 'M^+ (out)', 'lbl future', 'end');
+    d.text('labels', 3.9, -2.15, 'M^- (in)', 'lbl past', 'end');
+    d.text('labels', -3.95, s1[Math.round(d.xs.length * 0.04)] + 0.22, 'Σ', 'lbl', 'start', 0.9);
+    d.text('labels', -3.95, s0[Math.round(d.xs.length * 0.04)] - 0.22, 'Σ', 'lbl', 'start', 0.9);
+  };
+  d.redraw();
+})();
+
+/* ================= FIGURE 1 ================= */
+(function fig1() {
+  const view = { x0: -4, x1: 4, t0: -3, t1: 3 };
+  const d = new Diagram(document.getElementById('f1-diagram'), view, { label: 'Causal geometry explorer' });
+  const presets = {
+    lump: () => [{ kind: 'blob', cx: -0.3, ct: -0.2, s: 0.85 }],
+    sliver: () => [{ kind: 'seg', cx: -0.3, ct: -0.2, a: 1.4 }],
+    wline: () => [{ kind: 'wline', cx: -0.3, ct: -0.1, a: 1.35 }],
+    pairS: () => [{ kind: 'ell', cx: -1.7, ct: -0.1, rx: 0.45, rt: 0.35 }, { kind: 'ell', cx: 1.2, ct: 0.25, rx: 0.45, rt: 0.35 }],
+    pairT: () => [{ kind: 'ell', cx: -0.6, ct: -1.25, rx: 0.42, rt: 0.32 }, { kind: 'ell', cx: 0.05, ct: 1.05, rx: 0.42, rt: 0.32 }]
+  };
+  const st = { mode: 'cones', shapes: presets.lump(), L: { x: 2.6, t: 0.5, r: 0.45 } };
+  const geom = s => {
+    switch (s.kind) {
+      case 'blob': return { closed: true, pts: blobPts(s.cx, s.ct, s.s) };
+      case 'ell': return { closed: true, pts: ellipsePts(s.cx, s.ct, s.rx, s.rt) };
+      case 'seg': return { closed: false, pts: curvePts(u => [s.cx + u, s.ct], -s.a, s.a, 80) };
+      case 'wline': return { closed: false, pts: curvePts(u => [s.cx + 0.3 * Math.sin(1.8 * u), s.ct + u], -s.a, s.a, 100) };
+    }
+  };
+  const modeText = {
+    cones: 'Shaded: <i>J</i><sup>+</sup>(<i>K</i>) above (gold), <i>J</i><sup>−</sup>(<i>K</i>) below (teal), and where they overlap, the causal hull of <i>K</i> (violet).',
+    perp: 'Green: the causal complement <i>K</i><sup>⊥</sup>, every point that no causal curve joins to <i>K</i>. It equals <i>M</i><sup>+</sup> ∩ <i>M</i><sup>−</sup>.',
+    out: 'Gold: the out-region <i>M</i><sup>+</sup> = <i>M</i> ∖ <i>J</i><sup>−</sup>(<i>K</i>). Nothing here can influence <i>K</i>. The curve Σ is a Cauchy surface lying inside it.',
+    in: 'Teal: the in-region <i>M</i><sup>−</sup> = <i>M</i> ∖ <i>J</i><sup>+</sup>(<i>K</i>). Nothing in <i>K</i> can influence it. The curve Σ is a Cauchy surface lying inside it.'
+  };
+  const pill = document.getElementById('f1-pill'), txt = document.getElementById('f1-text'), mt = document.getElementById('f1-mode-text');
+  function classifyL(pts) {
+    const P = diamondPts(st.L.x, st.L.t, st.L.r);
+    let perp = true, out = true, inn = true, hull = false, fut = false, pst = false;
+    for (const [x, t] of P) {
+      const [gp, gm] = envAt(pts, x);
+      if (!(t > gm && t < gp)) perp = false;
+      if (!(t > gm)) out = false;
+      if (!(t < gp)) inn = false;
+      if (t >= gp && t <= gm) hull = true;
+      if (t >= gp) fut = true;
+      if (t <= gm) pst = true;
+    }
+    if (perp) return ['perp', 'L ⊂ K⊥ = M⁺ ∩ M⁻', 'No causal curve joins <i>L</i> to <i>K</i>. Θ acts trivially on observables of <i>L</i> (Prop. 3.1b). A probe observable localised here induces only the constant σ(<i>B</i>)<b>1</b>, and system observables here commute with every induced observable (Thm 3.3).'];
+    if (hull) return ['hull', 'L meets the causal hull of K', 'This is the interaction zone. The coupled theory 𝒞 need not resemble 𝒜 ⊗ ℬ here, and neither uncoupled description applies.'];
+    if (out) return ['future', 'L ⊂ M⁺ ∩ J⁺(K): out-region, downstream', 'Reading the probe here can carry information about the system. Θ maps observables of <i>L</i> back to early times, where they generally involve the system near <i>K</i>.'];
+    if (inn) return ['past', 'L ⊂ M⁻ ∩ J⁻(K): in-region, upstream', 'System and probe are prepared here, uncorrelated. Nothing done in <i>K</i> can influence <i>L</i>.'];
+    return ['mute', 'L meets both J⁺(K) and J⁻(K)', 'Part of <i>L</i> lies to the causal future of <i>K</i> and part to its causal past, without meeting the hull. Make <i>L</i> smaller or move it.'];
+  }
+  d.draw = d => {
+    const gs = st.shapes.map(geom), pts = gs.flatMap(g => g.pts);
+    const { gp, gm } = envelopes(pts, d.xs);
+    const xs = d.xs, cxK = pts.reduce((a, p) => a + p[0], 0) / pts.length;
+    const iC = Math.round((cxK - view.x0) / (view.x1 - view.x0) * (xs.length - 1));
+    if (st.mode === 'cones') {
+      d.path('fill', d.pAbove(gp), 'f-future'); d.path('fill', d.pBelow(gm), 'f-past');
+      d.path('fill', d.pBetween(gp, gm, false), 'f-hull');
+      d.path('lines', d.pCurve(gp), 'b-future'); d.path('lines', d.pCurve(gm), 'b-past');
+      d.text('labels', cxK, Math.min(view.t1 - 0.35, Math.max(gp[iC], gm[iC]) + 0.9), 'J^+(K)', 'lbl future');
+      d.text('labels', cxK, Math.max(view.t0 + 0.35, Math.min(gp[iC], gm[iC]) - 0.9), 'J^-(K)', 'lbl past');
+    } else if (st.mode === 'perp') {
+      d.path('fill', d.pBetween(gm, gp, true), 'f-perp');
+      d.path('lines', d.pCurve(gp), 'b-ink'); d.path('lines', d.pCurve(gm), 'b-ink');
+      const i0 = Math.round(xs.length * 0.06), i1 = Math.round(xs.length * 0.94);
+      d.text('labels', xs[i0], clamp((gp[i0] + gm[i0]) / 2, view.t0 + 0.3, view.t1 - 0.3), 'K^⊥', 'lbl perp', 'start');
+      d.text('labels', xs[i1], clamp((gp[i1] + gm[i1]) / 2, view.t0 + 0.3, view.t1 - 0.3), 'K^⊥', 'lbl perp', 'end');
+    } else if (st.mode === 'out') {
+      d.path('fill', d.pAbove(gm), 'f-out'); d.path('lines', d.pCurve(gm), 'b-past');
+      const s = cauchyAbove(gm, 0.3); d.path('lines', d.pCurve(s), 'cauchy');
+      d.text('labels', xs[Math.round(xs.length * 0.05)], s[Math.round(xs.length * 0.05)] + 0.25, 'Σ', 'lbl', 'start');
+      d.text('labels', view.x1 - 0.2, view.t1 - 0.3, 'M^+ = M ∖ J^-(K)', 'lbl future', 'end');
+    } else {
+      d.path('fill', d.pBelow(gp), 'f-in'); d.path('lines', d.pCurve(gp), 'b-future');
+      const s = cauchyBelow(gp, 0.3); d.path('lines', d.pCurve(s), 'cauchy');
+      d.text('labels', xs[Math.round(xs.length * 0.05)], s[Math.round(xs.length * 0.05)] - 0.25, 'Σ', 'lbl', 'start');
+      d.text('labels', view.x1 - 0.2, view.t0 + 0.3, 'M^- = M ∖ J^+(K)', 'lbl past', 'end');
+    }
+    gs.forEach((g, i) => {
+      d.path('marks', d.pPts(g.pts, g.closed), g.closed ? 'f-K' : 's-K');
+      const s = st.shapes[i];
+      d.text('labels', s.cx + (s.kind === 'wline' ? 0.55 : s.kind === 'seg' ? 0 : -0.05), s.ct + (s.kind === 'seg' ? 0.32 : s.kind === 'wline' ? 0.9 : 0), st.shapes.length > 1 ? 'K_' + (i + 1) : 'K', 'lbl K');
+    });
+    const L = st.L;
+    d.path('marks', d.pPts([[L.x + L.r, L.t], [L.x, L.t + L.r], [L.x - L.r, L.t], [L.x, L.t - L.r]], true), 'f-L');
+    d.text('labels', L.x + L.r + 0.12, L.t + 0.25, 'L', 'lbl', 'start');
+    const [cls, head, body] = classifyL(pts);
+    pill.className = 'pill ' + cls; pill.textContent = head; txt.innerHTML = body;
+  };
+  function setupHandles() {
+    d.clearHandles();
+    st.shapes.forEach((s, i) => d.addHandle({
+      label: 'Coupling region' + (st.shapes.length > 1 ? ' ' + (i + 1) : ''),
+      pos: () => [s.cx, s.ct], r: 30,
+      move: (x, t) => { s.cx = clamp(x, view.x0 + 0.8, view.x1 - 0.8); s.ct = clamp(t, view.t0 + 0.6, view.t1 - 0.6); schedule(); }
+    }));
+    d.addHandle({ label: 'Test region L', pos: () => [st.L.x, st.L.t], r: 26, move: (x, t) => { st.L.x = clamp(x, view.x0 + 0.5, view.x1 - 0.5); st.L.t = clamp(t, view.t0 + 0.5, view.t1 - 0.5); schedule(); } });
+  }
+  const schedule = rafThrottle(() => d.redraw());
+  segControl('f1-mode', v => { st.mode = v; mt.innerHTML = modeText[v]; d.redraw(); });
+  segControl('f1-shape', v => { st.shapes = presets[v](); setupHandles(); d.redraw(); });
+  mt.innerHTML = modeText.cones;
+  setupHandles(); d.redraw();
+})();
+
+/* ================= FIGURE 2 ================= */
+(function fig2() {
+  const view = { x0: -2.6, x1: 2.6, t0: -2.6, t1: 2.6 };
+  const d = new Diagram(document.getElementById('f2-diagram'), view, { label: 'Spacetime picture of the current step', legend: false });
+  const K = ellipsePts(0, -0.15, 0.75, 0.6);
+  const B = [-0.85, 1.75], rB = 0.22;
+  const Bpts = ellipsePts(B[0], B[1], rB, rB, 32);
+  let step = 1, hover = null;
+  const stepHl = { 1: 'plus', 2: 'fm', 3: 'eta', 4: 'all' };
+  let clipId = 'f2clip';
+  d.draw = d => {
+    const hl = hover || stepHl[step];
+    const { gp, gm } = envelopes(K, d.xs);
+    if (hl === 'plus' || hl === 'all') { d.path('fill', d.pAbove(gm), 'f-out'); d.text('labels', view.x1 - 0.15, view.t1 - 0.3, 'M^+', 'lbl future', 'end'); }
+    if (hl === 'minus' || hl === 'eta' || hl === 'fm') { d.path('fill', d.pBelow(gp), 'f-in'); d.text('labels', view.x1 - 0.15, view.t0 + 0.3, 'M^-', 'lbl past', 'end'); }
+    d.path('lines', d.pCurve(gp), 'b-future'); d.path('lines', d.pCurve(gm), 'b-past');
+    d.path('marks', d.pPts(K, true), 'f-K');
+    if (hl === 'fm' || hl === 'eta' || hl === 'all') {
+      const eb = envelopes(Bpts, d.xs);
+      d.path('lines', d.pCurve(eb.gm), 'b-probe');
+      const defs = S('defs', null, d.L.marks), cp = S('clipPath', { id: clipId }, defs);
+      S('path', { d: d.pBelow(eb.gm) }, cp);
+      d.path('marks', d.pPts(K, true), 'f-fm', { 'clip-path': `url(#${clipId})` });
+      d.text('labels', 0.95, -0.45, 'f^-', 'lbl sys', 'start');
+    }
+    S('circle', { cx: d.px(B[0]), cy: d.py(B[1]), r: d.sc(rB), class: 'f-h' }, d.L.marks);
+    d.text('labels', B[0] + 0.32, B[1] + 0.05, 'B', 'lbl probe', 'start');
+    d.text('labels', 0, -0.15, 'K', 'lbl K');
+    if (hl === 'eta' || hl === 'all') d.text('labels', 0, -2.05, 'ω ⊗ σ', 'lbl past');
+  };
+  d.redraw();
+  const cells = [...document.querySelectorAll('#cd > [data-steps]')];
+  const bodies = [...document.querySelectorAll('[data-stepbody]')];
+  const btns = [...document.querySelectorAll('#fig2 .stepbtn')];
+  function setStep(s) {
+    step = clamp(s, 1, 4);
+    cells.forEach(c => c.classList.toggle('on', c.dataset.steps.split(' ').includes(String(step))));
+    bodies.forEach(b => b.hidden = b.dataset.stepbody !== String(step));
+    btns.forEach(b => b.setAttribute('aria-pressed', String(b.dataset.step === String(step))));
+    d.redraw();
+  }
+  btns.forEach(b => b.addEventListener('click', () => setStep(Number(b.dataset.step))));
+  document.getElementById('f2-prev').addEventListener('click', () => setStep(step - 1));
+  document.getElementById('f2-next').addEventListener('click', () => setStep(step + 1));
+  document.querySelectorAll('#cd [data-hl]').forEach(c => {
+    c.addEventListener('pointerenter', () => { hover = c.dataset.hl; d.redraw(); });
+    c.addEventListener('pointerleave', () => { hover = null; d.redraw(); });
+  });
+  setStep(1);
+})();
+
+/* ================= lattice solver for the two-field model ================= */
+class Lattice {
+  constructor(x0, x1, t0, t1, d) {
+    this.x0 = x0; this.t0 = t0; this.d = d;
+    this.nx = Math.round((x1 - x0) / d) + 1; this.nt = Math.round((t1 - t0) / d) + 1; this.N = this.nx * this.nt;
+  }
+  arr() { return new Float64Array(this.N); }
+  bump(out, cx, ct, rx, rt, amp) {
+    out.fill(0);
+    const { nx, nt, d } = this;
+    const j0 = Math.max(1, Math.floor((cx - rx - this.x0) / d)), j1 = Math.min(nx - 2, Math.ceil((cx + rx - this.x0) / d));
+    const n0 = Math.max(1, Math.floor((ct - rt - this.t0) / d)), n1 = Math.min(nt - 3, Math.ceil((ct + rt - this.t0) / d));
+    for (let n = n0; n <= n1; n++) for (let j = j0; j <= j1; j++) {
+      const u = (this.x0 + j * d - cx) / rx, v = (this.t0 + n * d - ct) / rt, s = u * u + v * v;
+      if (s < 1) out[n * nx + j] = amp * Math.exp(1 - 1 / (1 - s));
+    }
+  }
+  sum(a) { let s = 0; for (let i = 0; i < a.length; i++) s += a[i]; return s * this.d * this.d; }
+  /* Advanced solution of T Ξ = (0, src): Φ'' − Φ_xx + mΦ²Φ + ρΨ = 0, Ψ'' − Ψ_xx + mΨ²Ψ + ρΦ = src, zero in the far future. dt = dx. */
+  coupledAdvanced(rho, src, m1, m2, Phi, Psi) {
+    const { nx, nt, d } = this, d2 = d * d, a1 = m1 * m1 * d2, a2 = m2 * m2 * d2;
+    Phi.fill(0); Psi.fill(0);
+    for (let n = nt - 2; n >= 1; n--) {
+      const r = n * nx, up = r + nx, dn = r - nx;
+      for (let j = 1; j < nx - 1; j++) {
+        const i = r + j, ph = Phi[i], ps = Psi[i], rr = rho[i] * d2;
+        Phi[dn + j] = Phi[i - 1] + Phi[i + 1] - Phi[up + j] - a1 * ph - rr * ps;
+        Psi[dn + j] = Psi[i - 1] + Psi[i + 1] - Psi[up + j] - a2 * ps - rr * ph + src[i] * d2;
+      }
+    }
+  }
+  /* Klein–Gordon with source: dir −1 advanced (support in the past), +1 retarded. */
+  kg(src, m, dir, u) {
+    const { nx, nt, d } = this, d2 = d * d, a = m * m * d2;
+    u.fill(0);
+    if (dir < 0) {
+      for (let n = nt - 2; n >= 1; n--) { const r = n * nx, up = r + nx, dn = r - nx; for (let j = 1; j < nx - 1; j++) { const i = r + j; u[dn + j] = u[i - 1] + u[i + 1] - u[up + j] - a * u[i] + src[i] * d2; } }
+    } else {
+      for (let n = 1; n <= nt - 2; n++) { const r = n * nx, up = r + nx, dn = r - nx; for (let j = 1; j < nx - 1; j++) { const i = r + j; u[up + j] = u[i - 1] + u[i + 1] - u[dn + j] - a * u[i] + src[i] * d2; } }
+    }
+  }
+}
+
+/* ================= FIGURES 3 and 5 ================= */
+function fieldFigure(cfg) {
+  const view = { x0: -4.5, x1: 4.5, t0: -3, t1: 3.3 };
+  const dd = 0.03, pad = 3;
+  const lat = new Lattice(view.x0 - pad, view.x1 + pad, view.t0, view.t1, dd);
+  const j0 = Math.round(pad / dd), cols = Math.round((view.x1 - view.x0) / dd) + 1, rows = lat.nt;
+  const d = new Diagram(document.getElementById(cfg.id + '-diagram'), view, { canvas: true, label: cfg.label });
+  d.canvas.width = cols; d.canvas.height = rows;
+  const ctx = d.canvas.getContext('2d');
+  const img = ctx.createImageData(cols, rows);
+  const shapes = { lump: { rx: 0.85, rt: 0.85 }, wline: { rx: 0.24, rt: 1.55 }, slab: { rx: 2.3, rt: 0.26 } };
+  const rH = 0.3;
+  const st = {
+    mode: 'f', shape: cfg.shape, kx: 0, kt: -0.4, lam: 1, mphi: 0.5, mpsi: 1.2,
+    h: cfg.two ? [{ x: -1.9, t: 2.55 }, { x: 2.3, t: 1.45 }] : [{ x: -0.9, t: 2.2 }]
+  };
+  const rho = lat.arr(), tmp = lat.arr();
+  const R = st.h.map(() => ({ src: lat.arr(), Phi: lat.arr(), Psi: lat.arr(), f: lat.arr() }));
+  const born = cfg.two ? null : lat.arr();
+  const ua = cfg.two ? lat.arr() : null, ur = cfg.two ? lat.arr() : null;
+  let colors;
+  const readColors = () => { colors = { pos: hexRgb(cssVar('--heat-pos')), neg: hexRgb(cssVar('--heat-neg')), p1: hexRgb(cssVar('--probe')), p2: hexRgb(cssVar('--probe2')) }; };
+  readColors();
+  const Kpts = () => { const s = shapes[st.shape]; return ellipsePts(st.kx, st.kt, s.rx, s.rt, 72); };
+  const discPts = h => ellipsePts(h.x, h.t, rH, rH, 24);
+  function fitH(h) {
+    h.x = clamp(h.x, view.x0 + rH + 0.1, view.x1 - rH - 0.1);
+    h.t = clamp(h.t, view.t0 + rH + 0.1, view.t1 - rH - 0.12);
+    const K = Kpts();
+    for (let it = 0; it < 300; it++) {
+      const ok = discPts(h).every(([x, t]) => t > envAt(K, x)[1] + 0.02);
+      if (ok) break; h.t += 0.02;
+    }
+    h.t = Math.min(h.t, view.t1 - rH - 0.12);
+  }
+  function solve() {
+    const s = shapes[st.shape];
+    lat.bump(rho, st.kx, st.kt, s.rx, s.rt, st.lam);
+    R.forEach((r, k) => {
+      const h = st.h[k];
+      lat.bump(r.src, h.x, h.t, rH, rH, 1);
+      const norm = lat.sum(r.src); for (let i = 0; i < lat.N; i++) r.src[i] /= norm;
+      lat.coupledAdvanced(rho, r.src, st.mphi, st.mpsi, r.Phi, r.Psi);
+      for (let i = 0; i < lat.N; i++) r.f[i] = -rho[i] * r.Psi[i];
+    });
+    if (born) { lat.kg(R[0].src, st.mpsi, -1, tmp); for (let i = 0; i < lat.N; i++) born[i] = -rho[i] * tmp[i]; }
+  }
+  function heat() {
+    const data = img.data, nx = lat.nx, nt = lat.nt;
+    let vmaxA = 0, vmaxB = 0, vback = 0;
+    const A = st.mode === 'f' ? R[0].f : st.mode === 'psi' ? R[0].Psi : R[0].Phi;
+    for (let n = 0; n < nt; n++) for (let c = 0; c < cols; c++) {
+      const i = n * nx + j0 + c;
+      vmaxA = Math.max(vmaxA, Math.abs(A[i]));
+      if (cfg.two) vmaxB = Math.max(vmaxB, Math.abs(R[1].f[i]));
+      if (st.mode === 'f' && !cfg.two) vback = Math.max(vback, Math.abs(R[0].Psi[i]));
+    }
+    if (cfg.two) { vmaxA = vmaxB = Math.max(vmaxA, vmaxB); }
+    for (let r = 0; r < rows; r++) {
+      const n = nt - 1 - r;
+      for (let c = 0; c < cols; c++) {
+        const i = n * nx + j0 + c, o = (r * cols + c) * 4;
+        let R0 = 0, G0 = 0, B0 = 0, a = 0;
+        if (cfg.two) {
+          const aa = vmaxA > 1e-14 ? Math.pow(Math.abs(R[0].f[i]) / vmaxA, 0.6) * 0.9 : 0;
+          const ab = vmaxB > 1e-14 ? Math.pow(Math.abs(R[1].f[i]) / vmaxB, 0.6) * 0.9 : 0;
+          a = 1 - (1 - aa) * (1 - ab);
+          if (a > 0) { const wa = aa / (aa + ab), wb = 1 - wa; R0 = colors.p1[0] * wa + colors.p2[0] * wb; G0 = colors.p1[1] * wa + colors.p2[1] * wb; B0 = colors.p1[2] * wa + colors.p2[2] * wb; }
+        } else {
+          const v = A[i];
+          let av = vmaxA > 1e-14 ? Math.pow(Math.abs(v) / vmaxA, 0.6) * 0.92 : 0;
+          let col = v >= 0 ? colors.pos : colors.neg;
+          if (st.mode === 'f') {
+            const w = R[0].Psi[i], bw = vback > 1e-14 ? Math.pow(Math.abs(w) / vback, 0.6) * 0.16 : 0;
+            if (av < bw) { av = bw; col = w >= 0 ? colors.pos : colors.neg; }
+          }
+          a = av; [R0, G0, B0] = col;
+        }
+        data[o] = R0; data[o + 1] = G0; data[o + 2] = B0; data[o + 3] = Math.round(a * 255);
+      }
+    }
+    ctx.putImageData(img, 0, 0);
+  }
+  function numbers() {
+    const nx = lat.nx, d2 = dd * dd;
+    const l1 = a => { let s = 0; for (let n = 0; n < lat.nt; n++) for (let c = 0; c < cols; c++) s += Math.abs(a[n * nx + j0 + c]); return s * d2; };
+    const K = Kpts();
+    const sees = h => discPts(h).some(([x, t]) => t >= envAt(K, x)[0]);
+    const out = {};
+    out.n1 = l1(R[0].f); out.sees1 = sees(st.h[0]);
+    if (born) { let df = 0; for (let i = 0; i < lat.N; i++) df += Math.abs(R[0].f[i] - born[i]); out.rel = out.n1 > 1e-12 ? df * d2 / out.n1 : 0; }
+    if (cfg.two) {
+      out.n2 = l1(R[1].f); out.sees2 = sees(st.h[1]);
+      lat.kg(R[1].f, st.mphi, -1, ua); lat.kg(R[1].f, st.mphi, +1, ur);
+      let e = 0; const f = R[0].f; for (let i = 0; i < lat.N; i++) if (f[i] !== 0) e += f[i] * (ua[i] - ur[i]);
+      out.EP = e * d2;
+      const a = st.h[0], b = st.h[1];
+      out.spacelike = Math.abs(a.x - b.x) - Math.abs(a.t - b.t) > 2 * rH * Math.SQRT2;
+    }
+    return out;
+  }
+  const pill = document.getElementById(cfg.id + '-pill'), txt = document.getElementById(cfg.id + '-text'), num = document.getElementById(cfg.id + '-num');
+  const bar = document.getElementById(cfg.id + '-bar');
+  function report(o) {
+    if (!cfg.two) {
+      if (o.sees1 && o.n1 > 1e-10) {
+        pill.className = 'pill future'; pill.textContent = 'h ⊂ M⁺, meets J⁺(K)';
+        txt.innerHTML = 'ε<sub>σ</sub>(Ψ(<i>h</i>)) = Φ(<i>f</i><sup>−</sup>) + σ(Ψ(<i>h</i><sup>−</sup>))<b>1</b>, with <i>f</i><sup>−</sup> supported on the part of <i>K</i> inside the past cone of <i>h</i>.';
+      } else {
+        pill.className = 'pill perp'; pill.textContent = 'h ⊂ M⁺, outside J⁺(K)';
+        txt.innerHTML = '<i>f</i><sup>−</sup> = 0, so ε<sub>σ</sub>(Ψ(<i>h</i>)) = σ(Ψ(<i>h</i>))<b>1</b>: a multiple of the identity, which tells you nothing about the system.';
+      }
+      num.innerHTML = `‖f⁻‖₁ = ${fmt(o.n1, 4)}<br>Born approximation −λρE<sub>Q</sub><sup>−</sup>h: relative error ${o.n1 > 1e-10 ? (100 * o.rel).toFixed(1) + '%' : '—'}`;
+    } else {
+      if (o.spacelike) { pill.className = 'pill perp'; pill.textContent = 'h and h′ spacelike: [Ψ(h), Ψ(h′)] = 0'; }
+      else { pill.className = 'pill future'; pill.textContent = 'h and h′ causally related'; }
+      const both = o.n1 > 1e-10 && o.n2 > 1e-10;
+      txt.innerHTML = both
+        ? 'Yet the induced observables satisfy [ε<sub>σ</sub>(Ψ(<i>h</i>)), ε<sub>σ</sub>(Ψ(<i>h</i>′))] = <i>i E<sub>P</sub></i>(<i>f</i><sup>−</sup>, <i>f</i>′<sup>−</sup>)<b>1</b>, computed below.'
+        : 'At least one readout lies outside <i>J</i><sup>+</sup>(<i>K</i>), so its induced observable is trivial and the commutator vanishes.';
+      const maxE = 0.5 * o.n1 * o.n2, frac = maxE > 1e-14 ? Math.abs(o.EP) / maxE : 0;
+      num.innerHTML = `‖f⁻‖₁ = ${fmt(o.n1, 4)}   ‖f′⁻‖₁ = ${fmt(o.n2, 4)}<br>E<sub>P</sub>(f⁻, f′⁻) = ${o.EP.toExponential(3)}<br>fraction of maximum: ${(100 * frac).toFixed(1)}%`;
+      bar.style.width = (100 * clamp(frac, 0, 1)).toFixed(1) + '%';
+    }
+  }
+  d.draw = d => {
+    const K = Kpts(), { gp, gm } = envelopes(K, d.xs);
+    d.path('lines', d.pCurve(gp), 'b-future');
+    d.path('marks', d.pPts(K, true), 'f-Kline');
+    const s = shapes[st.shape];
+    d.text('labels', st.kx + s.rx + 0.12, st.kt + Math.min(s.rt, 0.6) * 0.6, 'K', 'lbl K', 'start');
+    st.h.forEach((h, k) => {
+      const eb = envelopes(discPts(h), d.xs);
+      d.path('lines', d.pCurve(eb.gm), k ? 'b-probe2' : 'b-probe');
+      S('circle', { cx: d.px(h.x), cy: d.py(h.t), r: d.sc(rH), class: k ? 'f-h2' : 'f-h' }, d.L.marks);
+      d.text('labels', h.x + rH + 0.12, h.t + 0.18, k ? 'h′' : 'h', k ? 'lbl probe2' : 'lbl probe', 'start');
+    });
+    d.text('labels', view.x0 + 0.15, view.t1 - 0.25, 'J^+(K) boundary', 'lbl small future', 'start', 0.78);
+  };
+  const run = rafThrottle(() => { solve(); heat(); d.redraw(); report(numbers()); });
+  st.h.forEach((h, k) => d.addHandle({ label: k ? 'Second readout h′' : 'Readout h', pos: () => [h.x, h.t], r: 22, move: (x, t) => { h.x = x; h.t = t; fitH(h); run(); } }));
+  d.addHandle({
+    label: 'Coupling region K', pos: () => [st.kx, st.kt], rw: () => Math.min(shapes[st.shape].rx, shapes[st.shape].rt, 0.6),
+    move: (x, t) => { st.kx = clamp(x, -2.6, 2.6); st.kt = clamp(t, -1.6, 0.8); st.h.forEach(fitH); run(); }
+  });
+  if (!cfg.two) segControl(cfg.id + '-mode', v => { st.mode = v; run(); });
+  segControl(cfg.id + '-shape', v => { st.shape = v; st.h.forEach(fitH); run(); });
+  slider(cfg.id + '-lam', v => { st.lam = v; run(); });
+  slider(cfg.id + '-mphi', v => { st.mphi = v; run(); });
+  slider(cfg.id + '-mpsi', v => { st.mpsi = v; run(); });
+  themeFns.push(() => { readColors(); heat(); });
+  st.h.forEach(fitH);
+  run();
+}
+fieldFigure({ id: 'f3', shape: 'lump', two: false, label: 'Lattice computation of the induced test function' });
+fieldFigure({ id: 'f5', shape: 'wline', two: true, label: 'Two readouts and their induced test functions' });
+
+/* ================= charts ================= */
+let chartId = 0;
+class Chart {
+  constructor(host, opts) {
+    this.host = host; this.o = Object.assign({ h: 200, pad: { l: 40, r: 12, t: 12, b: 32 } }, opts);
+    this.svg = S('svg', { role: 'img', 'aria-label': opts.label || 'Chart' }, host);
+    this.id = 'clip' + (++chartId); this.W = 0;
+    new ResizeObserver(() => this.resize()).observe(host);
+  }
+  resize() { const w = Math.round(this.host.clientWidth); if (!w || w === this.W) return; this.W = w; this.render(); }
+  sx(x) { const { pad, xr } = this.o; return pad.l + (x - xr[0]) / (xr[1] - xr[0]) * (this.W - pad.l - pad.r); }
+  sy(y) { const { pad, yr, h } = this.o; return pad.t + (1 - (y - yr[0]) / (yr[1] - yr[0])) * (h - pad.t - pad.b); }
+  render() {
+    if (!this.W) return;
+    const { h, pad, xr, yr, xt, yt, xlabel } = this.o, svg = this.svg;
+    svg.setAttribute('viewBox', `0 0 ${this.W} ${h}`); svg.setAttribute('height', h);
+    svg.replaceChildren();
+    const defs = S('defs', null, svg), cp = S('clipPath', { id: this.id }, defs);
+    S('rect', { x: pad.l, y: pad.t, width: this.W - pad.l - pad.r, height: h - pad.t - pad.b }, cp);
+    const g = S('g', null, svg);
+    for (const v of (xt || [])) { const tk = S('g', { class: 'tick' }, g); S('line', { x1: this.sx(v), x2: this.sx(v), y1: pad.t, y2: h - pad.b }, tk); const t = S('text', { x: this.sx(v), y: h - pad.b + 14, 'text-anchor': 'middle' }, tk); t.textContent = v; }
+    for (const v of (yt || [])) { const tk = S('g', { class: 'tick' }, g); S('line', { x1: pad.l, x2: this.W - pad.r, y1: this.sy(v), y2: this.sy(v) }, tk); const t = S('text', { x: pad.l - 6, y: this.sy(v) + 3.5, 'text-anchor': 'end' }, tk); t.textContent = v; }
+    S('path', { class: 'ax', d: `M${pad.l},${pad.t}V${h - pad.b}H${this.W - pad.r}` }, g);
+    if (xlabel) { const t = S('text', { class: 'axl', x: this.W - pad.r, y: h - 4, 'text-anchor': 'end' }, g); t.textContent = xlabel; }
+    this.plot = S('g', { 'clip-path': `url(#${this.id})` }, svg);
+    if (this.o.draw) this.o.draw(this);
+  }
+  curve(fn, cls, n = 260, fillBase) {
+    const [a, b] = this.o.xr; let d = '';
+    for (let i = 0; i <= n; i++) { const x = a + (b - a) * i / n; d += (i ? 'L' : 'M') + f1(this.sx(x)) + ',' + f1(this.sy(fn(x))); }
+    if (fillBase !== undefined) d += `L${f1(this.sx(b))},${f1(this.sy(fillBase))}L${f1(this.sx(a))},${f1(this.sy(fillBase))}Z`;
+    return S('path', { d, class: cls }, this.plot);
+  }
+}
+const npdf = (x, m, s) => Math.exp(-0.5 * ((x - m) / s) ** 2) / (s * Math.sqrt(2 * Math.PI));
+function erf(x) { const s = Math.sign(x); x = Math.abs(x); const t = 1 / (1 + 0.3275911 * x); const y = 1 - (((((1.061405429 * t - 1.453152027) * t) + 1.421413741) * t - 0.284496736) * t + 0.254829592) * t * Math.exp(-x * x); return s * y; }
+const ncdf = z => 0.5 * (1 + erf(z / Math.SQRT2));
+
+/* ================= FIGURE 4 ================= */
+(function fig4() {
+  const st = { lam: 1, a: 1.2, s: 1, c: 0.5 };
+  const dist = new Chart(document.getElementById('f4-dist'), {
+    label: 'Distributions of readings', h: 220, xr: [-6, 6], yr: [0, 0.46], xt: [-6, -4, -2, 0, 2, 4, 6], yt: [0, 0.2, 0.4], xlabel: 'reading / λ',
+    draw: c => {
+      const sY = Math.sqrt(1 + (st.s / st.lam) ** 2);
+      c.curve(x => npdf(x, st.a, 1), 'c-sysfill', 260, 0);
+      c.curve(x => npdf(x, 0, st.s / st.lam), 'c-noise');
+      c.curve(x => npdf(x, 0, sY), 'c-vac');
+      c.curve(x => npdf(x, st.a, sY), 'c-actual');
+    }
+  });
+  const eff = new Chart(document.getElementById('f4-eff'), {
+    label: 'Induced effect', h: 220, xr: [-6, 6], yr: [0, 1.08], xt: [-6, -4, -2, 0, 2, 4, 6], yt: [0, 0.5, 1], xlabel: 'value of Φ(f₁)',
+    draw: c => {
+      const F = x => ncdf((x - st.c) * st.lam / st.s);
+      c.curve(x => 0.9 * npdf(x, st.a, 1) / npdf(0, 0, 1), 'c-pX', 200, 0);
+      c.curve(x => (x >= st.c ? 1 : 0), 'c-step', 600);
+      c.curve(x => F(x) ** 2, 'c-F2');
+      c.curve(F, 'c-F');
+    }
+  });
+  const out = document.getElementById('f4-read');
+  function upd() {
+    dist.render(); eff.render();
+    const vi = st.lam ** 2, vp = st.s ** 2, va = vi + vp;
+    const snr = Math.abs(st.a) / Math.sqrt(1 + (st.s / st.lam) ** 2);
+    const prob = ncdf((st.a - st.c) / Math.sqrt(1 + (st.s / st.lam) ** 2));
+    out.innerHTML =
+      `<div>Var(actual reading) = ${fmt(va, 3)}<br>= Var(Φ(f⁻); ω) + Var(Ψ(h⁻); σ) = ${fmt(vi, 3)} + ${fmt(vp, 3)}  <span style="color:var(--ink-3)">(5.7)</span></div>` +
+      `<div>Separation from the vacuum, in spreads of the readings: ${fmt(snr, 2)}</div>` +
+      `<div>Prob(reading ≥ λc) = ω(ε<sub>σ</sub>(E)) = ${fmt(prob, 3)}</div>`;
+  }
+  slider('f4-lam', v => { st.lam = v; upd(); });
+  slider('f4-a', v => { st.a = v; upd(); });
+  slider('f4-s', v => { st.s = v; upd(); });
+  slider('f4-c', v => { st.c = v; upd(); });
+  upd();
+})();
+
+/* ================= FIGURE 6 ================= */
+function besselK0(x) {
+  if (x <= 2) {
+    const y = x * x / 4, t = (x / 3.75) ** 2;
+    const I0 = 1 + t * (3.5156229 + t * (3.0899424 + t * (1.2067492 + t * (0.2659732 + t * (0.0360768 + t * 0.0045813)))));
+    return -Math.log(x / 2) * I0 + (-0.57721566 + y * (0.42278420 + y * (0.23069756 + y * (0.03488590 + y * (0.00262698 + y * (0.00010750 + y * 0.0000074))))));
+  }
+  const y = 2 / x;
+  return Math.exp(-x) / Math.sqrt(x) * (1.25331414 + y * (-0.07832358 + y * (0.02189568 + y * (-0.01062446 + y * (0.00587872 + y * (-0.00251540 + y * 0.00053208))))));
+}
+(function fig6() {
+  const view = { x0: -4.5, x1: 4.5, t0: -2.7, t1: 2.7 };
+  const d = new Diagram(document.getElementById('f6-diagram'), view, { label: 'Post-selection in the causal complement' });
+  const K = ellipsePts(-0.6, 0, 0.6, 0.55);
+  const B = [-1.2, 1.9];
+  const st = { O: { x: 2.0, t: 0.35, r: 0.4 }, z: 1.5, m: 0.8 };
+  const kap = 0.8, a0 = 0.3, gain = 1 / Math.sqrt(1 + 0.25);
+  const corr = dist => kap * besselK0(st.m * (dist + a0)) / besselK0(st.m * a0);
+  function geom() {
+    const P = diamondPts(st.O.x, st.O.t, st.O.r);
+    const perp = P.every(([x, t]) => { const [gp, gm] = envAt(K, x); return t > gm && t < gp; });
+    let dist = Infinity;
+    for (const [kx, kt] of K) { const q = (st.O.x - kx) ** 2 - (st.O.t - kt) ** 2; if (q > 0) dist = Math.min(dist, Math.sqrt(q)); else dist = Math.min(dist, 0); }
+    return { perp, dist: Math.max(0, dist) };
+  }
+  d.draw = d => {
+    const { gp, gm } = envelopes(K, d.xs);
+    d.path('fill', d.pBetween(gm, gp, true), 'f-perp');
+    d.path('lines', d.pCurve(gp), 'b-future'); d.path('lines', d.pCurve(gm), 'b-past');
+    d.path('marks', d.pPts(K, true), 'f-K');
+    d.text('labels', -0.6, 0, 'K', 'lbl K');
+    S('circle', { cx: d.px(B[0]), cy: d.py(B[1]), r: d.sc(0.2), class: 'f-h' }, d.L.marks);
+    d.text('labels', B[0] + 0.3, B[1], 'probe read', 'lbl probe up', 'start', 0.85);
+    d.text('labels', view.x1 - 0.2, view.t1 - 0.3, 'K^⊥', 'lbl perp', 'end');
+    const O = st.O;
+    d.path('marks', d.pPts([[O.x + O.r, O.t], [O.x, O.t + O.r], [O.x - O.r, O.t], [O.x, O.t - O.r]], true), 'f-O');
+    d.text('labels', O.x + O.r + 0.1, O.t + 0.28, 'O', 'lbl sys', 'start');
+  };
+  const meter = new Chart(document.getElementById('f6-meter'), {
+    label: 'Expectation value meter', h: 70, pad: { l: 14, r: 14, t: 18, b: 24 }, xr: [-1.2, 1.2], yr: [0, 1], xt: [-1, -0.5, 0, 0.5, 1],
+    draw: c => {
+      const g = geom();
+      const y = c.sy(0.45);
+      S('line', { x1: c.sx(-1.2), x2: c.sx(1.2), y1: y, y2: y, class: 'c-zero' }, c.plot);
+      S('circle', { cx: c.sx(0), cy: y - 9, r: 5.5, class: 'c-mark-i' }, c.plot);
+      S('circle', { cx: c.sx(0), cy: y + 9, r: 5.5, class: 'c-mark-o' }, c.plot);
+      if (g.perp) S('circle', { cx: c.sx(clamp(st.z * gain * corr(g.dist), -1.2, 1.2)), cy: y, r: 6.5, class: 'c-mark' }, c.plot);
+    }
+  });
+  const decay = new Chart(document.getElementById('f6-decay'), {
+    label: 'Shift against distance', h: 130, pad: { l: 40, r: 10, t: 10, b: 28 }, xr: [0, 6], yr: [-1.1, 1.1], xt: [0, 2, 4, 6], yt: [-1, 0, 1], xlabel: 'd',
+    draw: c => {
+      const g = geom();
+      c.curve(x => st.z * gain * corr(x), 'c-curve');
+      if (g.perp && g.dist <= 6) S('circle', { cx: c.sx(g.dist), cy: c.sy(st.z * gain * corr(g.dist)), r: 5, class: 'c-mark' }, c.plot);
+    }
+  });
+  const pill = document.getElementById('f6-pill'), txt = document.getElementById('f6-text');
+  function upd() {
+    d.redraw(); meter.render(); decay.render();
+    const g = geom();
+    if (g.perp) {
+      const sh = st.z * gain * corr(g.dist);
+      pill.className = 'pill perp'; pill.textContent = `O ⊂ K⊥ · spacelike distance d = ${fmt(g.dist, 2)}`;
+      txt.innerHTML = `ω′(Φ(<i>g</i>)) − ω(Φ(<i>g</i>)) = ${sh >= 0 ? '+' : ''}${fmt(sh, 4)} vacuum spreads. Averaged over all readings, the shift is exactly zero: ω<sub>ns</sub> = ω on <i>K</i><sup>⊥</sup>.`;
+    } else {
+      pill.className = 'pill future'; pill.textContent = 'O is not causally disjoint from K';
+      txt.innerHTML = 'Θ need not act trivially on observables in <i>O</i>, so formula (3.26) does not apply. In <i>J</i><sup>+</sup>(<i>K</i>) even the non-selective state can differ from ω, because the coupling acts there dynamically.';
+    }
+  }
+  d.addHandle({ label: 'Region O', pos: () => [st.O.x, st.O.t], r: 24, move: (x, t) => { st.O.x = clamp(x, view.x0 + 0.45, view.x1 - 0.45); st.O.t = clamp(t, view.t0 + 0.45, view.t1 - 0.45); sched(); } });
+  const sched = rafThrottle(upd);
+  slider('f6-z', v => { st.z = v; sched(); });
+  slider('f6-m', v => { st.m = v; sched(); });
+  upd();
+})();
+
+/* ================= FIGURE 7 ================= */
+(function fig7() {
+  const view = { x0: -4, x1: 4, t0: -3, t1: 3 };
+  const d = new Diagram(document.getElementById('f7-diagram'), view, { label: 'Two coupling regions' });
+  const st = { k: [{ x: -0.7, t: -0.9 }, { x: 0.8, t: 0.95 }] };
+  const RX = 0.5, RT = 0.38;
+  const cases = [...document.querySelectorAll('#fig7 .case')];
+  const txt = document.getElementById('f7-text');
+  const notes = {
+    '21': 'K₂ ∩ J⁻(K₁) = ∅: some Cauchy surface has K₁ in its past and K₂ in its future. Causal factorisation gives Θ̂ = Θ̂₁ ∘ Θ̂₂, and the instruments compose with K₁ first.',
+    '12': 'K₁ ∩ J⁻(K₂) = ∅: now K₂ comes first and the roles swap.',
+    dis: 'Neither region meets the causal past of the other. Observers using different foliations disagree about which came first, and the instruments compose the same either way.',
+    no: 'Move K₂ until it no longer straddles the light cones of K₁.'
+  };
+  d.draw = d => {
+    const P1 = ellipsePts(st.k[0].x, st.k[0].t, RX, RT), P2 = ellipsePts(st.k[1].x, st.k[1].t, RX, RT);
+    const e1 = envelopes(P1, d.xs), e2 = envelopes(P2, d.xs);
+    d.path('fill', d.pAbove(e1.gp), 'f-future'); d.path('fill', d.pBelow(e1.gm), 'f-past');
+    d.path('lines', d.pCurve(e2.gp), 'b-ink'); d.path('lines', d.pCurve(e2.gm), 'b-ink');
+    const F1 = ellipseFill(st.k[0].x, st.k[0].t, RX, RT), F2 = ellipseFill(st.k[1].x, st.k[1].t, RX, RT);
+    const A = F2.every(([x, t]) => t > envAt(P1, x)[1]);
+    const B = F1.every(([x, t]) => t > envAt(P2, x)[1]);
+    const c = A && B ? 'dis' : A ? '21' : B ? '12' : 'no';
+    const xs = d.xs, iL = Math.round(xs.length * 0.04);
+    // Midway between J⁻(earlier) and J⁺(later), smoothed so that the surface is visibly spacelike, then kept strictly between them.
+    const between = (lo, hi) => {
+      const m = Float64Array.from(lo, (v, i) => 0.5 * (v + hi[i])), w = Math.max(2, Math.round(xs.length * 0.06)), s = new Float64Array(m.length);
+      for (let i = 0; i < m.length; i++) { let a = 0, n = 0; for (let k = -w; k <= w; k++) { const j = clamp(i + k, 0, m.length - 1); const g = Math.exp(-(k * k) / (w * w / 2)); a += g * m[j]; n += g; } s[i] = clamp(a / n, lo[i] + 0.04, hi[i] - 0.04); }
+      return s;
+    };
+    if (A) { const s = between(e1.gm, e2.gp); d.path('lines', d.pCurve(s), 'cauchy'); d.text('labels', xs[iL], s[iL] + 0.25, 'Σ: K_1 first', 'lbl', 'start', 0.9); }
+    if (B) { const s = between(e2.gm, e1.gp); d.path('lines', d.pCurve(s), 'cauchy alt'); const iR = Math.round(xs.length * 0.96); d.text('labels', xs[iR], s[iR] + 0.25, 'Σ′: K_2 first', 'lbl', 'end', 0.9); }
+    d.path('marks', d.pPts(P1, true), 'f-K'); d.path('marks', d.pPts(P2, true), 'f-K');
+    d.text('labels', st.k[0].x, st.k[0].t, 'K_1', 'lbl K'); d.text('labels', st.k[1].x, st.k[1].t, 'K_2', 'lbl K');
+    cases.forEach(el => el.classList.toggle('on', el.dataset.case === c));
+    txt.textContent = notes[c];
+  };
+  const sched = rafThrottle(() => d.redraw());
+  st.k.forEach((k, i) => d.addHandle({ label: 'Coupling region K' + (i + 1), pos: () => [k.x - RX - 0.12, k.t], r: 20, move: (x, t) => { k.x = clamp(x + RX + 0.12, view.x0 + 0.7, view.x1 - 0.6); k.t = clamp(t, view.t0 + 0.5, view.t1 - 0.5); sched(); } }));
+  d.redraw();
+})();
+
+/* ================= FIGURE 8 ================= */
+(function fig8() {
+  const view = { x0: -1.3, x1: 5.1, t0: -4, t1: 4 };
+  const d = new Diagram(document.getElementById('f8-diagram'), view, { label: 'Uniformly accelerated detector', gridStep: 0.5 });
+  let T = 1;
+  const txt = document.getElementById('f8-text');
+  d.draw = d => {
+    const W = curvePts(u => [Math.cosh(u), Math.sinh(u)], -T, T, 160);
+    const { gp, gm } = envelopes(W, d.xs);
+    const mx = Float64Array.from(gp, (v, i) => Math.max(v, gm[i]));
+    d.path('fill', d.pAbove(mx), 'f-wait');
+    d.path('fill', d.pBetween(gp, gm, false), 'f-hull');
+    S('path', { class: 'b-ink', d: `M${d.px(0)},${d.py(0)}L${d.px(5.5)},${d.py(5.5)}M${d.px(0)},${d.py(0)}L${d.px(5.5)},${d.py(-5.5)}` }, d.L.lines);
+    d.path('lines', d.pPts(curvePts(u => [Math.cosh(u), Math.sinh(u)], -2.3, 2.3, 160), false), 'wline-ghost');
+    d.path('marks', d.pPts(W, false), 's-K');
+    d.text('labels', Math.cosh(T) + 0.15, Math.sinh(T), 'γ(T)', 'lbl K', 'start', 0.9);
+    d.text('labels', Math.cosh(T) + 0.15, -Math.sinh(T), 'γ(−T)', 'lbl K', 'start', 0.9);
+    d.text('labels', 4.9, 3.55, 'M^+ ∩ J^+(K)', 'lbl future', 'end', 0.9);
+    d.text('labels', -1.15, 0.0, 'x = |t|', 'lbl small', 'start', 0.85);
+    d.text('labels', 4.9, -3.7, 'Rindler wedge x > |t|', 'lbl small', 'end', 0.8);
+  };
+  function upd() {
+    d.redraw();
+    txt.innerHTML = `Proper time switched on: 2<i>T</i> = ${fmt(2 * T, 2)}.<br>At <i>t</i> = 0 the hull spans e<sup>−T</sup> &lt; <i>x</i> &lt; e<sup>T</sup>, here ${fmt(Math.exp(-T), 3)} &lt; <i>x</i> &lt; ${fmt(Math.exp(T), 2)}. The wedge is 0 &lt; <i>x</i> &lt; ∞.`;
+  }
+  slider('f8-T', v => { T = v; upd(); });
+  upd();
+})();
+
+})();
+</script>
+</body>
+</html>
